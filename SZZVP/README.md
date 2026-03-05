@@ -4,12 +4,12 @@ Student je zkoušen z jednoho zkušebního okruhu. Tento okruh si student vybere
 
 Formát zkoušky:
 
-    5 hodin na řešení zadané úlohy
-        3 až 10 dní před vlastní zkouškou
-        Během řešení lze používat libovolné dostupné materiály a zdroje, přísně zakázáno je využívat pomoci jiných osob nebo s nimi jakkoliv spolupracovat.
-    až 20 minut zkoušení, z toho
-        7 až 10 minut připravená prezentace k řešení úlohy
-        zbytek diskuse + ověřování souvisejících znalostí
+ - 5 hodin na řešení zadané úlohy
+      - 3 až 10 dní před vlastní zkouškou
+      - Během řešení lze používat libovolné dostupné materiály a zdroje, přísně zakázáno je využívat pomoci jiných osob nebo s nimi jakkoliv spolupracovat.
+ - až 20 minut zkoušení, z toho
+      - 7 až 10 minut připravená prezentace k řešení úlohy
+      - zbytek diskuse + ověřování souvisejících znalostí
 
 ## Databázové systémy a zpracování dat
 
