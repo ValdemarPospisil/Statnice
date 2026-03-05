@@ -1,4 +1,4 @@
-# Státní závěrečné zkoušky (SZZ) - KI/SZZPP & KI/SZZVP
+# Státní závěrečné zkoušky (SZZ) - KI/SZZTP & KI/SZZPP & KI/SZZVP
 
 Tento repozitář obsahuje materiály a vybrané otázky pro přípravu na státní závěrečné zkoušky na katedře informatiky.
 
