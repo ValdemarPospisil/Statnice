@@ -2,8 +2,8 @@
 
 Pro tento předmět platí následující pravidla.
 
-    Student je zkoušen z jedné otázky, resp. jednoho zkušebního okruhu. Tento okruh si student vybere náhodným výběrem ze sady 12 zkušebních okruhů, kterou si předem sestaví z 16 zkušebních okruhů uvedených níže. Zmíněný náhodný výběr se uskuteční za přítomnosti alespoň dvou členů zkušební komise.
-    Student má nárok na 60 minut přípravy včetně řešení zadané úlohy bez přístupu k internetu.
+  - Student je zkoušen z jedné otázky, resp. jednoho zkušebního okruhu. Tento okruh si student vybere náhodným výběrem ze sady 12 zkušebních okruhů, kterou si předem sestaví z 16 zkušebních okruhů uvedených níže. Zmíněný náhodný výběr se uskuteční za přítomnosti alespoň dvou členů zkušební komise.
+  - Student má nárok na 60 minut přípravy včetně řešení zadané úlohy bez přístupu k internetu.
     Obvyklá doba zkoušení je 20 minut. V jeho úvodu student představí své řešení zadané úlohy, následuje diskuse k tomuto řešení včetně ověřování souvisejících znalostí.
 
 
