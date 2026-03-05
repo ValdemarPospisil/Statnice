@@ -1,5 +1,12 @@
 # KI/SZZTP Teoretické základy informatiky
 
+Pro tento předmět platí následující pravidla.
+
+- Student je zkoušen z jedné otázky, resp. jednoho zkušebního okruhu. Tento okruh si student vybere náhodným výběrem ze sady 10 zkušebních okruhů, kterou si předem sestaví z 12 zkušebních okruhů uvedených níže. Zmíněný náhodný výběr se uskuteční za přítomnosti alespoň dvou členů zkušební komise.
+- Student má nárok na 15 minut přípravy.
+    Obvyklá doba zkoušení je 15 minut.
+
+
 ## Algoritmizace a programování I a II
 
 -   Základní abstraktní kolekce (jejich klasická implementace [seznamy, slovníky], iterátory nad nimi, typické elementární operace a jejich časová složitost) a specializované abstraktní kolekce (fronta, zásobník)
