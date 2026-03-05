@@ -11,18 +11,31 @@ Formát zkoušky:
         7 až 10 minut připravená prezentace k řešení úlohy
         zbytek diskuse + ověřování souvisejících znalostí
 
-## [Databázové systémy a zpracování dat](./ZadaniOkruhu/SZZVP-DB.pdf)
+## Databázové systémy a zpracování dat
 
-## [Elektronika a automatizace](./ZadaniOkruhu/SZZVP-EL.pdf)
+- [Databázové systémy a zpracování dat](./ZadaniOkruhu/SZZVP-DB.pdf)
+
+## Elektronika a automatizace
+
+- [Elektronika a automatizace](./ZadaniOkruhu/SZZVP-EL.pdf)
 
 ## Informační a počítačová bezpečnost
+
 - [ZKR](./ZadaniOkruhu/SZZVP-ZKR.pdf)
 - [SC](./ZadaniOkruhu/SZZVP-SC.pdf)
 
-## [~~Operační systémy a virtualizace~~](./ZadaniOkruhu/SZZVP-OS.pdf)
+## Operační systémy a virtualizace
 
-## [Počítačové sítě a protokoly](./ZadaniOkruhu/SZZVP-CN.pdf)
+- [~~Operační systémy a virtualizace~~](./ZadaniOkruhu/SZZVP-OS.pdf)
 
-## [Podniková informatika](./ZadaniOkruhu/SZZVP-PI.pdf)
+## Počítačové sítě a protokoly
 
-## [Programování a softwarové inženýrství](./ZadaniOkruhu/SZZVP-SW.pdf)
+- [Počítačové sítě a protokoly](./ZadaniOkruhu/SZZVP-CN.pdf)
+
+## Podniková informatika
+
+- [Podniková informatika](./ZadaniOkruhu/SZZVP-PI.pdf)
+
+## Programování a softwarové inženýrství
+
+- [Programování a softwarové inženýrství](./ZadaniOkruhu/SZZVP-SW.pdf)
