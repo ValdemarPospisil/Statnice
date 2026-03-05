@@ -50,7 +50,7 @@ Pro tento předmět platí následující pravidla.
 
 ## Multimédia a základy počítačové grafiky
 
-- [~~Multimédia a základy počítačové grafiky~~](./ZadaniOkruhu/MPG.pdf)
+- [Multimédia a základy počítačové grafiky](./ZadaniOkruhu/MPG.pdf)
 
 ## Projektové řízení
 
