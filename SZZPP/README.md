@@ -11,12 +11,12 @@ Pro tento předmět platí následující pravidla.
 
 - [Programování: funkce a cykly](./ZadaniOkruhu/APR-I-II-3okruhy.pdf)
 - [Programování: kolekce](./ZadaniOkruhu/APR-I-II-3okruhy.pdf)
-- [~~Programování: základy OOP~~](./ZadaniOkruhu/APR-I-II-3okruhy.pdf)
+- [Programování: základy OOP](./ZadaniOkruhu/APR-I-II-3okruhy.pdf)
 
 ## Architektura počítačů
 
 - [výběr komponent počítače](./ZadaniOkruhu/PCA-I.pdf)
-- [~~diagnostika a řešení problémů~~](./ZadaniOkruhu/PCA-II.pdf)
+- [diagnostika a řešení problémů](./ZadaniOkruhu/PCA-II.pdf)
 
 ## Základy elektroniky
 
@@ -25,8 +25,8 @@ Pro tento předmět platí následující pravidla.
 
 ## Základy počítačových sítí a protokolů
 
-- [A](./ZadaniOkruhu/ZPS-A.pdf)
-- [~~B~~](./ZadaniOkruhu/ZPS-B.pdf)
+- [~~A - Navhrnutí sítě~~](./ZadaniOkruhu/ZPS-A.pdf)
+- [~~B - CISCO~~](./ZadaniOkruhu/ZPS-B.pdf)
 
 ## Matematický software
 
@@ -42,7 +42,7 @@ Pro tento předmět platí následující pravidla.
 
 ## Základy kyberbezpečnosti
 
-- [Základy kyberbezpečnosti](./ZadaniOkruhu/ZKB.pdf)
+- [~~Základy kyberbezpečnosti~~](./ZadaniOkruhu/ZKB.pdf)
 
 ## Základy zpracování dat
 
@@ -50,7 +50,7 @@ Pro tento předmět platí následující pravidla.
 
 ## Multimédia a základy počítačové grafiky
 
-- [Multimédia a základy počítačové grafiky](./ZadaniOkruhu/MPG.pdf)
+- [~~Multimédia a základy počítačové grafiky~~](./ZadaniOkruhu/MPG.pdf)
 
 ## Projektové řízení
 

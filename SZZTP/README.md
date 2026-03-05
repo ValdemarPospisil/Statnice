@@ -17,8 +17,8 @@ Pro tento předmět platí následující pravidla.
  
 -    Reálná funkce jedné reálné proměnné (definice, definiční obor a obor hodnot, graf funkce, limita a spojitost funkce), polynomy (definice, vlastnosti, Hornerovo schéma), numerické řešení nelineárních rovnic (metoda půlení intervalu, Newtonova metoda)
 -    Diferenciální a integrální počet funkcí jedné proměnné (definice derivace funkce a její geometrický význam, primitivní funkce, určitý integrál a jeho geometrický význam), numerické derivování a integrace (obdélníkové, lichoběžníkové a Simpsonovo pravidlo), aplikace (určení lokálního extrému, navazování křivek, objem rotačního tělesa)
--    Soustava lineárních rovnic (definice, řešitelnost a Frobeniova věta, metody řešení [Cramerovo pravidlo, Gaussova eliminační metoda, metoda LU rozkladu, Jacobiho a Gaussova‑Seidelova iterační metoda]), aplikace (např. při řešení obvodů stejnosměrného proudu)
--   Reálná funkce více reálných proměnných (definice, definiční obor a obor hodnot, graf funkce dvou proměnných, parciální derivace, lokální, vázané a globální extrémy), aproximace metodou nejmenších čtverců (motivace a geometrický význam, formulace, řešení, aplikace na nelineární funkce např. v elektronice)
+-    ~~Soustava lineárních rovnic (definice, řešitelnost a Frobeniova věta, metody řešení [Cramerovo pravidlo, Gaussova eliminační metoda, metoda LU rozkladu, Jacobiho a Gaussova‑Seidelova iterační metoda]), aplikace (např. při řešení obvodů stejnosměrného proudu)~~
+-   ~~Reálná funkce více reálných proměnných (definice, definiční obor a obor hodnot, graf funkce dvou proměnných, parciální derivace, lokální, vázané a globální extrémy), aproximace metodou nejmenších čtverců (motivace a geometrický význam, formulace, řešení, aplikace na nelineární funkce např. v elektronice)~~
 
 ## Pravděpodobnost a statistika
 
