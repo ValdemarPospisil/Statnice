@@ -1,0 +1,36 @@
+title: Statnice
+description: Materiály a poznámky pro přípravu na státní závěrečné zkoušky.
+remote_theme: pages-themes/primer@v0.6.0
+repository: ValdemarPospisil/Statnice
+
+url: "https://valdemarpospisil.github.io"
+baseurl: "/Statnice"
+
+plugins:
+  - jekyll-remote-theme
+  - jekyll-github-metadata
+  - jekyll-include-cache
+  - jekyll-seo-tag
+
+defaults:
+  - scope:
+      path: ""
+    values:
+      layout: default
+
+markdown: kramdown
+kramdown:
+  input: GFM
+  hard_wrap: false
+  autolink: true
+  syntax_highlighter: rouge
+
+exclude:
+  - .git
+  - .github
+  - vendor
+  - generate_index.py
+  - README.md
+  - CLAUDE.md
+  - Gemfile
+  - Gemfile.lock

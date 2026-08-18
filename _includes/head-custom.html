@@ -1,0 +1,144 @@
+<!--
+  MathJax 3 pro vykreslování LaTeXu v poznámkách.
+
+  DŮLEŽITÉ: kramdown při buildu převede zdrojové $…$ a $$…$$ na \(…\) a \[…\].
+  Proto MUSÍ být v delimiterech níže uvedené i tyto varianty — jinak se
+  nevykreslí nic. Nemazat.
+-->
+<script>
+  MathJax = {
+    tex: {
+      inlineMath: [['\\(', '\\)'], ['$', '$']],
+      displayMath: [['\\[', '\\]'], ['$$', '$$']],
+      processEscapes: true
+    },
+    options: {
+      skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+    }
+  };
+</script>
+<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+
+<style>
+  :root {
+    color-scheme: light only;
+
+    --bg: #f7f7f7;
+    --bg-elevated: #fafafa;
+    --bg-code: #f0f0f0;
+    --text: #2b2b2b;
+    --text-heading: #1e1e1e;
+    --text-muted: #555555;
+    --border: #e0e0e0;
+    --border-subtle: #ebebeb;
+    --link: #1a5a9e;
+    --link-hover: #134a82;
+    --accent: #b45309;
+  }
+
+  html { background-color: var(--bg); }
+
+  body {
+    color: var(--text) !important;
+    background-color: var(--bg) !important;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a { color: var(--link); }
+  a:hover { color: var(--link-hover); }
+
+  /* Čtecí režim: širší sloupec a větší písmo, ať se dá učit z obrazovky */
+  .container-lg.markdown-body {
+    color: var(--text);
+    font-size: 17px;
+    line-height: 1.7;
+    max-width: 62rem;
+  }
+
+  .markdown-body { color: var(--text); }
+
+  .markdown-body h1,
+  .markdown-body h2,
+  .markdown-body h3,
+  .markdown-body h4 {
+    color: var(--text-heading);
+    font-weight: 600;
+  }
+
+  .markdown-body h1,
+  .markdown-body h2 { border-bottom-color: var(--border); }
+
+  .markdown-body h1 > a,
+  .markdown-body h1 > a:hover {
+    color: var(--text-heading);
+    text-decoration: none;
+  }
+
+  .markdown-body a { color: var(--link); }
+  .markdown-body a:hover { color: var(--link-hover); }
+  .markdown-body hr { background-color: var(--border); }
+
+  /* Zadání okruhu citované na začátku otázky */
+  .markdown-body blockquote {
+    color: var(--text-muted);
+    border-left-color: var(--accent);
+    background-color: var(--bg-elevated);
+    padding: 0.6em 1em;
+    border-radius: 0 4px 4px 0;
+  }
+
+  .markdown-body table th,
+  .markdown-body table td { border-color: var(--border); }
+
+  .markdown-body table tr {
+    background-color: var(--bg-elevated);
+    border-top-color: var(--border);
+  }
+
+  .markdown-body table tr:nth-child(2n) { background-color: var(--bg); }
+
+  .markdown-body pre,
+  .markdown-body code,
+  .highlight pre {
+    background-color: var(--bg-code) !important;
+    color: var(--text);
+  }
+
+  .markdown-body :not(pre) > code {
+    background-color: var(--bg-code);
+    border: 1px solid var(--border-subtle);
+    border-radius: 3px;
+    padding: 0.15em 0.35em;
+  }
+
+  .markdown-body pre,
+  .highlight pre { border: 1px solid var(--border-subtle); }
+
+  .markdown-body img {
+    background-color: var(--bg-elevated);
+    border-radius: 4px;
+  }
+
+  /* Zaškrtávací seznamy ("Co si nacvičit") ať nejsou natěsnané */
+  .markdown-body .task-list-item { margin: 0.3em 0; }
+
+  mjx-container { color: var(--text) !important; }
+
+  /* Dlouhé odvozování se na mobilu musí dát odscrollovat, ne rozbít stránku */
+  mjx-container[display="true"] {
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.2em 0;
+  }
+
+  /* Poznámky se čtou i večer, ale primer je světlé téma — držíme světlé i v dark modu */
+  @media (prefers-color-scheme: dark) {
+    :root { color-scheme: light only; }
+    html, body,
+    .markdown-body,
+    .container-lg.markdown-body {
+      background-color: var(--bg) !important;
+      color: var(--text) !important;
+    }
+  }
+</style>

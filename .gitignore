@@ -1,0 +1,19 @@
+# Jekyll
+_site/
+.jekyll-cache/
+.jekyll-metadata
+vendor/
+Gemfile.lock
+
+# Rozcestník se generuje při buildu (generate_index.py)
+index.md
+
+# R / Quarto (okruh Základy zpracování dat)
+.Rproj.user
+.Rhistory
+*_files/
+*_cache/
+
+# Python
+__pycache__/
+.ipynb_checkpoints/
