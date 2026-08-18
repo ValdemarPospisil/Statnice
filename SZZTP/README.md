@@ -6,6 +6,23 @@ Pro tento předmět platí následující pravidla.
 - Student má nárok na 15 minut přípravy.
     Obvyklá doba zkoušení je 15 minut.
 
+## Vybrané okruhy a poznámky
+
+Číslování odpovídá pořadí okruhů níže (6 a 7 jsou vyřazené, do losování nejdou).
+
+| # | Okruh | Poznámky |
+|---|---|---|
+| 1 | Základní a specializované abstraktní kolekce | [📁](./01-abstraktni-kolekce/) |
+| 2 | Komplexní algoritmy nad seznamy | [📁](./02-algoritmy-nad-seznamy/) |
+| 3 | Spojové datové struktury | [📁](./03-spojove-struktury/) |
+| 4 | Reálná funkce, polynomy, nelineární rovnice | [📁](./04-funkce-polynomy-nelinearni-rovnice/) |
+| 5 | Diferenciální a integrální počet, numerika | [📁](./05-derivace-integraly-numerika/) |
+| 8 | Náhodná veličina a její charakteristiky | [📁](./08-nahodna-velicina/) |
+| 9 | Intervaly spolehlivosti | [📁](./09-intervaly-spolehlivosti/) |
+| 10 | Výrokový a predikátový počet, množiny, relace | [📁](./10-logika-mnoziny-relace/) |
+| 11 | Rekurence, asymptotická notace, algoritmy | [📁](./11-rekurence-asymptotika/) |
+| 12 | Grafy, stromy, eulerovské a hamiltonovské grafy | [📁](./12-grafy-stromy/) |
+
 
 ## Algoritmizace a programování I a II
 

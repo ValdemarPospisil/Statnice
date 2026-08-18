@@ -7,6 +7,26 @@ Pro tento předmět platí následující pravidla.
     Obvyklá doba zkoušení je 20 minut. V jeho úvodu student představí své řešení zadané úlohy, následuje diskuse k tomuto řešení včetně ověřování souvisejících znalostí.
 
 
+## Vybraných 12 okruhů a poznámky
+
+Číslování je pořadí v sadě, kterou si sestavuješ (vyškrtnuté okruhy níže do losování nejdou).
+
+| # | Okruh | Poznámky |
+|---|---|---|
+| 1 | Programování: funkce a cykly | [📁](./01-programovani-funkce-a-cykly/) |
+| 2 | Programování: kolekce | [📁](./02-programovani-kolekce/) |
+| 3 | Programování: základy OOP | [📁](./03-programovani-oop/) |
+| 4 | Architektura počítačů: výběr komponent | [📁](./04-architektura-vyber-komponent/) |
+| 5 | Architektura počítačů: diagnostika | [📁](./05-architektura-diagnostika/) |
+| 6 | Základy elektroniky: analogová část | [📁](./06-elektronika-analogova/) |
+| 7 | Základy elektroniky: digitální část | [📁](./07-elektronika-digitalni/) |
+| 8 | Operační systémy | [📁](./08-operacni-systemy/) |
+| 9 | Databázové systémy | [📁](./09-databazove-systemy/) |
+| 10 | Základy zpracování dat | [📁](./10-zaklady-zpracovani-dat/) |
+| 11 | Multimédia a základy počítačové grafiky | [📁](./11-multimedia-a-pocitacova-grafika/) |
+| 12 | Projektové řízení | [📁](./12-projektove-rizeni/) |
+
+
 ## Algoritmizace a programování I a II
 
 - [Programování: funkce a cykly](./ZadaniOkruhu/APR-I-II-3okruhy.pdf)

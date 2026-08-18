@@ -2,6 +2,10 @@
 
 Tento repozitář obsahuje materiály a vybrané otázky pro přípravu na státní závěrečné zkoušky na katedře informatiky.
 
+📅 [**Plán přípravy**](./PLAN.md) - rozbor obtížnosti okruhů a denní harmonogram učení.
+
+🌐 [**Čitelná verze s vykreslenými vzorci**](https://valdemarpospisil.github.io/Statnice/) - poznámky se sázenou matematikou, čte se i na mobilu.
+
 ## Přehled okruhů
 
 Materiály jsou rozděleny do následujících částí:

@@ -11,6 +11,22 @@ Formát zkoušky:
       - 7 až 10 minut připravená prezentace k řešení úlohy
       - zbytek diskuse + ověřování souvisejících znalostí
 
+## Vybraných 8 okruhů a poznámky
+
+Tučně zvýrazněné okruhy níže = absolvované bloky **Databázové systémy a zpracování dat** a **Programování a softwarové inženýrství**.
+
+| # | Okruh | Blok | Poznámky |
+|---|---|---|---|
+| 1 | Relační databázové systémy a OLAP databáze | DB | [📁](./01-relacni-db-a-olap/) |
+| 2 | NoSQL databáze | DB | [📁](./02-nosql-databaze/) |
+| 3 | Pokročilé statistické metody a zpracování časových řad | DB | [📁](./03-pokrocila-statistika-a-casove-rady/) |
+| 4 | Objektově orientované návrhové vzory | SW | [📁](./04-navrhove-vzory/) |
+| 5 | Vývoj desktopové aplikace | SW | [📁](./05-vyvoj-desktopove-aplikace/) |
+| 6 | Vývoj mobilní aplikace | SW | [📁](./06-vyvoj-mobilni-aplikace/) |
+| 7 | Vývoj webové aplikace | SW | [📁](./07-vyvoj-webove-aplikace/) |
+| 8 | Objektově orientovaný návrh | SW | [📁](./08-objektove-orientovany-navrh/) |
+
+
 ## Databázové systémy a zpracování dat
 
 - [Databázové systémy a zpracování dat](./ZadaniOkruhu/SZZVP-DB.pdf)
@@ -34,7 +50,7 @@ Formát zkoušky:
 - [Informační a počítačová bezpečnost](./ZadaniOkruhu/SZZVP-SC.pdf)
   - Technologie pro security operations center
   - Penetrační testování
-  - [Základy kryptologie](./ZadaniOkruhu/SSZVP-ZKR.pdf)
+  - [Základy kryptologie](./ZadaniOkruhu/SZZVP-ZKR.pdf)
 
 ## Operační systémy a virtualizace
 
