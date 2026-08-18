@@ -158,7 +158,7 @@ Větší kořen je **zlatý řez** $\varphi = \frac{1+\sqrt5}{2} \approx 1{,}618
 
 $$F_n = \frac{\varphi^n - \psi^n}{\sqrt5}, \qquad \psi = \frac{1-\sqrt5}{2}$$
 
-Protože $|\psi| < 1$, druhý člen rychle mizí a **Fibonacciho čísla rostou exponenciálně jako $\varphi^n$**. Tenhle fakt použij dole u složitosti Euklidova algoritmu.
+Protože $\lvert \psi \rvert < 1$, druhý člen rychle mizí a **Fibonacciho čísla rostou exponenciálně jako $\varphi^n$**. Tenhle fakt použij dole u složitosti Euklidova algoritmu.
 
 ---
 

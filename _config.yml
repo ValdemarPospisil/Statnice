@@ -8,9 +8,13 @@ baseurl: "/Statnice"
 
 plugins:
   - jekyll-remote-theme
-  - jekyll-github-metadata
   - jekyll-include-cache
+  - jekyll-github-metadata
   - jekyll-seo-tag
+  # Bez těchto tří se poznámky nevykreslí — viz komentář v Gemfile
+  - jekyll-optional-front-matter
+  - jekyll-readme-index
+  - jekyll-relative-links
 
 defaults:
   - scope:

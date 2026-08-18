@@ -4,6 +4,7 @@ _site/
 .jekyll-metadata
 vendor/
 Gemfile.lock
+.bundle/
 
 # Rozcestník se generuje při buildu (generate_index.py)
 index.md

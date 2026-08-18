@@ -1,9 +1,14 @@
 <!--
   MathJax 3 pro vykreslování LaTeXu v poznámkách.
 
-  DŮLEŽITÉ: kramdown při buildu převede zdrojové $…$ a $$…$$ na \(…\) a \[…\].
-  Proto MUSÍ být v delimiterech níže uvedené i tyto varianty — jinak se
-  nevykreslí nic. Nemazat.
+  DŮLEŽITÉ: kramdown zpracuje jako matematiku jen $$…$$ — ty převede na \[…\].
+  Inline $…$ NEZNÁ a nechá je v HTML jako holý text; ty vykreslí až MathJax
+  v prohlížeči. Proto MUSÍ být v delimiterech níže obě sady — jinak zmizí
+  buď bloky, nebo inline vzorce. Nemazat.
+
+  Důsledek: obsah inline $…$ prochází markdownem, takže znaky | * _ v něm
+  mohou rozbít odstavec (svislítko udělá z odstavce tabulku). Absolutní
+  hodnotu proto piš \lvert x \rvert, ne |x|.
 -->
 <script>
   MathJax = {

@@ -43,7 +43,18 @@ Nadpisy v `README.md` otázky drž tak, jak jsou. Struktura se liší podle zkou
 
 Repozitář se při každém pushi do `main` nasazuje na <https://valdemarpospisil.github.io/Statnice/> (Jekyll + GitHub Pages, workflow `.github/workflows/pages.yml`). Rozcestník `index.md` se generuje při buildu skriptem `generate_index.py` — **needituj ho ručně**, je v `.gitignore`.
 
-Pozor na jednu věc: kramdown při buildu převede zdrojové `$…$` a `$$…$$` na `\(…\)` a `\[…\]`. MathJax v `_includes/head-custom.html` proto **musí** mít v delimiterech obě varianty. Kdyby se přestaly vzorce vykreslovat, hledej chybu tady.
+Pozor na dvě věci kolem matematiky:
+
+1. Kramdown zpracuje jako matematiku **jen** `$$…$$` (převede je na `\[…\]`). Inline `$…$` nezná a nechá je v HTML jako holý text — ty vykreslí až MathJax v prohlížeči. Proto musí `_includes/head-custom.html` mít v delimiterech obě sady. Kdyby se přestaly vzorce vykreslovat, hledej chybu tady.
+2. Protože obsah inline `$…$` prochází markdownem, znaky `|`, `*` a `_` v něm mohou rozbít odstavec — svislítko z něj udělá tabulku. **Absolutní hodnotu piš `\lvert x \rvert`, ne `|x|`.** Když nevíš, ověř lokálním buildem (viz níže).
+
+Lokálně se web postaví takhle (Ruby 3.4, bundler v `~/.local/share/gem/ruby/3.4.0/bin`):
+
+```bash
+bundle install
+python generate_index.py
+bundle exec jekyll serve   # náhled na http://localhost:4000/Statnice/
+```
 
 Aby se okruh objevil v rozcestníku, musí být složka pojmenovaná `NN-nazev` a mít `README.md` s prvním nadpisem ve tvaru `## N — Název`.
 
