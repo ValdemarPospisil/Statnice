@@ -22,11 +22,13 @@ Každá otázka má **vlastní složku** `NN-popisny-nazev/` s `README.md`. Čí
 
 Nadpisy v `README.md` otázky drž tak, jak jsou. Struktura se liší podle zkoušky:
 
-- **SZZTP** — `Osnova výkladu (15 min)` · `Klíčové definice` · `Příklad na papír` · `Na co se doptají` · `Užitečné odkazy`
+- **SZZTP** — `Osnova výkladu (15 min)` · `Co si napsat na papír (první 3 minuty přípravy)` · `Klíčové definice` · `Příklad na papír` · `Na co se doptají` · `Užitečné odkazy`
 - **SZZPP** — navíc `Postup u zkoušky (60 min přípravy)` · `Co si nacvičit` (checkboxy) · `Poznámky`
 - **SZZVP** — `Mé řešení úlohy` · `Kostra prezentace (7–10 min)` · `Na co se doptají`
 
 `Osnova výkladu` je jádro celé přípravy: musí se vejít na jednu A4 a musí jít odvyprávět bez opory. Když ji rozšiřuješ, hlídej, aby nenabobtnala — radši zkrať.
+
+`Co si napsat na papír` je to, co Valdemar zpaměti hodí na papír během 15 min přípravy. Je to **blok předformátovaného textu**, ne odrážky, a musí být opsatelný do tří minut. Nikdy do něj nepiš nic, co se dá odvodit z něčeho jiného v tom bloku — místo toho hned pod ním vysvětli, **jak se zbytek odvodí**, aby se učil princip, ne tabulku. V bloku nesmí být `$…$` (uvnitř bloku kódu se matematika nevykresluje), takže složitosti piš prostým textem.
 
 ## Jak psát
 
