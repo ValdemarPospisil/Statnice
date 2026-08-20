@@ -373,54 +373,156 @@ Definice $O$-notace a práce s ní patří k [okruhu 11 — Rekurence a asymptot
 
 ### Příklad na papír
 
-Tři malé příklady, které dohromady projdou celou otázku. Všechny tři se **kreslí**, ne počítají — proto jsou na tabuli vděčné a proto se dají zapamatovat jako obrázky, ne jako text.
+U zkoušky ukážeš **jeden** příklad — víc se za patnáct minut ani nestihne. Ten první je hlavní, druhý si nech pro případ, že se zeptají na slovníky.
 
 ---
 
-#### 1. Růst dynamického pole
+#### Příklad 1 — proč je přidávání na konec seznamu levné
 
-**Co nakreslit:** tabulku o čtyřech sloupcích. Vkládáš osm prvků do pole s počáteční kapacitou 1 a vedeš si u toho **účet zkopírovaných prvků**.
+##### Nejdřív: co je dynamické pole doopravdy
 
-| Vkládám | Kapacita před | Realokace? | Zkopírováno |
-|---|---|---|---|
-| 1. | 1 | — | 0 |
-| 2. | 1 | 1 → 2 | 1 |
-| 3. | 2 | 2 → 4 | 2 |
-| 4. | 4 | — | 0 |
-| 5. | 4 | 4 → 8 | 4 |
-| 6.–8. | 8 | — | 0 |
+Představ si paměť jako **jednu dlouhou řadu očíslovaných políček**. Když si program řekne o pole pro 4 čísla, dostane **čtyři políčka vedle sebe** — třeba od adresy 1000:
 
-**Jak to číst.** Realokace nastane vždy jen ve chvíli, kdy je pole **právě plné** — tedy při vkládání 2., 3. a 5. prvku. Všechna ostatní vložení jsou obyčejný zápis do volné pozice za $O(1)$. Drahé kroky jsou tedy **tři z osmi**, a čím dál je jich řidčeji: mezery mezi nimi se zdvojnásobují.
+```
+adresa:   1000  1004  1008  1012  1016  1020 ...
+          ┌────┬────┬────┬────┐
+pole:     │ 10 │ 20 │ 30 │ 40 │  ← moje pole, kapacita 4
+          └────┴────┴────┴────┘
+                                  ↑ tady už bydlí něco jiného
+```
 
-**Součet:**
+**Proč vedle sebe?** Protože pak se adresa libovolného prvku dá **spočítat**:
 
-$$\underbrace{8}_{\text{zápisy}} + \underbrace{1 + 2 + 4}_{\text{kopie} \;=\; 7} = 15 \quad\text{kroků na 8 vložení}$$
+```
+adresa prvku [2] = 1000 + 2 × 4 = 1008
+```
 
-To je necelé dva kroky na vložení, tedy **konstanta** → $O(1)$ amortizovaně. Obecně platí $1 + 2 + 4 + \cdots + n < 2n$, takže celkem méně než $3n$ kroků a na jedno vložení $3n/n = 3$.
+Jedno násobení, jedno sčítání, hotovo — nic se nehledá. **Tohle je celý důvod, proč má pole přístup přes index za $O(1)$.**
 
-**Co u toho říkat:** *„Jednotlivé vložení může stát $O(n)$, ale drahá vložení jsou tak vzácná, že se jejich cena rozpustí mezi levná. Amortizovaně proto $O(1)$."*
+Jenže má to háček. Ta souvislost je zároveň slabina: **pole nemůže povyrůst**. Za jeho posledním políčkem už leží jiná data. Nedá se říct „přidej mi ještě jedno políčko" — je zabrané.
 
-**Kontrast, kterým to dorazit** (ptají se na něj skoro vždy): kdyby pole rostlo **o konstantu $c$** místo na dvojnásobek, realokovalo by se při velikostech $c, 2c, 3c, \ldots, n$ a zkopírovalo by se
+**Co se tedy stane, když je pole plné a chci přidat další prvek?**
 
-$$c + 2c + \cdots + n \approx \frac{n^2}{2c} = O(n^2)$$
+1. požádá se o **nový, větší souvislý blok** někde jinde v paměti
+2. **zkopírují se do něj všechny dosavadní prvky** ← tohle je to drahé, je to $O(n)$
+3. starý blok se uvolní
+4. teprve teď se zapíše nový prvek
 
-tedy $O(n)$ na **jedno** vložení. Rozdíl mezi zdvojnásobováním a přičítáním je rozdíl mezi $O(1)$ a $O(n)$ — a to je celá pointa amortizované analýzy.
+```
+staré pole (plné)           nové pole
+┌────┬────┬────┬────┐       ┌────┬────┬────┬────┬────┬────┬────┬────┐
+│ 10 │ 20 │ 30 │ 40 │  ───► │ 10 │ 20 │ 30 │ 40 │ 50 │    │    │    │
+└────┴────┴────┴────┘  kopie└────┴────┴────┴────┴────┴────┴────┴────┘
+     kapacita 4               kapacita 8, teprve teď zapíšu 50
+```
 
-**Proč právě tenhle příklad:** je to jediné místo v otázce, kde se něco doopravdy **počítá**, a stejná úvaha se pak vrátí ještě dvakrát (u přehashování a u fronty ze dvou zásobníků). Když ji vyložíš tady pořádně, podruhé a potřetí už na ni jen odkážeš.
+Dynamické pole si proto drží **dvě čísla**, která se pletou a je dobré je rozlišit nahlas:
+
+- **`count`** — kolik prvků v něm reálně je
+- **`capacity`** — kolik se jich tam vejde, než se bude muset stěhovat
+
+Realokace nastane **právě tehdy, když `count` dosáhne `capacity`**.
+
+##### A teď ta otázka: o kolik se má pole zvětšit?
+
+Tohle je celé jádro příkladu. Nabízejí se dvě odpovědi a **liší se propastně**:
+
+- **o jedno políčko** — pak se ale stěhuje **při každém jediném vložení**
+- **na dvojnásobek** — pak se stěhuje jen občas
+
+Pojďme to spočítat pro **osm vložení** do pole, které začíná s kapacitou 1.
+
+##### Krok za krokem
+
+| # | `count` před | `capacity` | Vejde se? | Co se stane | Kopií |
+|---|---|---|---|---|---|
+| 1. | 0 | 1 | ano | jen zapíšu | 0 |
+| 2. | 1 | 1 | **ne, plno** | 1 → 2, **zkopíruju 1 prvek**, zapíšu | **1** |
+| 3. | 2 | 2 | **ne, plno** | 2 → 4, **zkopíruju 2 prvky**, zapíšu | **2** |
+| 4. | 3 | 4 | ano | jen zapíšu | 0 |
+| 5. | 4 | 4 | **ne, plno** | 4 → 8, **zkopíruju 4 prvky**, zapíšu | **4** |
+| 6. | 5 | 8 | ano | jen zapíšu | 0 |
+| 7. | 6 | 8 | ano | jen zapíšu | 0 |
+| 8. | 7 | 8 | ano | jen zapíšu | 0 |
+
+**Všimni si dvou věcí najednou** — v nich je celá pointa:
+
+- kopírování je **čím dál dražší**: 1, potom 2, potom 4 prvky
+- ale nastává **čím dál vzácněji**: u 2., 3., 5. vložení… další by bylo až u 9.
+
+Ty dvě věci se navzájem **přesně vyruší**. Drahá operace sice roste, ale zároveň stejně rychle řídne.
+
+##### Účet
+
+$$\underbrace{8}_{\substack{\text{samotné} \\ \text{zápisy}}} \;+\; \underbrace{1 + 2 + 4}_{\substack{\text{kopírování} \\ =\; 7}} \;=\; 15 \ \text{kroků na 8 vložení}$$
+
+To je **necelé dva kroky na jedno vložení**. Ne osm, ne sto — dva. A kdybys vkládal tisíc prvků, vyjde to zase na necelé dva, protože obecně
+
+$$1 + 2 + 4 + \cdots + n \;<\; 2n$$
+
+(součet mocnin dvojky je vždycky **skoro dvojnásobek té poslední** — $1+2+4 = 7$, což je skoro $8$). Celkem tedy méně než $n + 2n = 3n$ kroků, na jedno vložení $3n/n = 3$, což je **konstanta**. Proto $O(1)$.
+
+Tomuhle se říká **amortizovaná složitost**: jednotlivá operace může být drahá, ale rozpočítáno přes celou sérii vyjde konstanta.
+
+##### Nejlepší způsob, jak to vysvětlit u tabule
+
+Kdyby se ti ta suma zdála abstraktní, použij tuhle úvahu — je názornější a zkoušející ji ocení:
+
+> **Za každé vložení zaplatím tři mince místo jedné.** Jednu za samotný zápis, dvě si dám stranou. Když se pole zaplní na velikost $n$, mám v úsporách přesně tolik, kolik stojí zkopírovat všech $n$ prvků. **Stěhování je tedy předplacené.** A protože každé vložení platí pořád stejné tři mince, je cena jednoho vložení konstantní.
+
+Proč to vyjde přesně: po zdvojnásobení na kapacitu $n$ je v poli $n/2$ prvků, takže do dalšího naplnění se udělá $n/2$ vložení. Každé odloží 2 mince → našetří se $n$ mincí. A další stěhování stojí zkopírovat $n$ prvků, tedy $n$ mincí. **Přesně to vyjde.**
+
+##### Kontrast, kterým to dorazit
+
+Teď ukaž tu druhou variantu — růst **o konstantu $c$**. Stěhovat se bude při velikostech $c, 2c, 3c, \ldots, n$ a zkopíruje se
+
+$$c + 2c + 3c + \cdots + n \;\approx\; \frac{n^2}{2c} \;=\; O(n^2)$$
+
+To je $O(n)$ **na jedno vložení**. Při deseti tisících prvcích to je rozdíl mezi zhruba 30 000 kroky a 50 milióny.
+
+> **Věta na závěr:** „Rozdíl mezi zdvojnásobováním a přičítáním konstanty je rozdíl mezi $O(1)$ a $O(n)$ na operaci. Proto se kapacita násobí, a ne zvětšuje o kousek."
+
+##### Proč je zrovna tenhle příklad ten pravý
+
+- je to **jediné místo v otázce, kde se doopravdy počítá** — zbytek jsou definice
+- amortizace je **nejčastější doptávka** u téhle otázky
+- **stejná úvaha se vrátí u hashovací tabulky** (přehashování), takže druhý příklad na ni už jen odkážeš
 
 ---
 
-#### 2. Hashovací tabulka se zřetězením
+#### Příklad 2 — hashovací tabulka (když se zeptají na slovník)
 
-**Co nakreslit:** sloupec sedmi přihrádek očíslovaných 0–6 a do nich řetízky.
+##### Odkud se ten nápad vzal
 
-Tabulka velikosti $m = 7$, hashovací funkce $h(k) = k$ (tedy index $= k \bmod 7$), vkládej klíče $15, 11, 27, 8, 22$:
+Chci najít záznam mezi tisíci jiných. Normálně bych **hledal** — koukal na jeden po druhém, až na něj narazím. To je $O(n)$.
 
-$$15 \bmod 7 = 1, \quad 11 \bmod 7 = 4, \quad 27 \bmod 7 = 6, \quad 8 \bmod 7 = 1, \quad 22 \bmod 7 = 1$$
+Nápad hashovací tabulky je vyhnout se hledání úplně:
+
+> **Co kdyby se pozice, kam prvek uložím, dala spočítat přímo z jeho hodnoty?**
+
+Pak neprohledávám nic. Spočítám pozici, skočím na ni, jsem tam. Jeden krok.
+
+Přesně to dělá **hashovací funkce**: z klíče spočítá číslo. To číslo ale může být obrovské, a tabulka má jen $m$ přihrádek — proto se z něj vezme **zbytek po dělení $m$**, čímž se určitě trefí dovnitř.
+
+##### Příklad se sedmi přihrádkami
+
+Tabulka má $m = 7$ přihrádek (0 až 6), klíče jsou rovnou čísla, takže $h(k) = k$ a index $= k \bmod 7$. `mod` je **zbytek po dělení**:
+
+$$
+\begin{aligned}
+15 &: \quad 15 = 2 \cdot 7 + 1 &&\to\ \text{index } 1 \\
+11 &: \quad 11 = 1 \cdot 7 + 4 &&\to\ \text{index } 4 \\
+27 &: \quad 27 = 3 \cdot 7 + 6 &&\to\ \text{index } 6 \\
+ 8 &: \quad\ \ 8 = 1 \cdot 7 + 1 &&\to\ \text{index } 1 \quad \leftarrow \text{už obsazeno!} \\
+22 &: \quad 22 = 3 \cdot 7 + 1 &&\to\ \text{index } 1 \quad \leftarrow \text{taky!}
+\end{aligned}
+$$
+
+Nakresli sedm přihrádek a do nich to naskládej:
 
 ```
 0: —
-1: 15 → 8 → 22        ← tři klíče v jedné přihrádce, je to spojový seznam
+1: 15 → 8 → 22     ← tři klíče na jednom místě: přihrádka je spojový seznam
 2: —
 3: —
 4: 11
@@ -428,48 +530,39 @@ $$15 \bmod 7 = 1, \quad 11 \bmod 7 = 4, \quad 27 \bmod 7 = 6, \quad 8 \bmod 7 = 
 6: 27
 ```
 
-**Proč zrovna tyhle klíče — a jak si je zapamatovat.** Kolidují právě ty tři, které se liší o sedmičku:
+##### Co je kolize a proč je nevyhnutelná
 
-$$8 = 1 + 7, \qquad 15 = 1 + 14, \qquad 22 = 1 + 21$$
+**Kolize** = dva různé klíče vyjdou na stejný index. Tady kolidují 15, 8 a 22.
 
-Všechny jsou tvaru $1 + 7k$, takže dávají **stejný zbytek po dělení sedmi**. Kolize tedy nevznikla náhodou — vznikla proto, že jsou si ta čísla **kongruentní modulo $m$**. Zapamatuj si to jako řadu 8, 15, 22 s krokem 7 a dopočítáš zbytek na místě.
+Není to smůla, je to zákonitost. Klíčů může být milión, ale přihrádek je sedm — takže se nutně musí někteří potkat. (Formálně **Dirichletův princip**: mám-li víc předmětů než přihrádek, aspoň v jedné jsou dva.)
 
-**Co u toho říkat:**
+**Jak si zapamatovat zrovna tyhle klíče:** kolidují právě ta čísla, která se liší **o sedmičku**:
 
-1. *„Vyhledání klíče 22 musí projít celý řetěz — nejdřív 15, pak 8, teprve pak 22. To jsou tři porovnání místo jednoho."*
-2. *„Faktor zaplnění je $\alpha = 5/7 \approx 0{,}71$, tedy zhruba 0,7 prvku na přihrádku, a průměrná složitost $O(1 + \alpha)$ je pořád konstanta."*
-3. *„Ale kdyby všechny klíče byly kongruentní modulo 7, spadnou do jedné přihrádky, tabulka zdegeneruje na spojový seznam a jsme na $O(n)$. Proto je nejhorší případ $O(n)$, ne $O(1)$."*
-4. *„Až $\alpha$ překročí práh 0,75, tabulka se zvětší na dvojnásobek a všechno se přehashuje — jedno přehashování stojí $O(n)$, ale amortizovaně je to zase $O(1)$, stejnou úvahou jako u dynamického pole."*
+$$8 = 1 + 7, \qquad 15 = 1 + 2\cdot 7, \qquad 22 = 1 + 3\cdot 7$$
 
-**Proč právě tenhle příklad:** obsahuje kolizi, řetěz, faktor zaplnění, degeneraci na $O(n)$ i odkaz zpět na amortizaci. Jsou to čtyři doptávky v jednom obrázku o sedmi řádcích.
+Všechna jsou tvaru $1 + 7k$, tedy dávají **stejný zbytek po dělení sedmi**. Stačí si pamatovat řadu 8, 15, 22 s krokem 7 a zbytek dopočítáš u tabule.
+
+**Řešení kolize — zřetězení:** v přihrádce není jeden prvek, ale **spojový seznam** všech, co sem spadly. Hledání klíče 22 tedy projde 15, pak 8, pak najde 22 — tři porovnání místo jednoho.
+
+##### Co z toho plyne pro složitost — tohle je pointa
+
+- **Průměrně $O(1)$.** Řetízky jsou krátké. Měří se to **faktorem zaplnění** $\alpha = n/m$, tedy prvků na přihrádku; tady $\alpha = 5/7 \approx 0{,}7$. Průměrné hledání je $O(1 + \alpha)$, což je při omezeném $\alpha$ konstanta.
+- **Nejhůř $O(n)$.** Kdyby všechny klíče byly kongruentní modulo 7 (7, 14, 21, 28…), spadly by **všechny do jedné přihrádky**. Tabulka by zdegenerovala na jeden dlouhý spojový seznam a hledalo by se lineárně.
+- **Proto se tabulka zvětšuje.** Když $\alpha$ přeroste práh (typicky 0,75), zdvojnásobí se počet přihrádek a **všechno se přehashuje** (indexy se počítají modulo nové $m$, takže se musí spočítat znovu). Jedno přehashování stojí $O(n)$ — ale **amortizovaně je to zase $O(1)$, úplně stejnou úvahou jako u dynamického pole v prvním příkladu**.
+
+Ta poslední věta je nejcennější věc, kterou u téhle otázky můžeš říct: ukazuje, že amortizovaná analýza není trik na jeden příklad, ale způsob uvažování, který se opakuje.
+
+##### Past, na kterou se ptají
+
+Když řekneš jen „hashovací tabulka má $O(1)$", skoro jistě přijde: **„A nejhorší případ?"** Odpověď je $O(n)$ a nastane při degeneraci do jedné přihrádky. Předběhni je a řekni to sám.
 
 ---
 
-#### 3. Fronta ze dvou zásobníků
+#### Bonus: fronta ze dvou zásobníků
 
-Klasická doptávka. **Zdánlivý problém:** zásobník je LIFO, fronta FIFO — jak z obráceného pořadí udělat správné? **Trik:** obrátit ho dvakrát. Dvojí obrácení je původní pořadí.
+Až budou první dva sedět. Zásobník je LIFO, fronta FIFO — **trik je obrátit pořadí dvakrát**, protože dvojí obrácení je původní pořadí.
 
-Drž si dva zásobníky, `in` a `out`:
-
-- **`enqueue(x)`** → push do `in`
-- **`dequeue()`** → je-li `out` prázdný, **přelej celý** `in` do `out` (postupným pop/push, čímž se pořadí obrátí), pak pop z `out`
-
-**Co nakreslit:** dva sloupečky vedle sebe a průběh `enqueue(1), enqueue(2), enqueue(3)` a pak tří `dequeue`. Zásobníky piš zdola nahoru, vrchol je nahoře:
-
-```
-enqueue 1,2,3                 první dequeue: out je prázdný -> přelít
-
-   in     out                    in     out            in     out
-  ┌───┐                         ┌───┐  ┌───┐                 ┌───┐
-  │ 3 │← vrchol                 │   │  │ 1 │← vrchol         │ 1 │← vrátí se 1
-  │ 2 │                         │   │  │ 2 │                 │ 2 │
-  │ 1 │                         │   │  │ 3 │                 │ 3 │
-  └───┘  └───┘                  └───┘  └───┘                 └───┘
-```
-
-Přelévání jde takhle: z `in` popneš 3, 2, 1 (v tomhle pořadí, protože je to LIFO) a v tomhle pořadí je pushneš do `out`. Na dně `out` tedy skončí trojka a **na vrcholu jednička** — přesně ta, která přišla první.
-
-**Průběh do slov:**
+Dva zásobníky, `in` a `out`. `enqueue` = push do `in`. `dequeue` = je-li `out` prázdný, přelij **celý** `in` do `out` (tím se pořadí obrátí), pak popni z `out`.
 
 | Operace | `in` (dole→nahoře) | `out` (dole→nahoře) | Vrátí |
 |---|---|---|---|
@@ -480,15 +573,9 @@ Přelévání jde takhle: z `in` popneš 3, 2, 1 (v tomhle pořadí, protože je
 | `dequeue()` | — | 3 | **2** |
 | `dequeue()` | — | — | **3** |
 
-Vyšlo 1, 2, 3 — tedy FIFO ✓
+Vyšlo 1, 2, 3 → FIFO ✓ (Z `in` se popne 3, 2, 1 a v tomhle pořadí se pushne do `out`, takže jednička skončí nahoře.)
 
-**Složitost.** Každý prvek projde přesně čtyřmi operacemi za celý svůj život: push do `in`, pop z `in`, push do `out`, pop z `out`. Je tedy **pushnutý nejvýše dvakrát a popnutý nejvýše dvakrát**, což je konstanta na prvek — obě operace jsou **amortizovaně $O(1)$**, přestože jedno konkrétní `dequeue` může stát $O(n)$, když zrovna spustí přelití.
-
-> **Řekni nahlas, že je to tatáž úvaha jako u dynamického pole:** drahá operace nastane zřídka a její cena se rozpočítá mezi levné. Tohle propojení dělá největší dojem z celé otázky, protože ukazuje, že amortizovaná analýza není trik na jeden příklad, ale způsob uvažování.
-
-**Past, na kterou se ptají:** proč se `in` přelévá **celý** a jen tehdy, když je `out` **prázdný**? Kdyby ses přeléval po jednom prvku nebo pokaždé, každý prvek by putoval tam a zpět vícekrát a amortizace by přestala platit. Právě podmínka „jen když je `out` prázdný" zaručuje, že prvek přejde z `in` do `out` **nejvýše jednou**.
-
----
+Každý prvek je za celý život **pushnutý nejvýš dvakrát a popnutý nejvýš dvakrát** — konstanta na prvek, tedy **amortizovaně $O(1)$**, i když jedno `dequeue` může stát $O(n)$. Podmínka „přelévej, jen když je `out` prázdný" je nutná: bez ní by prvky putovaly tam a zpět a amortizace by padla.
 
 ### Na co se doptají
 
