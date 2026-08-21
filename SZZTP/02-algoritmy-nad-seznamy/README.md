@@ -54,7 +54,9 @@ PASTI: binární hledání jen na SETŘÍDĚNÉM POLI (spojový seznam ne)
        O(n log n) je dolní mez: n! listů -> hloubka log n! = n log n
 
 PŘÍKLAD: [1,3,5,7,9,11,13,15], hledám 13 -> 7, 11, 13 = 3 kroky = log 8
-         slévání [1,5,7,9] + [2,3,6,8] -> 1,2,3,5,6,7,8,9
+         merge sort [5,2,9,1,7,6,8,3]
+           poslední slití [1,2,5,9] + [3,6,7,8] -> 1,2,3,5,6,7,8,9
+           4 hladiny (0..3), na každé práce 8 -> 8·3 = 24
 ```
 
 #### Jak si to zapamatovat, aniž bys to biflil
@@ -261,13 +263,15 @@ Tohle je jádro algoritmu; dělení samotné nic nedělá, jen půlí indexy.
 Mám **dvě setříděná** pole. Na čelo každého ukážu prstem. Opakovaně **porovnám oba prsty a menší prvek odeberu** do výstupu, prst posunu. Až jedno pole dojde, zbytek druhého jen dopíšu.
 
 ```
-levá:  [1, 5, 7, 9]      pravá: [2, 3, 6, 8]      výstup: []
-        ↑                        ↑                 1 < 2 → ber 1
-levá:  [1, 5, 7, 9]      pravá: [2, 3, 6, 8]      výstup: [1]
-           ↑                     ↑                 5 > 2 → ber 2
+levá:  [1, 2, 5, 9]      pravá: [3, 6, 7, 8]      výstup: []
+        ↑                        ↑                 1 < 3 → ber 1
+levá:  [1, 2, 5, 9]      pravá: [3, 6, 7, 8]      výstup: [1]
+           ↑                     ↑                 2 < 3 → ber 2
                                                    ... atd.
                                         výstup: [1,2,3,5,6,7,8,9]
 ```
+
+(Tahle dvě pole nejsou náhodná — je to **poslední slití** z příkladu níže. Celý merge sort na osmi prvcích končí přesně tímhle krokem.)
 
 **Proč je slévání $O(n)$:** každý krok **odebere právě jeden prvek** a žádný se nevrací. Celkem tedy tolik kroků, kolik je prvků dohromady. **Proč je správné:** menší z obou čel je nutně nejmenší ze všech zbývajících prvků, protože obě pole jsou setříděná — před čelem už nic menšího neleží.
 
@@ -425,16 +429,18 @@ A jak seřadit ty poloviny? **Stejným postupem.** To je rekurze. Dělení pokra
 
 ##### Krok, na kterém všechno stojí: slévání
 
-Nejdřív ukaž **samotné slití**, protože bez něj zbytek nedává smysl. Mám dvě setříděná pole a prst na čele každého z nich. Vždy porovnám čela a **menší odeberu**:
+Nejdřív ukaž **samotné slití**, protože bez něj zbytek nedává smysl. Mám dvě setříděná pole a prst na čele každého z nich. Vždy porovnám čela a **menší odeberu**.
+
+Beru rovnou ta dvě pole, kterými za chvíli skončí celý příklad — `[1, 2, 5, 9]` a `[3, 6, 7, 8]`:
 
 | Krok | Levá (zbývá) | Pravá (zbývá) | Porovnání | Výstup |
 |---|---|---|---|---|
-| 1. | **1**, 5, 7, 9 | **2**, 3, 6, 8 | $1 < 2$ | 1 |
-| 2. | **5**, 7, 9 | **2**, 3, 6, 8 | $5 > 2$ | 1, 2 |
-| 3. | **5**, 7, 9 | **3**, 6, 8 | $5 > 3$ | 1, 2, 3 |
-| 4. | **5**, 7, 9 | **6**, 8 | $5 < 6$ | 1, 2, 3, 5 |
-| 5. | **7**, 9 | **6**, 8 | $7 > 6$ | 1, 2, 3, 5, 6 |
-| 6. | **7**, 9 | **8** | $7 < 8$ | 1, 2, 3, 5, 6, 7 |
+| 1. | **1**, 2, 5, 9 | **3**, 6, 7, 8 | $1 < 3$ | 1 |
+| 2. | **2**, 5, 9 | **3**, 6, 7, 8 | $2 < 3$ | 1, 2 |
+| 3. | **5**, 9 | **3**, 6, 7, 8 | $5 > 3$ | 1, 2, 3 |
+| 4. | **5**, 9 | **6**, 7, 8 | $5 < 6$ | 1, 2, 3, 5 |
+| 5. | **9** | **6**, 7, 8 | $9 > 6$ | 1, 2, 3, 5, 6 |
+| 6. | **9** | **7**, 8 | $9 > 7$ | 1, 2, 3, 5, 6, 7 |
 | 7. | **9** | **8** | $9 > 8$ | 1, 2, 3, 5, 6, 7, 8 |
 | 8. | **9** | — | pravá došla | 1, 2, 3, 5, 6, 7, 8, **9** |
 
