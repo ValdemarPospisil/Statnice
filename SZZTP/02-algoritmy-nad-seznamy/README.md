@@ -40,7 +40,7 @@ HLEDÁNÍ: identifikace + lokalizace JEDNOHO prvku (index / nenalezeno)
 
 3 NÁPADY (z nich se odvodí celá tabulka):
   půlení intervalu   -> n/2^k = 1 -> k = log n
-  rozděl a panuj     -> log n hladin, na každé n práce -> n log n
+  rozděl a panuj     -> log n KOL slévání, v každém n práce -> n log n
   dvojí cyklus       -> n průchodů po n prvcích -> n²
 
 MERGE SORT: T(n) = 2T(n/2) + n
@@ -56,7 +56,7 @@ PASTI: binární hledání jen na SETŘÍDĚNÉM POLI (spojový seznam ne)
 PŘÍKLAD: [1,3,5,7,9,11,13,15], hledám 13 -> 7, 11, 13 = 3 kroky = log 8
          merge sort [5,2,9,1,7,6,8,3]
            poslední slití [1,2,5,9] + [3,6,7,8] -> 1,2,3,5,6,7,8,9
-           4 hladiny (0..3), na každé práce 8 -> 8·3 = 24
+           3 kola slévání (1->2->4->8), v každém práce 8 -> 8·3 = 24
 ```
 
 #### Jak si to zapamatovat, aniž bys to biflil
@@ -79,7 +79,7 @@ A složitosti z těch sloves přímo vypadnou:
 | **půl** | zahodí půlku intervalu | $O(\log n)$ | kolikrát jde $n$ vydělit dvěma, než zbude 1 |
 | **vyber** | pro každou pozici projde zbytek | $O(n^2)$ | průchod uvnitř průchodu |
 | **zasuň** | pro každý prvek projde levou část | $O(n^2)$ | průchod uvnitř průchodu |
-| **rozděl** | půlí, pak slévá | $O(n \log n)$ | $\log n$ hladin × $n$ práce na hladinu |
+| **rozděl** | půlí, pak slévá | $O(n \log n)$ | $\log n$ kol slévání × $n$ práce na kolo |
 
 Dvě čísla, která se z ničeho neodvodí a je potřeba je znát: **insertion sort má nejlepší případ $O(n)$** (skoro setříděný vstup) a **merge sort potřebuje $O(n)$ paměti navíc**. Zbytek dopočítáš u tabule.
 
@@ -473,20 +473,21 @@ Vstup `[5, 2, 9, 1, 7, 6, 8, 3]`. Nejdřív dolů (dělení), pak nahoru (slév�
 
 ##### Odvození $O(n \log n)$ — a tady se to spojí s prvním příkladem
 
-Podívej se na ten obrázek jako na **tabulku hladin**:
+Rozděl to na dvě nezávislé otázky a každou spočítej zvlášť: **kolik je kol slévání** a **kolik práce je v jednom kole**. Nakonec je vynásob.
 
-| Hladina | Kolik částí | Velikost jedné | Práce na hladině |
+**Pozor na to, co se počítá:** slévá se jen při cestě **nahoru**, a jednotlivé prvky na nejnižším patře se neslévají — jsou setříděné samy od sebe. Počítají se tedy **kola slévání**, ne patra stromu. V obrázku výše jsou ta kola tři.
+
+| Kolo | Kolik slití | Velikost jednoho | Práce dohromady |
 |---|---|---|---|
-| 0 | 1 | 8 | **8** |
-| 1 | 2 | 4 | $2 \times 4 = $ **8** |
-| 2 | 4 | 2 | $4 \times 2 = $ **8** |
-| 3 | 8 | 1 | **8** |
+| 1. (dvojice) | 4 | 2 prvky | $4 \times 2 = $ **8** |
+| 2. (čtveřice) | 2 | 4 prvky | $2 \times 4 = $ **8** |
+| 3. (poslední) | 1 | 8 prvků | $1 \times 8 = $ **8** |
 
-**Na každé hladině se udělá práce $n$.** Není to náhoda: části se sice zmenšují, ale je jich úměrně víc, takže se to vyruší — slévání na hladině se dohromady dotkne každého prvku právě jednou.
+**V každém kole se udělá práce $n$.** Není to náhoda: slití je $O$ své velikosti, a kousků ubývá přesně tak rychle, jak jim roste velikost — takže se to vyruší a jedno kolo se dohromady dotkne každého prvku právě jednou.
 
-A **kolik je hladin?** To je přesně ta otázka z prvního příkladu: kolikrát můžu $8$ vydělit dvěma, než zbude jednička? **Třikrát.** Obecně $\log_2 n$ hladin.
+A **kolik je kol?** Každé kolo **zdvojnásobí velikost kousků**: $1 \to 2 \to 4 \to 8$. Otázka „kolik zdvojnásobení dělí jedničku od osmičky" je tatáž jako otázka z prvního příkladu obrácená naruby: **kolikrát můžu $8$ vydělit dvěma, než zbude jednička?** Třikrát. Obecně **$\log_2 n$ kol**.
 
-$$\text{celkem} = \underbrace{n}_{\text{práce na hladinu}} \times \underbrace{\log_2 n}_{\text{počet hladin}} = O(n \log n)$$
+$$\text{celkem} = \underbrace{n}_{\text{práce na kolo}} \times \underbrace{\log_2 n}_{\text{počet kol}} = O(n \log n)$$
 
 Kontrola: $8 \times 3 = 24$ kroků. Insertion sort by na osmi prvcích v nejhorším případě potřeboval $\frac{8 \cdot 7}{2} = 28$. Na osmi prvcích tedy skoro nic — ale při **tisíci prvcích** je to rozdíl mezi $10\,000$ a $500\,000$.
 
@@ -496,7 +497,7 @@ Když chtějí formálnější zápis, řekni to takhle: seřadit $n$ prvků zna
 
 $$T(n) = 2\,T(n/2) + \Theta(n)$$
 
-a jeho řešení je $T(n) = \Theta(n \log n)$. Ten vztah je **doslova přepsaný obrázek**: `2T(n/2)` jsou ty dvě větve, `Θ(n)` je slévání na dané hladině. Metody řešení rekurencí jsou v [okruhu 11](../11-rekurence-asymptotika/) — když se na ně doptají, odkaž se tam.
+a jeho řešení je $T(n) = \Theta(n \log n)$. Ten vztah je **doslova přepsaný obrázek**: `2T(n/2)` jsou ty dvě větve, `Θ(n)` je slévání v daném kole. Metody řešení rekurencí jsou v [okruhu 11](../11-rekurence-asymptotika/) — když se na ně doptají, odkaž se tam.
 
 ##### Past, na kterou se ptají
 
