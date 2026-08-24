@@ -385,7 +385,7 @@ vrať a
 
 **Proč to funguje:** každý společný dělitel čísel $a$ a $b$ dělí i jejich rozdíl $a - kb$, tedy i zbytek $a \bmod b$. Množina společných dělitelů se tím nemění — jen pracuji s menšími čísly.
 
-#### Příklad na papír
+#### Výpočet krok za krokem
 
 $$
 \begin{aligned}
@@ -433,13 +433,166 @@ $$\operatorname{lcm}(252, 198) = \frac{252 \cdot 198}{18} = \frac{49\,896}{18} =
 
 ### Příklad na papír
 
-Jeden příklad, kterým se dá projít celá otázka — nacvič si ho tak, abys ho psal a mluvil zároveň:
+Tahle otázka má tu výhodu, že se **jedním příkladem dá projít celá**. Vejde se na jednu A4 ve dvou sloupcích: vlevo rekurence, vpravo Euklides.
 
-1. Napiš $T(n) = 2T(n/2) + n$, $T(1) = 1$ a řekni, že to je merge sort.
-2. Vyřeš **iterační metodou** → $\Theta(n\log n)$.
-3. Ověř **substituční metodou** (odhad + indukce, včetně základního kroku).
-4. Spočítej $\gcd(252, 198)$ Euklidem a dopočítej $\operatorname{lcm}$ ze vzorce.
-5. Dodej, že nejhorší případ Euklida jsou Fibonacciho čísla, a napiš jejich charakteristickou rovnici $x^2 - x - 1 = 0$.
+```
+┌──────────────────────────┬──────────────────────────┐
+│  1) REKURENCE            │  2) EUKLIDES             │
+│     T(n) = 2T(n/2) + n   │     gcd(252, 198)        │
+│                          │                          │
+│     iterační metoda      │     4 dělení se zbytkem  │
+│     -> Θ(n log n)        │     -> 18                │
+│                          │                          │
+│     substituční ověření  │     lcm ze vzorce        │
+│     (odhad + indukce)    │     -> 2772              │
+│                          │                          │
+│                          │     nejhorší případ =    │
+│                          │     Fibonacci -> x²-x-1  │
+└──────────────────────────┴──────────────────────────┘
+```
+
+---
+
+#### Příklad 1 — rekurence merge sortu
+
+##### Krok 1: napiš zadání a řekni, odkud je
+
+$$T(n) = 2T(n/2) + n, \qquad T(1) = 1$$
+
+Nahlas k tomu řekni: *„Seřadit $n$ prvků znamená seřadit dvě poloviny a slít je. `2T(n/2)` jsou ty dvě poloviny, `+n` je slévání. Je to merge sort z [druhého okruhu](../02-algoritmy-nad-seznamy/)."* Tím máš rovnou obhájené, proč ta rekurence vypadá takhle — a to je první věc, na kterou se ptají.
+
+##### Krok 2: rozviň tři kroky a najdi vzor
+
+Dosazuj vztah sám do sebe. **Nepočítej to v hlavě** — piš to pod sebe, vzor se ukáže sám:
+
+$$
+\begin{aligned}
+T(n) &= 2T(n/2) + n \\
+     &= 2\left[2T(n/4) + \tfrac{n}{2}\right] + n \;=\; 4T(n/4) + 2n \\
+     &= 4\left[2T(n/8) + \tfrac{n}{4}\right] + 2n \;=\; 8T(n/8) + 3n
+\end{aligned}
+$$
+
+Teď se podívej na to, **co se mění a jak**:
+
+| Po $k$ krocích | Koeficient u $T$ | Argument uvnitř $T$ | Přičteno navíc |
+|---|---|---|---|
+| 0 | $1$ | $n$ | $0$ |
+| 1 | $2$ | $n/2$ | $1n$ |
+| 2 | $4$ | $n/4$ | $2n$ |
+| 3 | $8$ | $n/8$ | $3n$ |
+| **$k$** | $\mathbf{2^k}$ | $\mathbf{n/2^k}$ | $\mathbf{k\,n}$ |
+
+Poslední řádek je celý smysl iterační metody:
+
+$$T(n) = 2^k\,T(n/2^k) + k\,n$$
+
+> **Co říct nahlas:** *„Koeficient se pokaždé zdvojnásobí, argument se pokaždé půlí, a pokaždé přibude jedno $n$. Po $k$ krocích je tedy koeficient $2^k$, argument $n/2^k$ a přičteno $k$-krát $n$."*
+
+##### Krok 3: urči $k$ z počáteční podmínky
+
+Rozvíjení nemůže jít donekonečna — skončí, až se argument dostane na $1$, protože pro $T(1)$ mám hodnotu zadanou:
+
+$$\frac{n}{2^k} = 1 \quad\Longrightarrow\quad 2^k = n \quad\Longrightarrow\quad k = \log_2 n$$
+
+**Tohle je ten samý výpočet jako u binárního vyhledávání** — „kolikrát můžu $n$ půlit, než zbude jednička".
+
+##### Krok 4: dosaď zpátky
+
+$$T(n) = \underbrace{2^{\log_2 n}}_{=\;n}\cdot\, T(1) + n\log_2 n = n \cdot 1 + n\log_2 n = n + n\log_2 n$$
+
+To $2^{\log_2 n} = n$ plyne přímo z definice logaritmu — *„dvojka na to, kolikrát se dvojka vejde do $n$, je $n$."* Kdyby se doptali, tohle je odpověď.
+
+A protože $n$ roste pomaleji než $n\log n$, člen nižšího řádu se zahodí:
+
+$$\boxed{T(n) = \Theta(n\log n)}$$
+
+##### Kontrola na číslech — a pozor na jednu věc
+
+Pro $n = 8$ je $k = 3$, tedy $T(8) = 8 + 8\cdot3 = 8 + 24 = 32$.
+
+V [okruhu 2](../02-algoritmy-nad-seznamy/) ti u merge sortu vyšlo **24**. Není to spor a stojí za to vědět, proč:
+
+- **24** je práce **jen slévání** (3 kola × 8 prvků)
+- **32** je $24$ **plus** $8$ za osm jednoprvkových polí, kde rekurze končí — to je ten člen $n\cdot T(1)$
+
+Rozdíl je člen nižšího řádu, který $\Theta$ zahodí. **Obojí je $\Theta(n\log n)$.** Když se tě někdo zeptá, proč se ta osmička ztratila, řekneš přesně tohle — a je to hezká ukázka toho, co asymptotická notace dělá.
+
+##### Krok 5: ověření substituční metodou
+
+Iterační metoda vzor **našla**, substituční ho **dokáže**. Odhad tedy vezmi z výsledku: $T(n) \le c\,n\log_2 n$.
+
+*Indukční krok* — předpokládám, že tvrzení platí pro $n/2$, a dosadím ho do rekurence:
+
+$$
+\begin{aligned}
+T(n) &= 2T(n/2) + n \\
+     &\le 2 \cdot c\,\tfrac{n}{2}\log_2\!\tfrac{n}{2} + n && \text{(sem jde indukční předpoklad)} \\
+     &= c\,n(\log_2 n - 1) + n && \log_2\tfrac{n}{2} = \log_2 n - 1 \\
+     &= c\,n\log_2 n - c\,n + n \\
+     &\le c\,n\log_2 n && \text{platí, když } -cn + n \le 0, \text{ tedy } c \ge 1
+\end{aligned}
+$$
+
+*Základní krok* — pro $n = 2$ je $T(2) = 2T(1) + 2 = 4$ a potřebuji $4 \le c\cdot2\cdot\log_2 2 = 2c$, tedy $c \ge 2$.
+
+Obě podmínky splní **$c = 2$**, takže $T(n) = O(n\log n)$. ∎
+
+> **Dvě věci, které tady zaznít musí:**
+>
+> 1. **Bez základního kroku to není důkaz indukcí.** Na to se ptají cíleně — indukční krok sám o sobě jen říká „když to platí pro menší, platí i pro větší", ale nikdo neřekl, že to vůbec někdy platí.
+> 2. **Vyšly dvě různé podmínky na $c$** ($c \ge 1$ a $c \ge 2$) a bere se ta **silnější**. Tohle je nejčastější místo, kde se v substituční metodě chybuje.
+>
+> A ještě jedno rozlišení, kterým zaujmeš: iterační metoda dala $\Theta$, substituční jen $O$ — protože jsem dokazoval nerovnost jedním směrem. Pro $\Theta$ bych musel stejně dokázat i dolní odhad $T(n) \ge c\,n\log_2 n$.
+
+---
+
+#### Příklad 2 — Euklidův algoritmus
+
+##### Výpočet
+
+Opakovaně děl se zbytkem a **posouvej dvojici čísel doleva**, dokud nevyjde nula:
+
+$$
+\begin{aligned}
+252 &= 1 \cdot 198 + \mathbf{54} \\
+198 &= 3 \cdot 54 + \mathbf{36} \\
+ 54 &= 1 \cdot 36 + \mathbf{18} \\
+ 36 &= 2 \cdot 18 + \mathbf{0} \quad \leftarrow \text{zbytek } 0
+\end{aligned}
+$$
+
+**Výsledek je poslední nenulový zbytek: $\gcd(252,198) = 18$.**
+
+##### Proč to funguje — tohle je ta pointa
+
+*„Každý společný dělitel čísel $a$ a $b$ dělí i jejich rozdíl, a tedy i zbytek $a \bmod b$. Množina společných dělitelů se tím **nemění** — jen pracuju s menšími čísly. A protože čísla klesají, jednou musím dojít k nule."*
+
+To je zároveň důkaz správnosti **i** konečnosti, obojí ve dvou větách.
+
+##### Nejmenší společný násobek
+
+$$\operatorname{lcm}(252,198) = \frac{252 \cdot 198}{18} = \frac{49\,896}{18} = 2772$$
+
+*Kontrola rozkladem:* $252 = 2^2\cdot3^2\cdot7$, $198 = 2\cdot3^2\cdot11$ → $\gcd = 2\cdot3^2 = 18$ ✓, $\operatorname{lcm} = 2^2\cdot3^2\cdot7\cdot11 = 2772$ ✓
+
+> **Zmiň, že se má dělit před násobením** — $252 \cdot 198$ může u velkých čísel přetéct, kdežto $252/18 \cdot 198$ ne.
+
+##### Složitost — a tady se otázka spojí dohromady
+
+Tohle je nejhezčí místo celého okruhu, protože **použije všechny tři jeho části najednou**. Řekni to jako řetěz:
+
+1. **Kdy je Euklides nejpomalejší?** Když čísla klesají co nejpomaleji, tedy když je každý podíl roven jedné. To nastane právě pro **dvě po sobě jdoucí Fibonacciho čísla** — to je **Lamého věta**.
+2. **Jak rychle rostou Fibonacciho čísla?** To zjistím **charakteristickou rovnicí**: z $F_n = F_{n-1} + F_{n-2}$ dosazením $x^n$ vyjde $x^2 - x - 1 = 0$, jejíž větší kořen je **zlatý řez** $\varphi = \frac{1+\sqrt5}{2} \approx 1{,}618$. Fibonacciho čísla tedy rostou **exponenciálně** jako $\varphi^n$.
+3. **Závěr:** když nejhorší vstup velikosti $n$ potřebuje zhruba $\log_\varphi n$ kroků, je složitost $O(\log \min(a,b))$ — **logaritmická, protože nejhorší případ roste exponenciálně**.
+
+$$\text{Fibonacci roste jako } \varphi^n \;\Longrightarrow\; \text{počet kroků roste jako } \log n$$
+
+> **Věta na závěr celé otázky:** *„Tady se to všechno potká — rekurence popsala Fibonacciho čísla, charakteristická rovnice je vyřešila, a asymptotická notace z toho udělala složitost algoritmu."*
+
+##### Kdyby tlačil čas
+
+Zkrať to na **tři řádky**: čtyři dělení → $\gcd = 18$ → $\operatorname{lcm}$ ze vzorce. Fibonacciho souvislost pak jen **řekni**, kreslit ji nemusíš.
 
 ---
 
@@ -453,6 +606,83 @@ Jeden příklad, kterým se dá projít celá otázka — nacvič si ho tak, aby
 - Jaký je rozdíl mezi $O$ a $\Theta$? Kdy nemůžu použít $\Theta$?
 - Co musí obsahovat úplná definice rekurence?
 - Jak spočítáš NSN, když máš k dispozici jen Euklidův algoritmus?
+
+### Značky a symboly
+
+Průřez značkami, které potkáš **napříč celým SZZTP** — nejen v téhle otázce. Nemusíš je umět psát, ale musíš je umět **přečíst nahlas**, protože se objevují v zadáních a zkoušející je píše na tabuli.
+
+#### Logika a důkazy
+
+| Značka | Čte se | Znamená |
+|---|---|---|
+| $\forall$ | „pro každé" | platí pro všechny prvky |
+| $\exists$ | „existuje" | aspoň jeden takový prvek je |
+| $\exists!$ | „existuje právě jeden" | existuje a je jediný |
+| $\Rightarrow$ | „implikuje", „pak" | když platí levá strana, platí i pravá |
+| $\Leftrightarrow$ | „právě tehdy, když" | platí obě implikace naráz — **ekvivalence** |
+| $\neg$, $\overline{A}$ | „non", „negace" | opak |
+| $\wedge$ | „a zároveň" | konjunkce |
+| $\vee$ | „nebo" | disjunkce (nevylučovací!) |
+| $\oplus$ | „xor" | právě jedno z dvojice |
+| $\blacksquare$, $\square$, ∎ | „což bylo dokázat" | konec důkazu (QED) |
+| $:$ nebo $\mid$ v definici | „takové, že" | odděluje podmínku |
+
+#### Množiny
+
+| Značka | Čte se | Znamená |
+|---|---|---|
+| $\in$ / $\notin$ | „je prvkem" / „není prvkem" | příslušnost |
+| $\subseteq$ / $\subset$ | „je podmnožinou" / „vlastní podmnožinou" | u $\subset$ nesmí být rovnost |
+| $\cup$ / $\cap$ | „sjednocení" / „průnik" | |
+| $\setminus$ | „mínus", „bez" | rozdíl množin |
+| $\emptyset$ | „prázdná množina" | |
+| $\lvert A \rvert$ | „mohutnost", „počet prvků" | u čísel absolutní hodnota |
+| $\mathcal{P}(A)$, $2^A$ | „potenční množina" | množina všech podmnožin |
+| $A \times B$ | „kartézský součin" | množina všech dvojic |
+| $\mathbb{N}, \mathbb{Z}, \mathbb{Q}, \mathbb{R}$ | přirozená, celá, racionální, reálná čísla | |
+
+#### Čísla a funkce
+
+| Značka | Čte se | Znamená |
+|---|---|---|
+| $\lfloor x \rfloor$ | „dolní celá část" | největší celé $\le x$; $\lfloor -3{,}2 \rfloor = -4$ |
+| $\lceil x \rceil$ | „horní celá část" | nejmenší celé $\ge x$ |
+| $a \mid b$ | „$a$ dělí $b$" | $b$ je násobkem $a$ — **pozor, není to zlomek** |
+| $a \bmod b$ | „a modulo b" | zbytek po dělení |
+| $a \equiv b \pmod m$ | „kongruentní modulo $m$" | dávají stejný zbytek |
+| $n!$ | „en faktoriál" | $1\cdot2\cdots n$; počet permutací |
+| $\binom{n}{k}$ | „en nad ká" | kombinační číslo |
+| $\sum$ / $\prod$ | „suma" / „součin" | sečti / vynásob přes rozsah |
+| $\approx$ / $\ne$ / $\pm$ | „přibližně" / „nerovná se" / „plus minus" | |
+| $\infty$ | „nekonečno" | |
+| $\to$ | „jde k", „konverguje k" | $n \to \infty$ |
+
+#### Asymptotická notace
+
+| Značka | Čte se | Znamená | Analogie |
+|---|---|---|---|
+| $O(g)$ | „velké ó" | roste **nejvýš** tak rychle | $\le$ |
+| $\Omega(g)$ | „omega" | roste **aspoň** tak rychle | $\ge$ |
+| $\Theta(g)$ | „théta" | roste **přesně** tak rychle | $=$ |
+| $o(g)$ | „malé ó" | roste **striktně pomaleji** | $<$ |
+| $\omega(g)$ | „malá omega" | roste **striktně rychleji** | $>$ |
+
+> Malé $o$ a $\omega$ se u zkoušky nechtějí, ale když je zmíníš jako ostré verze, ukážeš, že notaci opravdu rozumíš.
+
+#### Řecká písmena, která u tebe padnou
+
+| Písmeno | Čte se | Kde na něj narazíš |
+|---|---|---|
+| $\alpha$ | alfa | faktor zaplnění hashe ([okruh 1](../01-abstraktni-kolekce/)); hladina významnosti ([okruh 9](../09-intervaly-spolehlivosti/)) |
+| $\varphi$ | fí | zlatý řez $\approx 1{,}618$ (Fibonacci, Euklides) |
+| $\psi$ | psí | druhý kořen v Binetově vzorci |
+| $\varepsilon$ | epsilon | „libovolně malé kladné číslo" — limity ([okruh 4](../04-funkce-polynomy-nelinearni-rovnice/)) |
+| $\Delta$ | delta | rozdíl, přírůstek; diskriminant |
+| $\mu$, $\sigma$, $\sigma^2$ | mí, sigma | střední hodnota, směrodatná odchylka, rozptyl ([okruh 8](../08-nahodna-velicina/)) |
+| $\lambda$ | lambda | parametr Poissonova a exponenciálního rozdělení |
+| $\chi^2$ | chí kvadrát | rozdělení pro interval spolehlivosti rozptylu ([okruh 9](../09-intervaly-spolehlivosti/)) |
+| $\Sigma$ | velká sigma | suma |
+| $\pi$ | pí | $3{,}14\ldots$; taky součin ($\prod$) |
 
 ### Užitečné odkazy
 
