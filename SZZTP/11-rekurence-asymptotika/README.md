@@ -461,9 +461,77 @@ $$T(n) = 2T(n/2) + n, \qquad T(1) = 1$$
 
 Nahlas k tomu řekni: *„Seřadit $n$ prvků znamená seřadit dvě poloviny a slít je. `2T(n/2)` jsou ty dvě poloviny, `+n` je slévání. Je to merge sort z [druhého okruhu](../02-algoritmy-nad-seznamy/)."* Tím máš rovnou obhájené, proč ta rekurence vypadá takhle — a to je první věc, na kterou se ptají.
 
+##### Nejdřív: co iterační metoda vlastně dělá
+
+Ta rovnice má problém — **$T$ je na obou stranách.** Když se zeptám „kolik je $T(8)$?", odpoví mi „to je dvakrát $T(4)$ plus osm", což je odpověď otázkou. Nic jsem se nedozvěděl.
+
+**Vyřešit rekurenci** znamená dostat se ke vzorci, kde je **jen $n$** a žádné $T$ napravo. Iterační metoda to dělá tím nejhloupějším možným způsobem: **dosazuje vztah pořád dokola sám do sebe, dokud $T$ nezmizí.**
+
+**Trik, na kterém to celé stojí:** ta rovnice není tvrzení o jednom konkrétním $n$ — je to **šablona s dírou**:
+
+```
+T( ? ) = 2 · T( ?/2 ) + ?
+```
+
+Do té díry smím dosadit **cokoli**. Když tam dám $n$, dostanu zadání. Ale můžu tam dát i $n/2$:
+
+$$T(n/2) = 2\,T(n/4) + \frac{n}{2}$$
+
+Přečti si to pomalu: **všude, kde bylo $n$, jsem napsal $n/2$.** Tam, kde bylo $n/2$, je teď $n/4$. Nic víc se nestalo. A přesně tenhle nový vztah teď dosadím do původního místo $T(n/2)$ — to je ta „iterace".
+
+##### Vyzkoušej si to na osmičce, než to napíšeš obecně
+
+Nejdřív si vypiš, co šablona říká pro jednotlivá čísla:
+
+| Dosadím | Vyjde |
+|---|---|
+| $T(8)$ | $2\,T(4) + 8$ |
+| $T(4)$ | $2\,T(2) + 4$ |
+| $T(2)$ | $2\,T(1) + 2$ |
+| $T(1)$ | $1$ ← **tohle už je dané**, počáteční podmínka |
+
+A teď dosazuj shora dolů:
+
+```
+T(8) = 2·T(4) + 8
+     = 2·[2·T(2) + 4] + 8        ← za T(4) jsem dosadil jeho řádek
+     = 4·T(2) + 8 + 8
+
+     = 4·[2·T(1) + 2] + 8 + 8    ← za T(2) jsem dosadil jeho řádek
+     = 8·T(1) + 8 + 8 + 8
+
+     = 8·1 + 24 = 32
+```
+
+**Zastav se a všimni si:** pokaždé, když jsem dosadil, **přibyla jedna osmička**. Ne čtyřka, ne dvojka — vždycky osmička.
+
+##### Proč pořád osmička, když se čísla půlí?
+
+Tohle je nejdůležitější otázka celého odvození:
+
+| Po $k$ dosazeních | Kolik je kousků | Práce na jeden kousek | Dohromady |
+|---|---|---|---|
+| 0 | $1$ | $8$ | $1 \times 8 = 8$ |
+| 1 | $2$ | $4$ | $2 \times 4 = 8$ |
+| 2 | $4$ | $2$ | $4 \times 2 = 8$ |
+
+**Koeficient roste dvakrát a práce klesá dvakrát, takže se to vyruší.** Proto každé dosazení přispěje přesně $n$.
+
+Je to totéž, co jsi u merge sortu viděl jako obrázek — *„v každém kole se udělá práce $n$"* — jen napsané algebrou místo stromem.
+
+##### Kontrola, že to není podvod
+
+Spočítej to i **odspodu**, úplně bez triků, prostě dosazováním do zadání:
+
+$$T(1) = 1 \;\to\; T(2) = 2\cdot1 + 2 = 4 \;\to\; T(4) = 2\cdot4 + 4 = 12 \;\to\; T(8) = 2\cdot12 + 8 = 32$$
+
+**Vyšlo 32, stejně jako nahoře.** Iterační metoda nic nevymýšlí — jen počítá totéž obecně místo pro jedno konkrétní číslo.
+
+> **Když se u zkoušky zasekneš:** spočítej si to stranou na papíře pro $n = 8$. Uvidíš vzor na číslech a pak už jen přepíšeš totéž s písmenem $n$. Zabere to půl minuty a je to naprosto legitimní postup.
+
 ##### Krok 2: rozviň tři kroky a najdi vzor
 
-Dosazuj vztah sám do sebe. **Nepočítej to v hlavě** — piš to pod sebe, vzor se ukáže sám:
+Teď to samé, ale místo osmičky nech $n$. Dosazuj vztah sám do sebe a **nepočítej to v hlavě** — piš to pod sebe, vzor se ukáže sám:
 
 $$
 \begin{aligned}
@@ -495,13 +563,13 @@ Rozvíjení nemůže jít donekonečna — skončí, až se argument dostane na 
 
 $$\frac{n}{2^k} = 1 \quad\Longrightarrow\quad 2^k = n \quad\Longrightarrow\quad k = \log_2 n$$
 
-**Tohle je ten samý výpočet jako u binárního vyhledávání** — „kolikrát můžu $n$ půlit, než zbude jednička".
+**Tohle je ten samý výpočet jako u binárního vyhledávání** — „kolikrát můžu $n$ půlit, než zbude jednička". A sedí to: pro $n = 8$ vyjde $k = 3$, a na osmičce jsem výš opravdu dosazoval **třikrát**.
 
 ##### Krok 4: dosaď zpátky
 
 $$T(n) = \underbrace{2^{\log_2 n}}_{=\;n}\cdot\, T(1) + n\log_2 n = n \cdot 1 + n\log_2 n = n + n\log_2 n$$
 
-To $2^{\log_2 n} = n$ plyne přímo z definice logaritmu — *„dvojka na to, kolikrát se dvojka vejde do $n$, je $n$."* Kdyby se doptali, tohle je odpověď.
+To $2^{\log_2 n} = n$ vypadá hrozivě, ale je to jen **logaritmus a mocnina, které se navzájem ruší**: $\log_2 n$ je „na kolikátou musím umocnit dvojku, abych dostal $n$" — a když dvojku právě touhle mocninou umocním, dostanu zpátky $n$. Na číslech: $2^{\log_2 8} = 2^3 = 8$ ✓. Kdyby se doptali, tohle je odpověď.
 
 A protože $n$ roste pomaleji než $n\log n$, člen nižšího řádu se zahodí:
 
@@ -509,7 +577,7 @@ $$\boxed{T(n) = \Theta(n\log n)}$$
 
 ##### Kontrola na číslech — a pozor na jednu věc
 
-Pro $n = 8$ je $k = 3$, tedy $T(8) = 8 + 8\cdot3 = 8 + 24 = 32$.
+Pro $n = 8$ je $k = 3$, tedy $T(8) = 8 + 8\cdot3 = 8 + 24 = 32$ — **stejně jako když jsme to výš spočítali ručně**, obojím směrem.
 
 V [okruhu 2](../02-algoritmy-nad-seznamy/) ti u merge sortu vyšlo **24**. Není to spor a stojí za to vědět, proč:
 
