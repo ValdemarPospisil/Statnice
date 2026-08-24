@@ -21,6 +21,111 @@
 
 ---
 
+### Co si napsat na papír (první 3 minuty přípravy)
+
+<!-- Tohle si zapamatuj doslova a při přípravě to hoď na papír. Zbytek se z toho odvodí. -->
+
+Tahák, který si vyrobíš zpaměti hned na začátku přípravy. Je delší než u ostatních okruhů, protože otázka má čtyři samostatné části — o to důležitější je psát ho **v tomhle pořadí** a nezdržovat se u ničeho, co si dovodíš u tabule.
+
+```
+REKURENCE = vztah + POČÁTEČNÍ PODMÍNKY (bez nich není definice úplná)
+  vyřešit = najít uzavřený tvar, kde vystupuje jen n
+
+3 METODY: iterační      rozviň vztah do sebe, najdi vzor
+          substituční   odhadni tvar, dokaž INDUKCÍ (i základní krok!)
+          charakt. rov. lineární rekurence s konstantními koeficienty
+
+ITERAČNÍ na T(n) = 2T(n/2) + n, T(1) = 1:
+  1) rozviň 3 kroky  2) napiš k-tý krok  3) urči k  4) dosaď
+  konec rekurze:  n/2^k = 1  ->  k = log n
+
+CHARAKTERISTICKÁ ROVNICE: dosaď a_n = x^n a vyděl x^(n-2)
+  a_n = c1·a(n-1) + c2·a(n-2)   ->   x² - c1·x - c2 = 0
+    dva různé kořeny    a_n = A·x1^n + B·x2^n
+    dvojnásobný kořen   a_n = (A + B·n)·x^n
+  A, B dopočítej z počátečních podmínek
+
+LOGARITMY: log_b a = c  <=>  b^c = a
+  log(xy) = log x + log y
+  změna základu: log_b x = log_c x / log_c b
+  log_2 n = kolikrát můžu n půlit, než zbude jednička
+
+CELÁ ČÁST: dolní = největší celé <= x   (-3,2 -> -4, NENÍ to useknutí!)
+           dolní(n/2) + horní(n/2) = n
+
+ASYMPTOTIKA - definici řekni doslova přes konstanty:
+  f = O(g) <=> existují c>0 a n0 tak, že pro VŠECHNA n >= n0: f(n) <= c·g(n)
+  Omega = otoč tu nerovnost      Theta = platí obě zároveň
+
+HIERARCHIE: 1 < log n < √n < n < n log n < n² < n³ < 2^n < n!
+
+ALGORITMUS: konečnost, determinovanost, hromadnost,
+            rezultativnost, elementárnost
+
+EUKLIDES: gcd(a, 0) = a,  gcd(a, b) = gcd(b, a mod b)
+          gcd(a,b) · lcm(a,b) = a·b
+          složitost log min(a,b), nejhorší případ = FIBONACCI (Lamé)
+
+PASTI: "alespoň O(n)" je NESMYSL - O už samo znamená nejvýše
+       O NENÍ nejhorší případ - nejdřív vyber případ, PAK ho popiš notací
+       u logaritmu se základ nepíše (je to konstanta), u 2^n se psát MUSÍ
+       substituční metoda bez ZÁKLADNÍHO KROKU není důkaz
+
+PŘÍKLAD: 252 = 1·198 + 54   198 = 3·54 + 36
+          54 = 1·36 + 18     36 = 2·18 + 0   ->  gcd = 18
+         lcm = 252·198/18 = 2772
+         a_n = 5a(n-1) - 6a(n-2)  ->  x² - 5x + 6  ->  kořeny 2 a 3
+```
+
+#### Jak si to zapamatovat, aniž bys to biflil
+
+**Tři metody řešení jsou tři slovesa:**
+
+> **Rozviň, hádej, nebo dosaď $x^n$.**
+
+- **rozviň** = iterační metoda (dosazuj vztah sám do sebe, dokud neuvidíš vzor)
+- **hádej** = substituční metoda (odhadni tvar a dokaž ho indukcí)
+- **dosaď $x^n$** = charakteristická rovnice
+
+A z těch sloves plyne i to, **kdy kterou použít**: *rozviň* na rekurence z rozděl a panuj (dělí se argument), *dosaď $x^n$* na ty, kde se argument snižuje o konstantu ($a_{n-1}$, $a_{n-2}$), *hádej* tehdy, když už tušíš výsledek a chceš ho jen potvrdit.
+
+**Z asymptotiky se učí jediná definice — ta pro $O$.** Zbytek se z ní vyrobí:
+
+| | Vznikne z $O$ takto | Čte se |
+|---|---|---|
+| $O$ | (základ, ten umět doslova) | „roste **nejvýš** tak rychle" — jako $\le$ |
+| $\Omega$ | **otoč nerovnost** na $c\,g(n) \le f(n)$ | „roste **aspoň** tak rychle" — jako $\ge$ |
+| $\Theta$ | **obě zároveň**, tedy $\Theta = O \cap \Omega$ | „roste **přesně** tak rychle" — jako $=$ |
+
+Když si $O$, $\Omega$, $\Theta$ představíš jako $\le$, $\ge$, $=$, vyplynou z toho i všechny manipulace: dualita ($f = O(g) \iff g = \Omega(f)$) je totéž jako otočit nerovnost, tranzitivita platí stejně jako u nerovností, a „součet dá maximum" je jen tvrzení, že o výsledku rozhoduje ten větší z obou členů.
+
+**A tři věci, které se opravdu neodvodí a je nutné je znát nazpaměť:** dva tvary řešení podle kořenů charakteristické rovnice, pět vlastností algoritmu a součin $\gcd \cdot \operatorname{lcm} = a \cdot b$ (z něj se $\operatorname{lcm}$ už jen vydělí).
+
+#### Kde jsi tohle všechno použil v okruzích 1, 2 a 3
+
+Tohle je nejcennější vlastnost jedenáctky: **nic z ní není nové.** V předchozích třech okruzích jsi celou dobu počítal přesně tyhle věci, jen bez jejich jmen. Když si tabulku projdeš, zjistíš, že se učíš pojmenovat, co už umíš.
+
+| Pojem z jedenáctky | Kde už ho máš | Co jsi tam konkrétně dělal |
+|---|---|---|
+| **rekurence** $T(n) = 2T(n/2) + n$ | [okruh 2](../02-algoritmy-nad-seznamy/) — merge sort | „doslova přepsaný obrázek": dvě větve plus slévání |
+| **iterační metoda** | [okruh 2](../02-algoritmy-nad-seznamy/) — merge sort | rozbalení $T(8) = 8\,T(1) + 8 + 8 + 8$; každé rozbalení = jedno kolo slévání |
+| **$\log_2 n$ = kolikrát půlit** | [okruh 2](../02-algoritmy-nad-seznamy/) — binární vyhledávání | $n/2^k = 1 \Rightarrow k = \log_2 n$ |
+| **totéž podruhé, obráceně** | [okruh 3](../03-spojove-struktury/) — výška stromu | $n \le 2^{h+1} - 1 \Rightarrow h = \log_2 n$ |
+| **změna základu je konstanta** | [okruh 2](../02-algoritmy-nad-seznamy/) | proč se u $O(\log n)$ nepíše dvojka |
+| **součet geometrické řady** | [okruh 1](../01-abstraktni-kolekce/) — amortizace | $1 + 2 + 4 + \cdots < 2n$, proto je `add` $O(1)$ |
+| **$\Theta$ vs. $O$** | [okruh 2](../02-algoritmy-nad-seznamy/) — selection sort | $\Theta(n^2)$ **vždy**, protože nemá lepší nejlepší případ |
+| **$O$ není nejhorší případ** | [okruh 2](../02-algoritmy-nad-seznamy/) — insertion sort | nejlepší $O(n)$, nejhorší $O(n^2)$ — případ a mez jsou dvě různé osy |
+| **$\Omega$ jako dolní mez** | [okruh 2](../02-algoritmy-nad-seznamy/) — dolní mez řazení | rozhodovací strom, $n!$ listů, $\Omega(n \log n)$ |
+| **dolní celá část** | [okruh 2](../02-algoritmy-nad-seznamy/) a [3](../03-spojove-struktury/) | `mid = (left + right) // 2`, výška $\lfloor \log_2 n \rfloor$ |
+| **hierarchie růstu** | [okruh 1](../01-abstraktni-kolekce/) — souhrnná tabulka | proč je hash lepší než strom a strom než seznam |
+| **paměť rekurze** | [okruh 3](../03-spojove-struktury/) — DFS | zásobník volání je $O(h)$, u degenerovaného stromu $O(n)$ |
+
+> **Věta, kterou tuhle souvislost řekni u zkoušky:** „Rekurence popisuje, **jak** algoritmus pracuje, asymptotická notace **za kolik**. Merge sort z druhého okruhu je jedna a tatáž věc napsaná dvakrát: jednou jako obrázek stromu slévání, podruhé jako $T(n) = 2T(n/2) + n$."
+
+Obráceně to platí taky, a hodí se to, když se ti u jiného okruhu zadrhne odvození: **kdykoli v jedničce, dvojce nebo trojce potřebuješ složitost, je to tenhle aparát.** Nemusíš si pamatovat čísla v tabulkách — stačí umět sestavit rekurenci nebo spočítat, kolikrát se něco půlí.
+
+---
+
 ### Rekurence
 
 - **rekurentní vztah** = předpis, který definuje hodnotu funkce (typicky posloupnosti) pomocí jejích **hodnot v menších argumentech**
