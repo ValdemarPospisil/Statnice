@@ -68,7 +68,12 @@ NEWTON   z rovnice tečny  y = f(x_k) + f'(x_k)*(x - x_k),  polož y = 0:
   kvadratická konvergence = počet platných číslic se ZDVOJNÁSOBÍ
   selže:  f'(x_k) = 0  |  špatný start (diverguje nebo cykluje)  |  násobný kořen
 
-PŘÍKLAD  x^3 - 2x - 5 = 0
+PŘÍKLAD A (funkce)  f(x) = (x^2 - 1)/(x - 1) = x + 1  pro x != 1
+  D(f) = R bez {1}    H(f) = R bez {2}    graf = přímka s DÍROU v [1,2]
+  lim x->1 f(x) = 2,  ale f(1) NEEXISTUJE -> odstranitelná nespojitost
+  (pól místo díry: 1/(x-2), limity -oo a +oo, limita NEEXISTUJE)
+
+PŘÍKLAD B (polynom + numerika)  x^3 - 2x - 5 = 0
   Horner v 2:   1  0  -2  -5  ->  1  2  2 | -1     P(2) = -1
   Horner v 3:                                      P(3) = +16
   -> znaménko se mění na [2,3], Bolzano dává kořen
@@ -475,7 +480,96 @@ $$0 = f(x_k) + f^{\prime}(x_k)(x - x_k) \quad \Longrightarrow \quad \boxed{\ x_{
 
 ### Příklad na papír
 
-Oba příklady jedou na **jedné a téže rovnici**, takže když je uděláš za sebou, vypráví se to jako jeden příběh: nejdřív se naučím funkci levně vyhodnocovat, pak toho vyhodnocování využiju k nalezení kořene.
+Příklady jsou dva a **kopírují dvě poloviny zadání**:
+
+- **Příklad 1** je na první polovinu — funkce, definiční obor, obor hodnot, limita, spojitost, graf. Nakreslíš ho za půl minuty a projdeš za dvě.
+- **Příklady 2 a 3** jsou jeden příběh na druhou polovinu a jedou na **jedné a téže rovnici**: nejdřív se naučím polynom levně vyhodnocovat, pak toho vyhodnocování využiju k nalezení kořene.
+
+Ukazuj podle toho, kam tě zkoušející tlačí. Když je čas, jdou všechny tři za sebou zhruba za pět minut.
+
+> **Slovo, kterému se vyhni:** neříkej „ukážu **průběh funkce**". *Vyšetření průběhu funkce* je odborný termín, který zahrnuje monotonii, extrémy, konvexnost a inflexní body — a to všechno se dělá **přes derivace**, tedy [okruh 5](../05-derivace-integraly-numerika/). Komise by pak čekala derivace. Říkej **„rozbor funkce"**.
+
+---
+
+#### Příklad 1 — rozbor funkce
+
+##### Co se má ukázat
+
+Že **limita a funkční hodnota jsou dvě různé věci** — a že se ten rozdíl dá vidět na obrázku. Je to jediný příklad, kde se dá naráz předvést definiční obor, obor hodnot, limita, spojitost i graf.
+
+$$f(x) = \frac{x^2 - 1}{x - 1}$$
+
+##### Krok 1: definiční obor
+
+Ptám se, kde by to spadlo — jediné riziko je **nulový jmenovatel**:
+
+$$x - 1 \ne 0 \quad \Rightarrow \quad D(f) = \mathbb{R} \setminus \{1\}$$
+
+##### Krok 2: úprava — a past, která je v ní schovaná
+
+Čitatel je rozdíl čtverců, takže se dá rozložit:
+
+$$f(x) = \frac{x^2-1}{x-1} = \frac{(x-1)(x+1)}{x-1} = x + 1 \qquad \textbf{pro } x \ne 1$$
+
+> **Tu podmínku vyslov nahlas.** Krátit smím jen tam, kde není nula, takže rovnost platí **jen mimo jedničku**. A hlavně: **úprava definiční obor nemění.** Funkce $f$ a funkce $x+1$ jsou dvě různé funkce — liší se právě v jednom bodě. Tohle je nejčastější chyba, kterou u téhle úlohy komise slyší.
+
+##### Krok 3: graf
+
+Grafem je tedy přímka $y = x+1$, ze které je **vypíchnutý jeden bod**:
+
+```
+       y
+       │              ╱
+     4 ┤            ╱
+     3 ┤          ╱
+     2 ┤        ○           ← [1, 2]: bod CHYBÍ, f(1) není definováno
+     1 ┤      ╱
+       │    ╱
+   ────┼──╱───┼────┼─────▶ x
+      ╱│      1    2
+    ╱  │
+  -1   │
+```
+
+Kroužek (ne puntík) je tady celý vtip — nakresli ho výrazně, komise se dívá právě na něj.
+
+##### Krok 4: obor hodnot
+
+Přímka $y = x+1$ by nabývala všech reálných hodnot, ale hodnota $2$ se ztratila spolu s vypíchnutým bodem:
+
+$$H(f) = \mathbb{R} \setminus \{2\}$$
+
+##### Krok 5: limita v bodě 1
+
+Blížím se k jedničce, ale **do ní nevstupuju** — a mimo ni se funkce rovná $x+1$:
+
+$$\lim_{x \to 1} \frac{x^2-1}{x-1} = \lim_{x \to 1} (x+1) = 2$$
+
+Zleva i zprava vyjde totéž, takže **limita existuje** a je rovna $2$.
+
+> **Věta, kvůli které se celý příklad počítal:** „Funkce v bodě $1$ **není definovaná**, a přesto tam **má limitu**. To je přesně ten důvod, proč se v definici limity vyžaduje $0 < \lvert x - a \rvert$ — hodnota v samotném bodě do limity nemluví."
+
+##### Krok 6: spojitost
+
+Spojitost v bodě $1$ měla tři podmínky. První z nich, existence $f(1)$, **neplatí** — takže funkce v bodě $1$ **spojitá není**, ačkoli limita existuje. Jde o **odstranitelnou nespojitost**: kdybych dodefinoval $f(1) = 2$, byla by funkce spojitá na celém $\mathbb{R}$.
+
+Na množině $\mathbb{R} \setminus \{1\}$, tedy **na celém svém definičním oboru, spojitá je**.
+
+##### Doptávka, která přijde
+
+**„A ukažte mi nespojitost, která se odstranit nedá."** Vezmi
+
+$$g(x) = \frac{1}{x-2}$$
+
+- $D(g) = \mathbb{R} \setminus \{2\}$, $H(g) = \mathbb{R} \setminus \{0\}$
+- jednostranné limity ve dvojce se **liší a jsou nevlastní**: $\lim_{x \to 2^-} g(x) = -\infty$, $\lim_{x \to 2^+} g(x) = +\infty$ — limita tedy **neexistuje** a jde o **pól**
+- $\lim_{x \to \pm\infty} g(x) = 0$, takže osa $x$ je vodorovná asymptota
+
+**Nuance, kterou přidej na konec:** i tahle funkce je **spojitá na celém svém definičním oboru**. „Není spojitá" a „není spojitá v bodě, který do jejího definičního oboru nepatří" jsou dvě různá tvrzení — a tohle rozlišení dělá dobrý dojem.
+
+---
+
+Zbylé dva příklady jedou na jedné rovnici, protože hodnoty, které v prvním z nich spočítám Hornerem, jsou přesně ty, které ve druhém potřebuje Bolzanova věta a metoda půlení:
 
 $$x^3 - 2x - 5 = 0$$
 
@@ -483,7 +577,7 @@ $$x^3 - 2x - 5 = 0$$
 
 ---
 
-#### Příklad 1 — Hornerovo schéma
+#### Příklad 2 — Hornerovo schéma
 
 ##### Co se má ukázat
 
@@ -539,7 +633,7 @@ Tedy $\Theta(n)$ proti $\Theta(n^2)$ — přesně ten typ rozdílu, který zná�
 
 ---
 
-#### Příklad 2 — půlení intervalu a Newton na téže rovnici
+#### Příklad 3 — půlení intervalu a Newton na téže rovnici
 
 ##### Krok 1: separace kořene
 
@@ -618,6 +712,9 @@ A shrnutí obou metod na jedné rovnici:
 - Proč musí být u metody půlení funkce **spojitá**? Ukaž protipříklad.
 - Jaký je rozdíl mezi limitou funkce v bodě a funkční hodnotou v tom bodě?
 - Kdy limita v bodě neexistuje?
+- Ukaž funkci, která má v bodě limitu, ale **není v něm spojitá**.
+- Jaký je rozdíl mezi odstranitelnou nespojitostí a pólem?
+- Změní se definiční obor, když zlomek zkrátíš?
 - Uveď funkci, která je spojitá na celém $\mathbb{R}$, a funkci, která spojitá není.
 - Kolik kořenů má polynom $n$-tého stupně? A kolik z nich může být reálných?
 - Proč má polynom lichého stupně vždy aspoň jeden reálný kořen?
