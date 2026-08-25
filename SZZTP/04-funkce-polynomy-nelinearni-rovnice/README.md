@@ -73,7 +73,15 @@ PŘÍKLAD A (funkce)  f(x) = (x^2 - 1)/(x - 1) = x + 1  pro x != 1
   lim x->1 f(x) = 2,  ale f(1) NEEXISTUJE -> odstranitelná nespojitost
   (pól místo díry: 1/(x-2), limity -oo a +oo, limita NEEXISTUJE)
 
-PŘÍKLAD B (polynom + numerika)  x^3 - 2x - 5 = 0
+PŘÍKLAD B (Horner + rozklad)  x^4 - 4x^3 - 7x^2 + 22x + 24
+  kandidáti na kořen = celí dělitelé absolutního členu 24
+  Horner v -1 -> zbytek 0, podíl  x^3 - 5x^2 - 2x + 24
+  Horner v -2 -> zbytek 0, podíl  x^2 - 7x + 12 = (x-3)(x-4)
+  => (x+1)(x+2)(x-3)(x-4);  kořeny -1,-2,3,4 = PRŮSEČÍKY S OSOU X
+  pozor: sudá násobnost = graf se osy jen DOTKNE -> půlení tam selže
+
+PŘÍKLAD C (numerika)  x^3 - 2x - 5 = 0
+  kandidáti +-1, +-5 nevyjdou -> žádný racionální kořen -> MUSÍ numericky
   Horner v 2:   1  0  -2  -5  ->  1  2  2 | -1     P(2) = -1
   Horner v 3:                                      P(3) = +16
   -> znaménko se mění na [2,3], Bolzano dává kořen
@@ -267,6 +275,10 @@ kde $a_i \in \mathbb{R}$ jsou **koeficienty** a mocniny jsou **celočíselné ne
 1. **Věta o kořenovém činiteli:** $c$ je kořen $P$ **právě tehdy**, když $P(x) = (x - c) \cdot Q(x)$, kde $\deg Q = \deg P - 1$
 2. **Základní věta algebry:** každý nekonstantní polynom má aspoň jeden kořen v $\mathbb{C}$. Opakovaným vytýkáním kořenových činitelů z toho plyne, že polynom stupně $n$ má **přesně $n$ kořenů v $\mathbb{C}$** (počítáno s násobností)
 3. Reálných kořenů má tedy **nejvýš $n$** — komplexní kořeny se u reálných koeficientů vyskytují v **komplexně sdružených dvojicích**
+
+Na grafu je kořen **$x$-ová souřadnice průsečíku s osou $x$** — $P(c)$ je výška grafu nad bodem $c$, takže nulová hodnota znamená, že graf sedí na ose. **Ale pozor: protnout ji nemusí.** U kořene **sudé násobnosti** se jí graf jen **dotkne a odrazí se zpátky** (třeba $(x-2)^2$) a znaménko se v něm nemění — a přesně takový kořen **metoda půlení intervalu nikdy nenajde**.
+
+A jak se první kořen prakticky uhodne? Pomůže **věta o racionálních kořenech**: je-li polynom **normovaný** (vedoucí koeficient $1$) s **celočíselnými koeficienty**, pak je každý jeho racionální kořen **celé číslo dělící absolutní člen**. Kandidátů je tedy konečně mnoho a testují se Hornerem.
 
 > **Hezký důsledek, kterým můžeš zaujmout:** polynom **lichého stupně** má vždy aspoň jeden **reálný** kořen. Důvod je Bolzano — pro $x \to -\infty$ a $x \to +\infty$ má lichá mocnina opačná znaménka, polynom je spojitý, takže osu musí někde protnout. Tady se první a druhá část otázky potkávají.
 
@@ -483,7 +495,7 @@ $$0 = f(x_k) + f^{\prime}(x_k)(x - x_k) \quad \Longrightarrow \quad \boxed{\ x_{
 Příklady jsou dva a **kopírují dvě poloviny zadání**:
 
 - **Příklad 1** je na první polovinu — funkce, definiční obor, obor hodnot, limita, spojitost, graf. Nakreslíš ho za půl minuty a projdeš za dvě.
-- **Příklady 2 a 3** jsou jeden příběh na druhou polovinu a jedou na **jedné a téže rovnici**: nejdřív se naučím polynom levně vyhodnocovat, pak toho vyhodnocování využiju k nalezení kořene.
+- **Příklady 2 a 3** jsou na druhou polovinu a tvoří dvojici: v prvním se polynom Hornerem **rozloží úplně**, ve druhém se ukáže polynom, u kterého to nejde — **a proto se musí sáhnout po numerice**. Vazbu mezi nimi dělá zase Horner.
 
 Ukazuj podle toho, kam tě zkoušející tlačí. Když je čas, jdou všechny tři za sebou zhruba za pět minut.
 
@@ -569,55 +581,82 @@ $$g(x) = \frac{1}{x-2}$$
 
 ---
 
-Zbylé dva příklady jedou na jedné rovnici, protože hodnoty, které v prvním z nich spočítám Hornerem, jsou přesně ty, které ve druhém potřebuje Bolzanova věta a metoda půlení:
-
-$$x^3 - 2x - 5 = 0$$
-
-*(Je to historicky Wallisova rovnice, na které Newton svou metodu poprvé předvedl — to se hodí prohodit.)*
+Zbylé dva příklady spolu souvisí obráceně, než by se čekalo: druhý ukáže polynom, který se rozloží **úplně a ručně**, a třetí polynom, u kterého to nejde — a proto se musí sáhnout po numerice. Přechod mezi nimi obstará zase Hornerovo schéma.
 
 ---
 
-#### Příklad 2 — Hornerovo schéma
+#### Příklad 2 — Hornerovo schéma a rozklad polynomu
 
 ##### Co se má ukázat
 
-Že jedno schéma dá naráz **hodnotu, podíl i test kořene**.
+Že jedno schéma dá naráz **hodnotu, podíl i test kořene** — a že jeho opakovaným použitím se polynom **rozloží na kořenové činitele**.
 
-##### Vyhodnocení v bodě $c = 2$
+$$P(x) = x^4 - 4x^3 - 7x^2 + 22x + 24$$
 
-Koeficienty polynomu $P(x) = x^3 - 2x - 5$ jsou $1, 0, -2, -5$ — **nulu u $x^2$ nesmíš vynechat**, to je nejčastější chyba.
+##### Krok 1: jak vůbec uhodnout první kořen
 
-```
-          1     0    -2    -5
-    2 |         2     4     4
-    ---------------------------
-          1     2     2    -1
-```
+Nehádá se naslepo. Je-li polynom **normovaný** (vedoucí koeficient $1$) a má **celočíselné koeficienty**, musí být každý racionální kořen **celé číslo dělící absolutní člen**. Kandidáti jsou tedy dělitelé čísla $24$:
 
-Řádek po řádku: spadne $1$; $2 \cdot 1 = 2$, $0 + 2 = 2$; $2 \cdot 2 = 4$, $-2 + 4 = 2$; $2 \cdot 2 = 4$, $-5 + 4 = -1$.
+$$\pm 1,\ \pm 2,\ \pm 3,\ \pm 4,\ \pm 6,\ \pm 8,\ \pm 12,\ \pm 24$$
 
-**Výsledek:** $P(2) = -1$. Kontrola přímým dosazením: $8 - 4 - 5 = -1$. ✔
+Zkoušíš je od nejmenších — a zkoušet je znamená **pustit na ně Horner**, protože ten test kořene zvládne za $n$ násobení.
 
-A protože první tři čísla jsou koeficienty podílu:
+##### Krok 2: první průchod, $c = -1$
 
-$$x^3 - 2x - 5 = (x - 2)(x^2 + 2x + 2) - 1$$
-
-##### A teď totéž s jedním koeficientem změněným
-
-Kdyby byl absolutní člen $-4$ místo $-5$:
+Koeficienty jsou $1,\ -4,\ -7,\ 22,\ 24$:
 
 ```
-          1     0    -2    -4
-    2 |         2     4     4
-    ---------------------------
-          1     2     2     0    <- ZBYTEK 0
+            1    -4    -7    22    24
+     -1 |        -1     5     2   -24
+     -----------------------------------
+            1    -5    -2    24     0   <- ZBYTEK 0
 ```
 
-Zbytek vyšel nula, takže $2$ **je kořen** a hned mám rozklad:
+Prostřední řádek je vždy $c$ krát číslo vlevo dole: $-1\cdot 1 = -1$; $-1 \cdot (-5) = 5$; $-1 \cdot (-2) = 2$; $-1 \cdot 24 = -24$.
 
-$$x^3 - 2x - 4 = (x - 2)(x^2 + 2x + 2)$$
+**Zbytek je nula, takže $-1$ je kořen** a zbylá čísla jsou koeficienty podílu:
 
-Zbylá kvadratická rovnice má diskriminant $4 - 8 = -4 < 0$, takže **žádné další reálné kořeny nejsou** — polynom třetího stupně tu má tři komplexní kořeny, ale jen jeden reálný. To je pěkná ilustrace základní věty algebry.
+$$P(x) = (x+1)\,(x^3 - 5x^2 - 2x + 24)$$
+
+##### Krok 3: druhý průchod, už jen na podílu, $c = -2$
+
+Teď pracuju s kubickým polynomem $1,\ -5,\ -2,\ 24$ — **o stupeň nižším**, takže i práce je menší:
+
+```
+            1    -5    -2    24
+     -2 |        -2    14   -24
+     -------------------------------
+            1    -7    12     0   <- ZBYTEK 0
+```
+
+Zase nula, takže $-2$ je kořen a zbývá **kvadratická rovnice**, kterou už umím doškolsky:
+
+$$x^2 - 7x + 12 = 0 \quad \Rightarrow \quad D = 49 - 48 = 1 \quad \Rightarrow \quad x_{1,2} = \frac{7 \pm 1}{2} = 4,\ 3$$
+
+##### Krok 4: hotový rozklad
+
+$$x^4 - 4x^3 - 7x^2 + 22x + 24 = (x+1)(x+2)(x-3)(x-4)$$
+
+Kořeny jsou $-1,\ -2,\ 3,\ 4$ — **čtyři kořeny u polynomu čtvrtého stupně**, přesně jak slibuje základní věta algebry, a všechny náhodou reálné.
+
+Kontrola, která zabere pět vteřin: součin kořenových činitelů má absolutní člen $1 \cdot 2 \cdot (-3) \cdot (-4) = 24$ ✔ a součet kořenů $-1-2+3+4 = 4$, což je opravdu $-\frac{a_3}{a_4} = 4$ ✔.
+
+##### Krok 5: co kořeny znamenají na grafu
+
+**Kořen je $x$-ová souřadnice bodu, ve kterém graf protíná osu $x$** — protože $P(c)$ je výška grafu nad místem $c$, a nulová výška znamená, že graf sedí na ose.
+
+```
+      y
+      │        ╱‾╲                              ╱
+      │       ╱   ╲                            ╱
+   ───●──●───╱─────╲──────────────●───────────●──▶ x
+     -2 -1 ╱        ╲            3           4
+      │   ╱          ╲___________╱
+      │  ╱
+   čtyři kořeny = čtyři PRŮSEČÍKY s osou x
+```
+
+> **Výhrada, kterou musíš znát, protože se na ni doptají:** kořen osu protnout **nemusí**. U **sudé násobnosti** se jí graf jen **dotkne a odrazí se zpět** — třeba $(x-2)^2$ má kořen $2$, ale znaménko se v něm **nemění**. A přesně tehdy **selže metoda půlení intervalu**, protože ta se řídí jedině změnou znaménka. Tady se polynomy a numerika potkávají.
 
 ##### Úspora, kterou ukaž na číslech
 
@@ -625,7 +664,7 @@ Pro stupeň $n$ Horner potřebuje $n$ násobení, naivní dosazení $\frac{n(n+1
 
 | $n$ | Horner | naivní dosazení |
 |---|---|---|
-| 3 | 3 | 6 |
+| 4 | 4 | 10 |
 | 10 | 10 | 55 |
 | 100 | 100 | **5050** |
 
@@ -633,15 +672,36 @@ Tedy $\Theta(n)$ proti $\Theta(n^2)$ — přesně ten typ rozdílu, který zná�
 
 ---
 
-#### Příklad 3 — půlení intervalu a Newton na téže rovnici
+#### Příklad 3 — když rozklad nevyjde: půlení intervalu a Newton
+
+$$x^3 - 2x - 5 = 0$$
+
+*(Je to historicky Wallisova rovnice, na které Newton svou metodu poprvé předvedl — to se hodí prohodit.)*
+
+##### Krok 0: proč tenhle polynom nerozložím jako ten předchozí
+
+Zkusím na něj tentýž postup. Polynom je normovaný s celočíselnými koeficienty, absolutní člen je $-5$, takže **jediní kandidáti na racionální kořen** jsou $\pm 1$ a $\pm 5$. Hornerem (nebo rovnou dosazením) vyjde
+
+$$P(1) = -6, \qquad P(-1) = -4, \qquad P(5) = 110, \qquad P(-5) = -120$$
+
+— **ani jeden není nula**. Tenhle polynom tedy **nemá žádný racionální kořen**, takže rozklad na kořenové činitele s pěknými čísly z principu neexistuje a musím na kořen numericky.
+
+> **Tohle je ten správný okamžik, kdy nadhodit Abelovu–Ruffiniho větu:** u pátého a vyššího stupně obecný vzorec pomocí odmocnin **nemůže existovat**. Numerická metoda tedy není nouzové řešení, ale jediné, které v obecném případě máme.
 
 ##### Krok 1: separace kořene
 
-Vyhodnotím Hornerem v celých číslech (proto byl první příklad první):
+Vyhodnotím Hornerem v celých číslech — koeficienty jsou $1,\ 0,\ -2,\ -5$ a **nulu u $x^2$ nesmíš vynechat**, to je nejčastější chyba:
+
+```
+          1     0    -2    -5              1     0    -2    -5
+    2 |         2     4     4        3 |         3     9    21
+    ---------------------------      ---------------------------
+          1     2     2    -1              1     3     7    16
+```
 
 $$P(2) = -1, \qquad P(3) = 16$$
 
-*(Horner v trojce: $1$; $0 + 3 = 3$; $-2 + 9 = 7$; $-5 + 21 = 16$.)*
+*(Kontrola dosazením: $8-4-5 = -1$ a $27-6-5 = 16$.)* Mimochodem první schéma říká i to, že $x^3 - 2x - 5 = (x-2)(x^2+2x+2) - 1$ — nenulový zbytek přesně odpovídá tomu, že $2$ kořen není.
 
 Znaménka jsou **opačná** a polynom je spojitý na celém $\mathbb{R}$, takže podle **Bolzanovy věty** leží v intervalu $(2, 3)$ kořen. Tuhle větu u zkoušky vyslov — to je ten okamžik, kdy se první polovina otázky napojí na druhou.
 
@@ -705,6 +765,8 @@ A shrnutí obou metod na jedné rovnici:
 - Spočítej Hornerovým schématem hodnotu polynomu v bodě — kolik násobení jsi ušetřil?
 - Co znamenají zbývající čísla v řádku Hornerova schématu, kromě toho posledního?
 - Jak Hornerovým schématem poznám, že je dané číslo kořenem?
+- Rozlož polynom čtvrtého stupně na kořenové činitele. Jak uhodneš první kořen?
+- Co znamenají kořeny na grafu? **Musí ho vždycky protnout?**
 - Napiš iterační vzorec Newtonovy metody a **odvoď** ho z rovnice tečny.
 - Kolik iterací půlení potřebuji na danou přesnost a proč zrovna tolik?
 - Jak poznám, že mám iterační proces ukončit? Stačí, že je $\lvert f(x_k) \rvert$ malé?
