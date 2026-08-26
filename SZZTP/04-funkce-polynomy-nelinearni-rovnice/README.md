@@ -73,10 +73,14 @@ PŘÍKLAD A (funkce)  f(x) = (x^2 - 1)/(x - 1) = x + 1  pro x != 1
   lim x->1 f(x) = 2,  ale f(1) NEEXISTUJE -> odstranitelná nespojitost
   (pól místo díry: 1/(x-2), limity -oo a +oo, limita NEEXISTUJE)
 
+RACIONÁLNÍ KOŘENY: kandidát p/q,  p dělí ABSOLUTNÍ člen, q dělí VEDOUCÍ
+  normovaný polynom -> q = 1 -> kandidáti jsou celí dělitelé abs. členu
+  hádej jen dokud nezbude KVADRATICKÁ rovnice, pak už diskriminant
+
 PŘÍKLAD B (Horner + rozklad)  x^4 - 4x^3 - 7x^2 + 22x + 24
-  kandidáti na kořen = celí dělitelé absolutního členu 24
+  normovaný -> kandidáti = celí dělitelé 24
   Horner v -1 -> zbytek 0, podíl  x^3 - 5x^2 - 2x + 24
-  Horner v -2 -> zbytek 0, podíl  x^2 - 7x + 12 = (x-3)(x-4)
+  Horner v -2 -> zbytek 0, podíl  x^2 - 7x + 12 -> diskriminant -> 3, 4
   => (x+1)(x+2)(x-3)(x-4);  kořeny -1,-2,3,4 = PRŮSEČÍKY S OSOU X
   pozor: sudá násobnost = graf se osy jen DOTKNE -> půlení tam selže
 
@@ -278,7 +282,13 @@ kde $a_i \in \mathbb{R}$ jsou **koeficienty** a mocniny jsou **celočíselné ne
 
 Na grafu je kořen **$x$-ová souřadnice průsečíku s osou $x$** — $P(c)$ je výška grafu nad bodem $c$, takže nulová hodnota znamená, že graf sedí na ose. **Ale pozor: protnout ji nemusí.** U kořene **sudé násobnosti** se jí graf jen **dotkne a odrazí se zpátky** (třeba $(x-2)^2$) a znaménko se v něm nemění — a přesně takový kořen **metoda půlení intervalu nikdy nenajde**.
 
-A jak se první kořen prakticky uhodne? Pomůže **věta o racionálních kořenech**: je-li polynom **normovaný** (vedoucí koeficient $1$) s **celočíselnými koeficienty**, pak je každý jeho racionální kořen **celé číslo dělící absolutní člen**. Kandidátů je tedy konečně mnoho a testují se Hornerem.
+A jak se první kořen prakticky uhodne? Pomůže **věta o racionálních kořenech**:
+
+> Má-li polynom s **celočíselnými koeficienty** racionální kořen $\frac{p}{q}$ v základním tvaru, pak $p$ **dělí absolutní člen** $a_0$ a $q$ **dělí vedoucí koeficient** $a_n$.
+
+Kandidátů je tedy konečně mnoho a testují se Hornerem. Speciální případ, který si pamatuj zvlášť, protože je nejčastější: **je-li polynom normovaný** (tedy $a_n = 1$), musí $q$ dělit jedničku, takže $q = 1$ a **každý racionální kořen je celé číslo dělící absolutní člen**.
+
+> **Past, na kterou se dá naletět:** u **nenormovaného** polynomu ta zjednodušená verze **neplatí** a zlomkové kořeny ti utečou. Třeba $4x^4 + 8x^3 - 33x^2 - 2x + 8$ má kořeny $2$ a $-4$, ale taky $\frac{1}{2}$ a $-\frac{1}{2}$ — a ty na seznamu celých dělitelů osmičky nejsou. Musíš vzít i $q \in \{1, 2, 4\}$, tedy kandidáty $\pm\frac{1}{2}$ a $\pm\frac{1}{4}$. **Hornerovo schéma samo o sobě žádné omezení na celá čísla nemá** — otestuje ti klidně $0{,}5$; omezený je jen seznam čísel, která mu podstrčíš.
 
 > **Hezký důsledek, kterým můžeš zaujmout:** polynom **lichého stupně** má vždy aspoň jeden **reálný** kořen. Důvod je Bolzano — pro $x \to -\infty$ a $x \to +\infty$ má lichá mocnina opačná znaménka, polynom je spojitý, takže osu musí někde protnout. Tady se první a druhá část otázky potkávají.
 
@@ -595,11 +605,13 @@ $$P(x) = x^4 - 4x^3 - 7x^2 + 22x + 24$$
 
 ##### Krok 1: jak vůbec uhodnout první kořen
 
-Nehádá se naslepo. Je-li polynom **normovaný** (vedoucí koeficient $1$) a má **celočíselné koeficienty**, musí být každý racionální kořen **celé číslo dělící absolutní člen**. Kandidáti jsou tedy dělitelé čísla $24$:
+Nehádá se naslepo. Tenhle polynom je **normovaný** (vedoucí koeficient $1$) a má **celočíselné koeficienty**, takže každý racionální kořen musí být **celé číslo dělící absolutní člen**. Kandidáti jsou tedy dělitelé čísla $24$:
 
 $$\pm 1,\ \pm 2,\ \pm 3,\ \pm 4,\ \pm 6,\ \pm 8,\ \pm 12,\ \pm 24$$
 
 Zkoušíš je od nejmenších — a zkoušet je znamená **pustit na ně Horner**, protože ten test kořene zvládne za $n$ násobení.
+
+> **Kdyby polynom normovaný nebyl**, musíš vzít plnou verzi věty: kandidát je $\frac{p}{q}$, kde $p$ dělí absolutní člen a $q$ vedoucí koeficient. Jinak ti **zlomkové kořeny utečou**.
 
 ##### Krok 2: první průchod, $c = -1$
 
@@ -632,6 +644,8 @@ Teď pracuju s kubickým polynomem $1,\ -5,\ -2,\ 24$ — **o stupeň nižším*
 Zase nula, takže $-2$ je kořen a zbývá **kvadratická rovnice**, kterou už umím doškolsky:
 
 $$x^2 - 7x + 12 = 0 \quad \Rightarrow \quad D = 49 - 48 = 1 \quad \Rightarrow \quad x_{1,2} = \frac{7 \pm 1}{2} = 4,\ 3$$
+
+> **Pravidlo, které si zapamatuj:** Hornerem se hádá **jen dokud nezbude kvadratická rovnice** — tu už řeš diskriminantem. U polynomu čtvrtého stupně tedy hádáš **nejvýš dvakrát**. Zbylé dva kořeny nepřijdou z hádání, ale ze vzorce, a to i tehdy, když nejsou celá čísla. Kdo hádá dál, zbytečně se trápí — a hlavně mu **utečou kořeny, které se uhodnout nedají**.
 
 ##### Krok 4: hotový rozklad
 
@@ -766,6 +780,8 @@ A shrnutí obou metod na jedné rovnici:
 - Co znamenají zbývající čísla v řádku Hornerova schématu, kromě toho posledního?
 - Jak Hornerovým schématem poznám, že je dané číslo kořenem?
 - Rozlož polynom čtvrtého stupně na kořenové činitele. Jak uhodneš první kořen?
+- A co když polynom **není normovaný**? Jak se změní seznam kandidátů?
+- Umí Hornerovo schéma otestovat i neceločíselný kořen?
 - Co znamenají kořeny na grafu? **Musí ho vždycky protnout?**
 - Napiš iterační vzorec Newtonovy metody a **odvoď** ho z rovnice tečny.
 - Kolik iterací půlení potřebuji na danou přesnost a proč zrovna tolik?
