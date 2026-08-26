@@ -581,6 +581,22 @@ $$= \pi \left[ \left(r^3 - \frac{r^3}{3}\right) - \left(-r^3 + \frac{r^3}{3}\rig
 - Jak odvodíš vzorec pro objem rotačního tělesa z určitého integrálu?
 - Odvoď objem koule nebo kužele.
 
+### Skripty k vyzkoušení
+
+V kořeni repozitáře jsou dva Python skripty k téhle otázce. Nic neinstalují, běží na čisté standardní knihovně:
+
+```bash
+python3 numericke_derivovani.py   # dopředná, zpětná, centrální diference
+python3 numericka_integrace.py    # obdélníky, lichoběžníky, Simpson
+```
+
+Co na nich uvidíš a co se z toho dá u zkoušky říct:
+
+- **řády chyby na číslech** — zmenši $h$ desetkrát a chyba dopředné diference klesne $10\times$, chyby centrální $100\times$. U integrace zdvojnásob $n$ a chyby klesnou $2\times$, $4\times$ a $16\times$ podle pravidla.
+- **past s příliš malým $h$** — skript projede $h$ od $10^{-1}$ do $10^{-16}$ a je vidět, jak chyba nejdřív klesá, u $h \approx 10^{-5}$ dosáhne minima a pak zase **roste**. Tuhle tabulku je dobré si jednou prohlédnout — pak už na tu otázku nikdy neodpovíš špatně.
+- **odkud se berou váhy $1 : 4 : 1$** — skript spočítá $\frac{2M + T}{3}$ a ukáže, že vyjde přesně Simpson.
+- **$\int_0^1 e^{-x^2}\,\mathrm{d}x$** — funkce bez elementární primitivní funkce, tedy přesně ten důvod, proč numerická integrace vůbec existuje. Simpson ji s devíti vyhodnoceními trefí na $2 \cdot 10^{-6}$, obdélníkové pravidlo by na totéž potřebovalo statisíce dílků.
+
 ### Užitečné odkazy
 
 - <https://www.geogebra.org/calculator> (tečna, plocha pod křivkou — jde si to naklikat)

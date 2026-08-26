@@ -800,6 +800,18 @@ A shrnutí obou metod na jedné rovnici:
 - Jaký je rozdíl mezi oborem hodnot a cílovou množinou?
 - Kdy má funkce inverzní funkci?
 
+### Skripty k vyzkoušení
+
+V kořeni repozitáře jsou dva Python skripty, na kterých si tenhle okruh můžeš **osahat na číslech**. Nic neinstalují, běží na čisté standardní knihovně:
+
+```bash
+python3 horner.py               # Hornerovo schéma a rozklad polynomu
+python3 nelinearni_rovnice.py   # půlení intervalu a Newtonova metoda
+```
+
+- **`horner.py`** vypíše schéma přesně tak, jak se píše na papír, najde kandidáty na racionální kořen podle věty $\frac{p}{q}$ a odloupne kořeny až na kvadratickou rovnici. Pustíš na něj i vlastní polynom (koeficienty od nejvyšší mocniny, **nuly se nevynechávají**) a zkontroluješ si domácí počítání.
+- **`nelinearni_rovnice.py`** porovná obě metody na téže rovnici — u Newtona je na tabulce chyb $10^{-2} \to 10^{-3} \to 10^{-5} \to 10^{-10}$ vidět kvadratická konvergence, u půlení těch $33$ kroků na totéž. Poslední sekce ukazuje **všechny tři způsoby, jak Newton selže**: skoro vodorovnou tečnu, cyklení a násobný kořen.
+
 ### Užitečné odkazy
 
 - <https://www.geogebra.org/calculator> (rychlé nakreslení grafu a separace kořene)

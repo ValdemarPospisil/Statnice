@@ -34,6 +34,11 @@ exclude:
   - .github
   - vendor
   - generate_index.py
+  - horner.py
+  - nelinearni_rovnice.py
+  - numericke_derivovani.py
+  - numericka_integrace.py
+  - .venv
   - README.md
   - CLAUDE.md
   - Gemfile
