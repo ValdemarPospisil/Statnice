@@ -476,6 +476,56 @@ V bodě $x_0 = 3$ je $f(3) = 9$ a $f^{\prime}(3) = 6$, takže tečna je
 
 $$y = 9 + 6(x - 3) = 6x - 9$$
 
+**Kontrola, která zabere pět vteřin:** dosaď do tečny $x = 3$ a musí vyjít $9$, tedy funkční hodnota — tečna se paraboly opravdu dotýká v bodě $T = [3,\ 9]$.
+
+##### Krok 2b: sečna versus tečna — a jak to celé nakreslit
+
+Tohle je obrázek, kterým se limita v definici derivace vysvětlí sama.
+
+**Sečna** je přímka procházející **dvěma body na křivce**, $[x_0,\ f(x_0)]$ a $[x_0+h,\ f(x_0+h)]$. Její směrnice je přesně ten diferenční podíl z definice:
+
+$$k_{\text{sečny}} = \frac{f(x_0+h) - f(x_0)}{h}$$
+
+**Tečna** je přímka, která se křivky v bodě jen **dotýká**, a její směrnice je $f^{\prime}(x_0)$.
+
+| | Sečna | Tečna |
+|---|---|---|
+| kolik bodů křivky | **dva** | **jeden** (dotykový) |
+| jak dostanu směrnici | ze dvou funkčních hodnot, $\frac{\Delta y}{\Delta x}$ | z **derivace** |
+| co popisuje | **průměrnou** změnu na úseku | **okamžitou** změnu v bodě |
+| potřebuju k ní derivaci? | **ne** | **ano** |
+
+> **Past, kterou si vyjasni hned:** sečna **nemá nic společného s počátkem** $[0,0]$. Nevychází z nuly — vychází z **bodu na křivce** a její poloha závisí jen na tom, jak si zvolíš $h$. Kdyby šla z počátku, byla by to jedna konkrétní přímka, a ne celá rodina přímek, která se s klesajícím $h$ sklápí k tečně.
+
+**Rovnice, které si necháš vykreslit** (parabola, tečna a dvě sečny — víc na jeden obrázek nedávej, slije se to):
+
+| Objekt | Rovnice | Prochází body |
+|---|---|---|
+| parabola | $y = x^2$ | — |
+| **sečna** pro $h = 1$ | $y = 7x - 12$ | $[3,\ 9]$ a $[4,\ 16]$ |
+| **sečna** pro $h = 0{,}5$ | $y = 6{,}5x - 10{,}5$ | $[3,\ 9]$ a $[3{,}5\ ;\ 12{,}25]$ |
+| **tečna** | $y = 6x - 9$ | dotýká se v $[3,\ 9]$ |
+
+Směrnice těch tří přímek jdou $7 \to 6{,}5 \to 6$ — a to je **celá limita na jednom obrázku**: jak $h$ klesá, druhý bod se přisouvá k prvnímu, sečna se sklápí a **v limitě z ní je tečna**. Sečny se navíc protínají s parabolou ve dvou bodech, tečna v jediném.
+
+Obecně vyjde sečna z definice derivace: pro $f(x) = x^2$ je její směrnice $\frac{(3+h)^2 - 9}{h} = 6 + h$, takže **sečna se od tečny liší přesně o $h$** — pro $h=1$ směrnice $7$, pro $h = 0{,}5$ směrnice $6{,}5$. Odtud je taky rovnou vidět, proč má dopředná diference chybu $O(h)$.
+
+##### Krok 2c: jak z rovnice poznám, že funkce v bodě roste
+
+Podle **znaménka derivace** — a je to zároveň největší praktická věc, kterou derivace umí:
+
+| Znaménko | Funkce | Tečna |
+|---|---|---|
+| $f^{\prime}(x) > 0$ | **roste** | stoupá zleva doprava |
+| $f^{\prime}(x) < 0$ | **klesá** | klesá |
+| $f^{\prime}(x) = 0$ | ani jedno — **stacionární bod** | vodorovná |
+
+U nás $f^{\prime}(3) = 6 > 0$, takže parabola v trojce **roste** — a ta šestka říká i **jak rychle**: posun o kousek doprava zvedne $y$ zhruba o šestinásobek toho kousku.
+
+Z jediného vzorce $f^{\prime}(x) = 2x$ se navíc odečte **celý průběh**: derivace je záporná pro $x < 0$, nulová v nule a kladná pro $x > 0$, tedy funkce **vlevo klesá, v nule má minimum a vpravo roste**. Přesně ten tvar, který kreslíš.
+
+> **Věta, kterou tím plynule přejdeš k aplikacím:** „Znaménko derivace mi dá **monotonii**, nula v derivaci **kandidáta na extrém**, a znaménko druhé derivace pak rozhodne, jestli je to **minimum nebo maximum**."
+
 ##### Krok 3: totéž numericky, $h = 0{,}1$
 
 Hodnoty: $f(2{,}9) = 8{,}41$, $f(3) = 9$, $f(3{,}1) = 9{,}61$.
