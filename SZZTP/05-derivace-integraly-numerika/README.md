@@ -497,18 +497,37 @@ $$k_{\text{sečny}} = \frac{f(x_0+h) - f(x_0)}{h}$$
 
 > **Past, kterou si vyjasni hned:** sečna **nemá nic společného s počátkem** $[0,0]$. Nevychází z nuly — vychází z **bodu na křivce** a její poloha závisí jen na tom, jak si zvolíš $h$. Kdyby šla z počátku, byla by to jedna konkrétní přímka, a ne celá rodina přímek, která se s klesajícím $h$ sklápí k tečně.
 
-**Rovnice, které si necháš vykreslit** (parabola, tečna a dvě sečny — víc na jeden obrázek nedávej, slije se to):
+**Jak se rovnice sečny dostane** — jsou to dva kroky a oba se dělají stejně jako u tečny.
 
-| Objekt | Rovnice | Prochází body |
-|---|---|---|
-| parabola | $y = x^2$ | — |
-| **sečna** pro $h = 1$ | $y = 7x - 12$ | $[3,\ 9]$ a $[4,\ 16]$ |
-| **sečna** pro $h = 0{,}5$ | $y = 6{,}5x - 10{,}5$ | $[3,\ 9]$ a $[3{,}5\ ;\ 12{,}25]$ |
-| **tečna** | $y = 6x - 9$ | dotýká se v $[3,\ 9]$ |
+**Krok A: směrnice.** Je to $\frac{\Delta y}{\Delta x}$, tedy **nahoře patří $y$, dole $x$**:
 
-Směrnice těch tří přímek jdou $7 \to 6{,}5 \to 6$ — a to je **celá limita na jednom obrázku**: jak $h$ klesá, druhý bod se přisouvá k prvnímu, sečna se sklápí a **v limitě z ní je tečna**. Sečny se navíc protínají s parabolou ve dvou bodech, tečna v jediném.
+$$k = \frac{f(x_0+h) - f(x_0)}{h}$$
 
-Obecně vyjde sečna z definice derivace: pro $f(x) = x^2$ je její směrnice $\frac{(3+h)^2 - 9}{h} = 6 + h$, takže **sečna se od tečny liší přesně o $h$** — pro $h=1$ směrnice $7$, pro $h = 0{,}5$ směrnice $6{,}5$. Odtud je taky rovnou vidět, proč má dopředná diference chybu $O(h)$.
+> **Přesně tady se chybuje:** v čitateli **nejsou $x$-ové souřadnice**, ale **funkční hodnoty**. Pro $x_0 = 3$ a $h = 1$ je to $\frac{f(4) - f(3)}{1} = \frac{16 - 9}{1} = 7$. Kdo tam napíše $4 - 3$, dostane $1$ — a to je jmenovatel, ne čitatel.
+
+**Krok B: dosazení do směrnicového tvaru.** Přímka daným bodem s danou směrnicí, tentýž vzorec jako u tečny:
+
+$$y = y_0 + k\,(x - x_0)$$
+
+Pro naše tři přímky bodem $[3,\ 9]$:
+
+| $h$ | druhý bod | směrnice $k$ | rovnice |
+|---|---|---|---|
+| $1$ | $[4,\ 16]$ | $\frac{16-9}{1} = 7$ | $y = 9 + 7(x-3) = 7x - 12$ |
+| $0{,}5$ | $[3{,}5\ ;\ 12{,}25]$ | $\frac{12{,}25-9}{0{,}5} = 6{,}5$ | $y = 9 + 6{,}5(x-3) = 6{,}5x - 10{,}5$ |
+| $\to 0$ | — (tečna) | $f^{\prime}(3) = 6$ | $y = 9 + 6(x-3) = 6x - 9$ |
+
+**Kontrola, kterou dělej vždycky:** dosaď do každé rovnice $x = 3$ a musí vyjít $9$, protože všechny tři přímky procházejí bodem $[3,9]$. Tedy $21-12 = 9$ ✔, $19{,}5-10{,}5 = 9$ ✔, $18-9 = 9$ ✔. Když to nevyjde, spletl jsi znaménko při roznásobování závorky.
+
+**Zkratka, která ušetří půlku práce:** u $f(x) = x^2$ se směrnice sečny dá zjednodušit obecně, a je to tentýž výpočet jako v Kroku 1, jen s dosazenou trojkou:
+
+$$k = \frac{(3+h)^2 - 9}{h} = \frac{9 + 6h + h^2 - 9}{h} = \frac{6h + h^2}{h} = 6 + h$$
+
+Takže $h = 1 \Rightarrow 7$, $h = 0{,}5 \Rightarrow 6{,}5$, $h = 0{,}1 \Rightarrow 6{,}1$, $h \to 0 \Rightarrow 6$. **Sečna se od tečny liší přesně o $h$** — a odtud je rovnou vidět, proč má dopředná diference v Kroku 3 chybu $O(h)$ a proč jí tam vyjde zrovna $6{,}1$.
+
+Ty tři směrnice $7 \to 6{,}5 \to 6$ jsou **celá limita na jednom řádku**: jak $h$ klesá, druhý bod se přisouvá k prvnímu, sečna se sklápí a v limitě z ní je tečna. Sečny navíc parabolu **protínají ve dvou bodech**, tečna se jí dotýká v jediném.
+
+Pro vykreslení tedy stačí parabola $y = x^2$ a ty tři přímky z tabulky — víc na jeden obrázek nedávej, slije se to.
 
 ##### Krok 2c: jak z rovnice poznám, že funkce v bodě roste
 
