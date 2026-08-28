@@ -576,22 +576,99 @@ Hodnoty: lokální minimum $f(1) = -2$, lokální maximum $f(-1) = 2$.
 $$\int_1^2 \frac{\mathrm{d}x}{x} = \big[\ln x\big]_1^2 = \ln 2 - \ln 1 = \ln 2 \doteq 0{,}693147$$
 
 > **Proč zrovna tenhle integrál:** přesnou hodnotu znám, takže **můžu spočítat chyby** — a přitom to není polynom, takže žádné pravidlo nevyjde „náhodou" přesně. Navíc je $\frac{1}{x}$ konvexní, což je vidět na tom, jak se která metoda plete.
+>
+> **A pozor na kalkulačku:** $\ln$ je logaritmus **přirozený**, o základu $e$, ne o základu 2. Tlačítko `log2` dá $1$ a `log` (základ 10) dá $0{,}301$ — správně je $\ln 2 \doteq 0{,}693$. Jiný logaritmus tam vyjít nemůže, protože primitivní funkce k $\frac{1}{x}$ je právě $\ln x$.
 
-##### Potřebuju jen tři funkční hodnoty
+##### Krok 1: rozdělení intervalu
 
-$$f(1) = 1, \qquad f(1{,}5) = \frac{2}{3} \doteq 0{,}666667, \qquad f(2) = 0{,}5$$
+Všechna tři pravidla vycházejí ze stejného rámce — interval rozdělím na $n$ stejných dílků o šířce
 
-##### Všechna tři pravidla z týchž tří čísel
+$$h = \frac{b-a}{n}, \qquad x_i = a + i\,h$$
 
-| Pravidlo | Vzorec | Výpočet | Výsledek | Chyba |
-|---|---|---|---|---|
-| **obdélníkové** (se středem) | $(b-a)\,f\!\left(\frac{a+b}{2}\right)$ | $1 \cdot 0{,}666667$ | $0{,}666667$ | $-0{,}0265$ |
-| **lichoběžníkové** | $\frac{b-a}{2}\big[f(a) + f(b)\big]$ | $0{,}5 \cdot 1{,}5$ | $0{,}75$ | $+0{,}0569$ |
-| **Simpsonovo** | $\frac{b-a}{6}\big[f(a) + 4f(s) + f(b)\big]$ | $\frac{1}{6}(1 + 2{,}666667 + 0{,}5)$ | $\mathbf{0{,}694444}$ | $\mathbf{+0{,}0013}$ |
+$n$ si **volím sám** a platí, že **čím větší, tím přesnější** (a tím víc počítání). Uzly pro $n = 2$ na intervalu $[1,2]$ tedy jsou
+
+$$h = \frac{2-1}{2} = 0{,}5, \qquad x_0 = 1, \quad x_1 = 1{,}5, \quad x_2 = 2$$
+
+a funkční hodnoty v nich:
+
+$$f(1) = \frac{1}{1} = 1, \qquad f(1{,}5) = \frac{1}{1{,}5} \doteq 0{,}666667, \qquad f(2) = \frac{1}{2} = 0{,}5$$
+
+> **Past, kvůli které to nemusí sedět:** v následující tabulce **nemá každé pravidlo dva dílky**. Aby šla ta tři pravidla poctivě porovnat, dostane každé **tytéž tři funkční hodnoty** — a každé si z nich vezme, co potřebuje: obdélník **jeden dílek** a jen střed, lichoběžník **jeden dílek** a jen kraje, Simpson **dvojici dílků** a všechny tři body. Kdyby měl obdélník dílky dva, spotřeboval by víc informací než ostatní a srovnání by kulhalo. Až v [Kroku 5](#krok-5-a-teď-n-jako-skutečné-dělení-na-víc-dílků) to rozdělím doopravdy.
+
+##### Krok 2: čím která metoda nahradí ten kousek
+
+Tohle je celý rozdíl mezi pravidly — nad dílek se položí **něco jiného**:
+
+**Obdélníkové se středem** — vodorovná čára ve výšce prostředního bodu:
+
+```
+   1 ┤●
+     │ ╲___                       funkce 1/x
+0,67 ┤▓▓▓▓|▓▓▓╲___
+     │▓▓▓▓|▓▓▓▓▓▓▓●              obdélník výšky f(1,5)
+     │▓▓▓▓|▓▓▓▓▓▓▓▓
+   ──┼────┼───────┼──
+     1   1,5      2
+
+   vlevo PODstřelí, vpravo PŘEstřelí -> chyby se z velké části vyruší
+```
+
+**Lichoběžníkové** — úsečka mezi krajními body:
+
+```
+   1 ┤●
+     │▓╲___                       úsečka leží CELÁ NAD funkcí,
+     │▓▓▓▓▓▓▓╲___                 protože 1/x je prohnutá dolů
+ 0,5 ┤▓▓▓▓▓▓▓▓▓▓▓●
+     │▓▓▓▓▓▓▓▓▓▓▓▓
+   ──┼───────────┼──
+     1           2                -> PŘEstřelí
+```
+
+**Simpsonovo** — parabola všemi třemi body:
+
+```
+   1 ┤●
+     │▓╲__                        parabola se přes prostřední bod
+0,67 ┤▓▓▓▓●___                    PROHNE stejně jako funkce
+     │▓▓▓▓▓▓▓▓▓╲__
+     │▓▓▓▓▓▓▓▓▓▓▓▓●
+   ──┼────┼───────┼──
+     1   1,5      2                -> sedne mnohem líp
+```
+
+| Pravidlo | Co položí nad dílek | Co z funkce zachytí |
+|---|---|---|
+| obdélníkové | **vodorovnou čáru** | jen výšku, sklon ignoruje |
+| lichoběžníkové | **šikmou úsečku** | výšku **i sklon** |
+| Simpsonovo | **parabolu** | výšku, sklon **i prohnutí** |
+
+**A to je celá otázka v jedné větě: čím víc z chování funkce ta náhrada zachytí, tím menší chyba.**
+
+##### Krok 3: všechna tři pravidla z týchž tří čísel
+
+**Obdélníkové se středem** — je to prostě *šířka krát výška*, kde výška je hodnota uprostřed:
+
+$$M = (b-a)\cdot f\!\left(\tfrac{a+b}{2}\right) = 1 \cdot 0{,}666667 = 0{,}666667$$
+
+**Lichoběžníkové** — vzoreček ze základky, *průměr obou stran krát šířka*:
+
+$$T = \frac{f(a) + f(b)}{2}\cdot(b-a) = \frac{1 + 0{,}5}{2}\cdot 1 = 0{,}75$$
+
+**Simpsonovo** — prostřední hodnota se čtyřnásobnou vahou:
+
+$$S = \frac{b-a}{6}\Big[f(a) + 4f(s) + f(b)\Big] = \frac{1}{6}\big[1 + 4\cdot 0{,}666667 + 0{,}5\big] = \frac{4{,}166667}{6} = 0{,}694444$$
+
+| Pravidlo | Použije body | Výsledek | Chyba |
+|---|---|---|---|
+| **obdélníkové** (se středem) | jen $1{,}5$ | $0{,}666667$ | $-0{,}0265$ (**pod**) |
+| **lichoběžníkové** | jen $1$ a $2$ | $0{,}75$ | $+0{,}0569$ (**nad**) |
+| **Simpsonovo** | **všechny tři** | $\mathbf{0{,}694444}$ | $\mathbf{+0{,}0013}$ |
+| přesně, $\ln 2$ | — | $0{,}693147$ | — |
 
 Simpson je tady **zhruba čtyřicetkrát přesnější** než lichoběžníkové pravidlo — a použil **úplně stejné tři hodnoty funkce**. To je pointa, kterou vyslov: lepší pravidlo nestojí víc výpočtů, jen chytřejší váhy.
 
-##### A teď odkud se ty váhy berou
+##### Krok 4: a teď odkud se ty váhy berou
 
 Podívej se na znaménka chyb: obdélníkové pravidlo je **pod** správnou hodnotou, lichoběžníkové **nad** ní, a lichoběžník se plete **zhruba dvakrát víc** ($0{,}0569 \approx 2 \cdot 0{,}0265$). Nabízí se je tedy zprůměrovat v poměru $2 : 1$:
 
@@ -602,6 +679,29 @@ $$\frac{2M + T}{3} = \frac{2 \cdot 0{,}666667 + 0{,}75}{3} = \frac{2{,}083333}{3
 $$\frac{2M + T}{3} = \frac{1}{3}\left[2(b-a)f(s) + \frac{b-a}{2}\big(f(a)+f(b)\big)\right] = \frac{b-a}{6}\Big[f(a) + 4f(s) + f(b)\Big]$$
 
 **Váhy $1 : 4 : 1$ tedy nejsou vzorec k memorování, ale výsledek toho, že se dvě chyby s opačným znaménkem vyruší.** Když tohle u zkoušky ukážeš, máš odpověď na „proč zrovna čtyřka" i na „proč je Simpson tak přesný" naráz.
+
+> **Nepleť si tuhle čtyřku s dvojkou u lichoběžníkového pravidla** — vznikají úplně jinak:
+>
+> | Koeficient | Odkud se bere |
+> |---|---|
+> | **dvojka** u vnitřních uzlů lichoběžníku | vnitřní uzel je **sdílený dvěma sousedními lichoběžníky** — jednou jako pravý okraj, jednou jako levý |
+> | **čtyřka** u Simpsona | **dvojnásobná váha obdélníku** ve váženém průměru $\frac{2M+T}{3}$ |
+>
+> Ve složeném Simpsonově pravidle se pak objeví **obojí naráz**: liché uzly jsou vždy středem dvojice, a mají tedy váhu $4$; sudé uzly jsou sdílené mezi dvěma dvojicemi, a mají váhu $2$.
+
+##### Krok 5: a teď $n$ jako skutečné dělení na víc dílků
+
+Až doteď byl obdélník i lichoběžník jeden jediný, přes celý interval. Teď to udělám doopravdy — **dva lichoběžníky** o šířce $h = 0{,}5$:
+
+$$\underbrace{\frac{f(1) + f(1{,}5)}{2}\cdot 0{,}5}_{[1;\ 1{,}5]} + \underbrace{\frac{f(1{,}5) + f(2)}{2}\cdot 0{,}5}_{[1{,}5;\ 2]} = 0{,}416667 + 0{,}291667 = 0{,}708333$$
+
+Chyba klesla z $0{,}0569$ na $0{,}0152$, tedy zhruba **čtyřikrát** — přesně jak slibuje řád $O(h^2)$: zdvojnásobím $n$, chyba klesne na čtvrtinu.
+
+**A všimni si, že $f(1{,}5)$ se ve výpočtu objevilo dvakrát** — jednou jako pravá strana prvního lichoběžníku, jednou jako levá strana druhého. Přesně to je ta dvojka ze složeného vzorce, jen zapsaná úsporněji:
+
+$$\frac{h}{2}\Big[f(x_0) + 2f(x_1) + f(x_2)\Big] = \frac{0{,}5}{2}\big[1 + 1{,}333333 + 0{,}5\big] = 0{,}708333$$
+
+Obě čísla jsou stejná, protože je to **týž výpočet** — jednou rozepsaný po lichoběžnících, jednou vytknutý.
 
 ##### Kontrola na polynomu
 
