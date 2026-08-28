@@ -152,6 +152,8 @@ $$P(X = x_i) = p_i, \qquad \sum_i p_i = 1$$
 - **výška sloupce přímo je pravděpodobnost** té hodnoty
 - proto musí platit $0 \le p_i \le 1$
 
+**Na kostce:** $X$ = počet ok, $P(X = k) = \frac{1}{6}$ pro každé $k$ od $1$ do $6$. Kontrola normalizace: $6 \cdot \frac{1}{6} = 1$ ✔. A $P(X \le 3) = \frac{1}{6}+\frac{1}{6}+\frac{1}{6} = 0{,}5$ — prostě sečtu tři sloupce.
+
 ```
  P
 0,3┤              ▌
@@ -170,6 +172,8 @@ $$P(a \le X \le b) = \int_a^b f(x)\,\mathrm{d}x, \qquad \int_{-\infty}^{\infty} 
 - graf je **spojitá křivka**
 - **pravděpodobnost je plocha pod křivkou** na daném intervalu, ne výška v bodě
 - platí jen $f(x) \ge 0$ a celková plocha $1$
+
+**Na výšce dospělých mužů:** $X$ = výška v centimetrech, zvon s vrcholem kolem $180$ cm. Otázka *„jaká je pravděpodobnost, že měří přesně $180$ cm?"* nedává smysl — odpověď je $0$. Ptát se jde jen na interval: *„kolik jich měří mezi $175$ a $185$ cm?"*, a to je plocha pod křivkou mezi těmi mezemi.
 
 ```
  f
@@ -204,6 +208,12 @@ $$F(x) = P(X \le x)$$
 3. **spojitá zprava**
 4. $P(a < X \le b) = F(b) - F(a)$
 
+**Na kostce:** $F(3) = P(X \le 3) = 0{,}5$ a $F(5) = \frac{5}{6} \doteq 0{,}833$. Pravděpodobnost, že padne čtyřka nebo pětka, tedy spočítám odečtením:
+
+$$P(3 < X \le 5) = F(5) - F(3) = 0{,}833 - 0{,}5 = 0{,}333 = \tfrac{2}{6} \ ✔$$
+
+To je ta vlastnost 4 v akci — **rozdíl dvou hodnot $F$ dá pravděpodobnost intervalu**, a proto je distribuční funkce tak užitečná.
+
 ```
   DISKRÉTNÍ: schody              SPOJITÁ: hladká sigmoida
  F                              F
@@ -235,9 +245,23 @@ $$E(X) = \sum_i x_i\,p_i \qquad \qquad E(X) = \int_{-\infty}^{\infty} x\,f(x)\,\
 
 - je to **vážený průměr** možných hodnot, kde vahami jsou pravděpodobnosti
 - fyzikálně **těžiště** rozdělení — kdybys graf vyřízl z papíru, vyvážil by se přesně tam
-- **nemusí být mezi možnými hodnotami**: střední počet ok na kostce je $3{,}5$, což na kostce nepadne nikdy
+- **nemusí být mezi možnými hodnotami**
+
+**Na kostce:**
+
+$$E(X) = 1\cdot\tfrac{1}{6} + 2\cdot\tfrac{1}{6} + \dots + 6\cdot\tfrac{1}{6} = \frac{1+2+3+4+5+6}{6} = \frac{21}{6} = 3{,}5$$
+
+**Trojka a půl na kostce nepadne nikdy** — a přesto je to správná střední hodnota. Znamená „při mnoha hodech vyjde průměr $3{,}5$", ne „tohle číslo padne".
+
+**Na hazardu — ukázka, proč se to počítá:** ruleta má 37 čísel. Vsadím $100$ Kč na jedno číslo; při výhře dostanu $3600$ Kč, jinak nic. Náhodná veličina $X$ = můj zisk:
+
+$$E(X) = \underbrace{3500 \cdot \tfrac{1}{37}}_{\text{výhra}} + \underbrace{(-100) \cdot \tfrac{36}{37}}_{\text{prohra}} = \frac{3500 - 3600}{37} = -\frac{100}{37} \doteq -2{,}70 \text{ Kč}$$
+
+Na každé stovce prodělám v průměru $2{,}70$ Kč. **Tohle je typická úloha, kde střední hodnota rozhoduje** — a odpověď zní „nehrát".
 
 Vlastnosti: $E(aX + b) = a\,E(X) + b$ a $E(X+Y) = E(X) + E(Y)$ (to platí **vždy**, i pro závislé veličiny).
+
+**Dosazení:** dostanu-li za každé oko $10$ Kč plus $5$ Kč za účast, je můj průměrný výdělek $E(10X + 5) = 10 \cdot 3{,}5 + 5 = 40$ Kč. A součet ok na **dvou** kostkách má střední hodnotu $3{,}5 + 3{,}5 = 7$ — proto je sedmička na dvou kostkách ta nejčastější.
 
 #### Rozptyl a směrodatná odchylka
 
@@ -248,6 +272,17 @@ $$\sigma = \sqrt{D(X)}$$
 - měří, **jak jsou hodnoty rozptýlené** kolem střední hodnoty
 - umocnění na druhou je tam proto, aby se **kladné a záporné odchylky nevyrušily** (a aby se velké odchylky trestaly víc)
 - $D(aX+b) = a^2 D(X)$ — **posun rozptyl nemění**, roztažení ho mění kvadraticky
+
+**Proč se odchylky umocňují — ukázka na dvou třídách.** Obě mají průměr $50$ bodů:
+
+| | známky | průměr | průměrná odchylka | rozptyl |
+|---|---|---|---|---|
+| třída A | $49, 50, 51$ | $50$ | $(-1 + 0 + 1)/3 = 0$ | $\frac{1+0+1}{3} = 0{,}67$ |
+| třída B | $0, 50, 100$ | $50$ | $(-50 + 0 + 50)/3 = 0$ | $\frac{2500+0+2500}{3} = 1667$ |
+
+**Obyčejný průměr odchylek vyjde v obou případech nula** — plusy a minusy se vyruší, takže nerozliší třídu, kde jsou všichni stejní, od třídy, kde je půlka propadlíků a půlka jedničkářů. Po umocnění je rozdíl obrovský: $0{,}67$ proti $1667$.
+
+**Dosazení do vlastností:** přidám-li všem $10$ bodů zdarma, průměr stoupne na $60$, ale **rozptyl se nezmění** — všichni se posunuli stejně, vzájemné rozdíly zůstaly. Když ale body zdvojnásobím, rozptyl vzroste $2^2 = 4$krát.
 
 > **Proč se kromě rozptylu zavádí ještě směrodatná odchylka:** rozptyl je ve **druhých mocninách jednotky**. Měříš-li výšku v centimetrech, vyjde rozptyl v $\text{cm}^2$, což nedává smysl interpretovat. Odmocněním se vrátíš k centimetrům, a proto se v praxi mluví o $\sigma$. **Tohle je oblíbená doptávka.**
 
@@ -267,7 +302,23 @@ tedy „pod $x_p$ padne $100p$ procent hodnot". Speciální případy:
 
 > **Kvantil je inverzní funkce k distribuční funkci.** $F$ jde z hodnoty na pravděpodobnost, kvantil z pravděpodobnosti zpátky na hodnotu. Odtud se to napojuje na [okruh 9](../09-intervaly-spolehlivosti/), kde se kvantily hledají v tabulkách.
 
-**Medián vs. střední hodnota:** u symetrického rozdělení splývají. U zešikmeného ne — a **medián je odolnější vůči odlehlým hodnotám**. Proto se u platů uvádí medián: pár miliardářů zvedne průměr, ale mediánem nehnou.
+**Medián vs. střední hodnota:** u symetrického rozdělení splývají. U zešikmeného ne — a **medián je odolnější vůči odlehlým hodnotám**.
+
+**Ukázka na platech**, protože právě tohle je důvod, proč se u nich uvádí medián. Devět lidí ve firmě bere (v tisících):
+
+$$20,\ 22,\ 25,\ 25,\ \mathbf{28},\ 30,\ 32,\ 35,\ 40$$
+
+- **medián** je prostřední hodnota, tedy $28$
+- **průměr** je $\frac{257}{9} \doteq 28{,}6$ — skoro totéž
+
+Teď přijde majitel s platem $1\,000$:
+
+$$20,\ 22,\ 25,\ 25,\ \mathbf{28},\ 30,\ 32,\ 35,\ 40,\ 1000$$
+
+- **medián** vyskočí jen na $29$ (průměr dvou prostředních, $28$ a $30$)
+- **průměr** vyletí na $\frac{1257}{10} \doteq 125{,}7$
+
+**Průměrný plat je najednou vyšší než plat devíti lidí z deseti.** Jedna odlehlá hodnota průměr rozhodila, mediánem sotva pohnula — a proto statistiky platů uvádějí medián.
 
 ---
 
@@ -285,6 +336,18 @@ tedy „pod $x_p$ padne $100p$ procent hodnot". Speciální případy:
 $$P(X = k) = \binom{n}{k} p^k (1-p)^{n-k} \qquad \text{(binomické)}$$
 
 Vzorec si přečti zleva doprava: $p^k$ je pravděpodobnost $k$ úspěchů, $(1-p)^{n-k}$ pravděpodobnost zbylých neúspěchů, a $\binom{n}{k}$ říká, **kolika způsoby můžou být ty úspěchy rozmístěné**.
+
+**Dosazení — pětkrát hodím kostkou, jaká je šance na právě dvě šestky?** Úspěch je „padla šestka", tedy $p = \frac{1}{6}$, $n = 5$, $k = 2$:
+
+$$P(X = 2) = \binom{5}{2}\left(\tfrac{1}{6}\right)^2\left(\tfrac{5}{6}\right)^3 = 10 \cdot \frac{1}{36} \cdot \frac{125}{216} \doteq 0{,}161$$
+
+Tedy asi $16\ \%$. Ta desítka je $\binom{5}{2}$ — počet způsobů, jak vybrat, **které dva** z pěti hodů byly šestky. A střední počet šestek je $E(X) = np = 5 \cdot \frac{1}{6} \doteq 0{,}83$.
+
+**A Poissonovo na tomtéž principu:** na centrálu přijde průměrně $\lambda = 5$ hovorů za hodinu; jaká je šance, že příští hodinu nepřijde ani jeden?
+
+$$P(X = 0) = \frac{\lambda^k e^{-\lambda}}{k!} = \frac{5^0 e^{-5}}{0!} = e^{-5} \doteq 0{,}0067$$
+
+Necelé $0{,}7\ \%$. **Všimni si, že nikde nevystupuje počet pokusů** — nevím, kolik lidí mohlo teoreticky zavolat, jen kolik jich průměrně volá. Přesně podle toho Poissonovo rozdělení poznáš.
 
 > **Rozdíl, na který se ptají:** binomické je výběr **s vracením** (pravděpodobnost se mezi pokusy nemění), hypergeometrické **bez vracení**. Poissonovo je limitou binomického pro velké $n$ a malé $p$ — a poznáš ho podle toho, že **není dané, kolik bylo pokusů**, jen kolik událostí průměrně nastane („do centrály přijde průměrně 5 hovorů za hodinu").
 >
@@ -321,6 +384,18 @@ Vzorec si přečti zleva doprava: $p^k$ je pravděpodobnost $k$ úspěchů, $(1-
 $$U = \frac{X - \mu}{\sigma}$$
 
 Odečtu střed a vydělím šířkou — tím se zvon posune do nuly a roztáhne na jednotkovou šířku. **Proto stačí jediná tabulka** pro všechna normální rozdělení.
+
+**Dosazení — výška mužů má $\mu = 180$ cm a $\sigma = 7$ cm. Kolik jich měří přes $194$ cm?**
+
+$$U = \frac{194 - 180}{7} = \frac{14}{7} = 2$$
+
+Sto devadesát čtyři centimetrů jsou tedy **dvě sigma nad průměrem**. Z pravidla $68$–$95$–$99{,}7$ víš, že v pásu $\mu \pm 2\sigma$ leží $95\ \%$ hodnot, takže mimo něj zbývá $5\ \%$ — a to je symetricky rozděleno na obě strany:
+
+$$P(X > 194) \doteq \frac{5\ \%}{2} = 2{,}5\ \%$$
+
+**Celý výpočet bez tabulek, jen z pravidla tří sigma.** Standardizace je to, co ho umožnila: převedla konkrétní centimetry na „kolik sigma od průměru", a v té řeči už odpověď znáš zpaměti.
+
+Kontrolní intuice: $\mu \pm \sigma$ je $173$ až $187$ cm, kam spadnou zhruba dvě třetiny mužů. To sedí s realitou, takže jsi nepočítal nesmysl.
 
 > **A tady se hezky vrací [okruh 5](../05-derivace-integraly-numerika/):** hustota normálního rozdělení obsahuje $e^{-x^2}$, jejíž **primitivní funkce v elementárním tvaru neexistuje**. Distribuční funkce se tedy nedá vyjádřit vzorcem a **musí se počítat numericky** — právě proto existují statistické tabulky. Když tohle řekneš, propojíš dva okruhy jednou větou.
 

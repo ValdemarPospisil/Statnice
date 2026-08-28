@@ -40,6 +40,10 @@ Nadpisy v `README.md` otázky drž tak, jak jsou. Struktura se liší podle zkou
 - Kód v ohraničených blocích s uvedeným jazykem. Python u okruhů APR, BASH u OPS, SQL u databází, R u ZZD, C# u SZZVP-SW.
 - **Zvýrazňuj pasti a časté chyby** — u ústní zkoušky rozhodují právě ty (např. správná interpretace intervalu spolehlivosti, `O` vs. `Ω`).
 - Kde se okruhy překrývají, propoj je odkazem na složku druhého okruhu. Překryvy jsou vypsané v [PLAN.md](./PLAN.md).
+- **Nikdy nenech vzorec stát samotný.** Valdemar látku chápe z příkladů, ne z definic — takže za každý vzorec, pojem nebo pravidlo ve výkladu patří hned **konkrétní dosazení s čísly**, ne až v sekci `Příklad na papír`. Ta sekce zůstává na jeden velký příklad k předvedení u zkoušky; drobné ukázky patří přímo do výkladu, aby se při čtení nemusel nikam vracet.
+    - Dosazuj **malá čísla, která se dají ověřit v hlavě**, a výsledek vždy dopočítej až na číslo.
+    - Kde to jde, volej **příklady z reálného světa** (autobus, mince, výška lidí, spotřeba, hovory na centrále) — abstraktní $X$ a $Y$ jen tam, kde nic konkrétního nedává smysl.
+    - Kde má tvrzení protipříklad, ukaž **oba případy vedle sebe** — „takhle to platí, a takhle ne".
 
 ## Web s vykreslenou matematikou
 
