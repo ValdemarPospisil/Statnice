@@ -585,15 +585,38 @@ Všechna tři pravidla vycházejí ze stejného rámce — interval rozdělím n
 
 $$h = \frac{b-a}{n}, \qquad x_i = a + i\,h$$
 
-$n$ si **volím sám** a platí, že **čím větší, tím přesnější** (a tím víc počítání). Uzly pro $n = 2$ na intervalu $[1,2]$ tedy jsou
+$n$ si **volím sám** a platí, že **čím větší, tím přesnější** (a tím víc počítání). Pravidlo je bez výjimek:
 
-$$h = \frac{2-1}{2} = 0{,}5, \qquad x_0 = 1, \quad x_1 = 1{,}5, \quad x_2 = 2$$
+$$\textbf{kolik dílků } n \textbf{, tolik obdélníků (resp. lichoběžníků).}$$
 
-a funkční hodnoty v nich:
+Na intervalu $[1,2]$ o délce $1$ to vypadá takhle:
+
+| $n$ | $h$ | dílky |
+|---|---|---|
+| $1$ | $1$ | $[1;\ 2]$ |
+| $2$ | $0{,}5$ | $[1;\ 1{,}5]$, $[1{,}5;\ 2]$ |
+| $3$ | $0{,}333$ | $[1;\ 1{,}33]$, $[1{,}33;\ 1{,}67]$, $[1{,}67;\ 2]$ |
+| $4$ | $0{,}25$ | $[1;\ 1{,}25]$, $[1{,}25;\ 1{,}5]$, $[1{,}5;\ 1{,}75]$, $[1{,}75;\ 2]$ |
+
+Pro dělení na dva dílky, tedy $h = \frac{2-1}{2} = 0{,}5$, dostanu tři uzly a v nich tři funkční hodnoty:
+
+$$x_0 = 1, \quad x_1 = 1{,}5, \quad x_2 = 2$$
 
 $$f(1) = \frac{1}{1} = 1, \qquad f(1{,}5) = \frac{1}{1{,}5} \doteq 0{,}666667, \qquad f(2) = \frac{1}{2} = 0{,}5$$
 
-> **Past, kvůli které to nemusí sedět:** v následující tabulce **nemá každé pravidlo dva dílky**. Aby šla ta tři pravidla poctivě porovnat, dostane každé **tytéž tři funkční hodnoty** — a každé si z nich vezme, co potřebuje: obdélník **jeden dílek** a jen střed, lichoběžník **jeden dílek** a jen kraje, Simpson **dvojici dílků** a všechny tři body. Kdyby měl obdélník dílky dva, spotřeboval by víc informací než ostatní a srovnání by kulhalo. Až v [Kroku 5](#krok-5-a-teď-n-jako-skutečné-dělení-na-víc-dílků) to rozdělím doopravdy.
+> **Přečti si tohle, než budeš číst dál, jinak ti čísla nebudou sedět.** Tyhle tři hodnoty jsou **společná zásoba**, ze které si v následujícím srovnání každé pravidlo vezme, co potřebuje — a **každé proto pracuje s jiným $n$**:
+>
+> | Pravidlo | $n$ | Co použije |
+> |---|---|---|
+> | obdélníkové | $\mathbf{1}$ | jeden dílek $[1;2]$, výška ve středu $1{,}5$ |
+> | lichoběžníkové | $\mathbf{1}$ | jeden dílek $[1;2]$, kraje $1$ a $2$ |
+> | Simpsonovo | $\mathbf{2}$ | dva dílky, parabola přes všechny tři body |
+>
+> **Proč to tak dělám:** aby všechna tři pravidla dostala **stejná tři čísla** a šla poctivě porovnat. Kdyby měl obdélník $n = 2$, potřeboval by středy $1{,}25$ a $1{,}75$, tedy dvě úplně nová vyhodnocení funkce — a tabulka by pak neporovnávala pravidla, ale to, kolikrát které funkci vyhodnotilo.
+>
+> **Pravidlo „$n$ dílků = $n$ obdélníků" se tím nijak neporušuje** — obdélník tu má prostě $n = 1$. V [Kroku 5](#krok-5-a-teď-n-jako-skutečné-dělení-na-víc-dílků) rozdělím interval doopravdy a uvidíš oba lichoběžníky zvlášť.
+>
+> A ještě jedna věc k Simpsonovi: u něj $n$ pořád znamená počet dílků, ale bere je **po dvojicích** — na každou dvojici položí jednu parabolu. Proto $n = 2$ dá jednu parabolu, $n = 4$ dvě, $n = 6$ tři… a proto **musí být $n$ sudé**: $n = 3$ by nechalo jeden dílek bez páru.
 
 ##### Krok 2: čím která metoda nahradí ten kousek
 
@@ -702,6 +725,24 @@ Chyba klesla z $0{,}0569$ na $0{,}0152$, tedy zhruba **čtyřikrát** — přesn
 $$\frac{h}{2}\Big[f(x_0) + 2f(x_1) + f(x_2)\Big] = \frac{0{,}5}{2}\big[1 + 1{,}333333 + 0{,}5\big] = 0{,}708333$$
 
 Obě čísla jsou stejná, protože je to **týž výpočet** — jednou rozepsaný po lichoběžnících, jednou vytknutý.
+
+**A totéž s obdélníky.** Dva obdélníky šířky $0{,}5$, výška ve **středu každého z nich** — což jsou body $1{,}25$ a $1{,}75$, tedy dvě zcela nové funkční hodnoty:
+
+$$f(1{,}25) = 0{,}8, \qquad f(1{,}75) \doteq 0{,}571429$$
+
+$$0{,}5 \cdot 0{,}8 \ + \ 0{,}5 \cdot 0{,}571429 \ = \ 0{,}4 + 0{,}285714 \ = \ 0{,}685714$$
+
+Chyba klesla z $-0{,}0265$ na $-0{,}0074$, tedy zhruba **čtyřikrát** — obdélník se středem má také řád $O(h^2)$.
+
+Tady je rovnou vidět i to, proč měl obdélník v srovnávací tabulce $n = 1$: **s $n = 2$ potřebuje body, které ostatní pravidla vůbec nepoužívají.**
+
+| $n$ | obdélník (střed) | lichoběžník | Simpson |
+|---|---|---|---|
+| $1$ | $0{,}666667$ | $0{,}75$ | — (potřebuje sudé $n$) |
+| $2$ | $0{,}685714$ | $0{,}708333$ | $0{,}694444$ |
+| přesně | $0{,}693147$ | $0{,}693147$ | $0{,}693147$ |
+
+Ve druhém řádku už mají všechna tři pravidla **stejné $n$** — a pořadí přesnosti je přesně takové, jaké má být.
 
 ##### Kontrola na polynomu
 
