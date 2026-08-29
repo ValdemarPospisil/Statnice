@@ -538,6 +538,77 @@ Kontrolní intuice: $\mu \pm \sigma$ je $173$ až $187$ cm, kam spadnou zhruba d
 
 ---
 
+#### Souhrnná tabulka — jak poznám, které rozdělení použít
+
+Klíč k rozlišení není v tom, na co se ptáš, ale v tom, **co o situaci víš**:
+
+| Rozdělení | **Co znám** | Na co se ptám | Příklad z praxe |
+|---|---|---|---|
+| **alternativní** $A(p)$ | pravděpodobnost $p$, **jeden** pokus | povede se, nebo ne? | jeden výrobek — je vadný? |
+| **binomické** $Bi(n,p)$ | **$n$ pokusů i pravděpodobnost $p$** | kolik z nich se povede? | ze 100 výrobků kolik bude vadných? |
+| **hypergeometrické** | velikost celku, kolik je v něm vadných, kolik táhnu | kolik vadných vytáhnu | kontrolor vytáhne 5 kusů z bedny 50 — **bez vracení** |
+| **Poissonovo** $Po(\lambda)$ | **jen průměrný počet $\lambda$** za čas či plochu | kolik jich nastane? | kolik hovorů přijde na centrálu za hodinu |
+| **rovnoměrné** $R(a,b)$ | interval $[a,b]$, nic není zvýhodněné | jaká hodnota padne | doba čekání na autobus jezdící po 10 min |
+| **normální** $N(\mu,\sigma^2)$ | střed $\mu$ a rozptýlení $\sigma$ | jak daleko od středu | výška lidí, chyba měření, IQ |
+| **exponenciální** $E(\lambda)$ | intenzita $\lambda$ (událostí za čas) | **jak dlouho počkám** | životnost žárovky, čas do další poruchy |
+
+**Rozhodovací postup**, když nevíš, co sáhnout:
+
+```
+1. Počítám něco, nebo měřím?
+      počítám (0, 1, 2, ...) -> DISKRÉTNÍ
+      měřím (jakékoli číslo) -> SPOJITÉ
+
+2a. DISKRÉTNÍ - znám počet pokusů n?
+      ANO, znám n i p            -> BINOMICKÉ     (s vracením)
+      ANO, ale táhnu bez vracení -> HYPERGEOMETRICKÉ
+      NE, znám jen průměr za čas -> POISSONOVO
+
+2b. SPOJITÉ - jaký je tvar?
+      všude stejně pravděpodobné -> ROVNOMĚRNÉ
+      zvon kolem středu          -> NORMÁLNÍ
+      čekání na událost          -> EXPONENCIÁLNÍ
+```
+
+> **Nejdůležitější rozdíl, na který se ptají — binomické vs. Poissonovo:**
+>
+> | | Binomické | Poissonovo |
+> |---|---|---|
+> | znám počet pokusů $n$? | **ano** | **ne** |
+> | znám pravděpodobnost $p$? | **ano** | **ne** |
+> | co tedy znám? | $n$ **a** $p$ | jen $\lambda$ = průměrný počet |
+>
+> *„Hodím 5krát kostkou, kolik padne šestek?"* — vím, že hodů je $5$ a šance je $\frac{1}{6}$ → **binomické**.
+>
+> *„Kolik hovorů přijde za hodinu?"* — kolik lidí mohlo teoreticky zavolat? Tisíc? Milion? **Nevím.** A jaká je šance, že zrovna tenhle člověk zavolá? **Taky ne.** Vím jen, že jich průměrně přijde $5$ → **Poissonovo**.
+>
+> Poissonovo je totiž limitní případ binomického pro $n \to \infty$ a $p \to 0$ tak, aby součin $np = \lambda$ zůstal konečný. **Proto v jeho vzorci $n$ ani $p$ nevystupuje** — zůstal z nich jen ten součin.
+
+**Dvojice, které se pletou** — vždycky je to táž situace ze dvou stran:
+
+| | Poissonovo | Exponenciální |
+|---|---|---|
+| ptá se na | **kolik** událostí za daný čas | **jak dlouho** do další události |
+| druh | diskrétní (počítám) | spojité (měřím čas) |
+| příklad | *„za hodinu přijde 5 hovorů"* | *„na další hovor čekám v průměru 12 minut"* |
+
+Ta dvě čísla spolu souvisí: $\lambda = 5$ hovorů za hodinu znamená průměrné čekání $\frac{1}{\lambda} = \frac{1}{5}$ hodiny, tedy $12$ minut. **Jsou to dva pohledy na týž děj.**
+
+##### Kde to potkáš v IT
+
+Protože zadání chce „vybraná rozdělení", vyplatí se mít po ruce příklady z vlastního oboru:
+
+| Situace | Rozdělení |
+|---|---|
+| kolik z $1000$ požadavků skončí chybou (znám chybovost) | binomické |
+| kolik požadavků dorazí na server za sekundu | Poissonovo |
+| doba odpovědi serveru | přibližně normální, často zešikmená |
+| čas do příštího pádu služby | exponenciální |
+| náhodné číslo z generátoru | rovnoměrné |
+| součet mnoha nezávislých malých zpoždění | normální (centrální limitní věta) |
+
+---
+
 ### Klíčové definice
 
 <!-- Co musím říct doslova a přesně, ne vlastními slovy. -->
