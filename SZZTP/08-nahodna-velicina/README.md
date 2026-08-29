@@ -243,9 +243,75 @@ $$F(x) = \int_{-\infty}^{x} f(t)\,\mathrm{d}t \qquad \text{a zpět} \qquad f(x) 
 
 $$E(X) = \sum_i x_i\,p_i \qquad \qquad E(X) = \int_{-\infty}^{\infty} x\,f(x)\,\mathrm{d}x$$
 
+##### Co znamená $x_i$ a $p_i$
+
+Jsou to očíslované seznamy, kde $i$ je pořadové číslo možnosti:
+
+| $i$ | $1$ | $2$ | $3$ | $4$ | $5$ | $6$ |
+|---|---|---|---|---|---|---|
+| $x_i$ — **hodnota** | $1$ | $2$ | $3$ | $4$ | $5$ | $6$ |
+| $p_i$ — **její pravděpodobnost** | $\frac{1}{6}$ | $\frac{1}{6}$ | $\frac{1}{6}$ | $\frac{1}{6}$ | $\frac{1}{6}$ | $\frac{1}{6}$ |
+
+Suma $\sum_i x_i p_i$ tedy říká: **projdi všechny možnosti, každou hodnotu vynásob její pravděpodobností a sečti to.**
+
+> **Pozor, ta šestka je počet možností, ne počet hodů.** Kostkou házím **jednou** a ona má šest stěn, takže sčítám šest sčítanců. U mince by byly dva: $E(X) = 0 \cdot 0{,}5 + 1 \cdot 0{,}5 = 0{,}5$.
+
+**Proč se tomu říká *vážený* průměr** je vidět, teprve když nejsou pravděpodobnosti stejné. Loterie s hlavní výhrou:
+
+$$E(X) = \underbrace{1\,000\,000 \cdot 0{,}000001}_{\text{výhra}} + \underbrace{0 \cdot 0{,}999999}_{\text{prohra}} = 1 \text{ Kč}$$
+
+Obyčejný průměr těch dvou hodnot by byl $500\,000$ Kč, což je zjevný nesmysl. **Pravděpodobnost jako váha je to podstatné.**
+
+##### Co střední hodnota je a co není
+
 - je to **vážený průměr** možných hodnot, kde vahami jsou pravděpodobnosti
 - fyzikálně **těžiště** rozdělení — kdybys graf vyřízl z papíru, vyvážil by se přesně tam
 - **nemusí být mezi možnými hodnotami**
+
+> **Nejčastější nedorozumění:** střední hodnota **není nejčastější hodnota**. Kdyby ano, byl by to **modus**. U kostky padá každé číslo stejně často, takže žádná hodnota není častější — a přesto je $E(X) = 3{,}5$.
+>
+> Když hodíš kostkou $1200$krát, **graf četností bude plochý**, ne s kopcem u trojky a čtyřky:
+>
+> ```
+>  četnost po 1200 hodech
+>
+>  200┤ ▌   ▌   ▌   ▌   ▌   ▌     všech šest zhruba stejně vysoko
+>     │ ▌   ▌   ▌   ▌   ▌   ▌     (každé číslo asi 200x)
+>    0└─┴───┴───┴───┴───┴───┴──
+>      1   2   3   4   5   6
+> ```
+>
+> **A právě proto vyjde průměr 3,5:**
+>
+> $$\frac{200(1+2+3+4+5+6)}{1200} = \frac{4200}{1200} = 3{,}5$$
+>
+> Trojka a čtyřka v tom nemají zvláštní roli — hodnota $3{,}5$ vzniká tím, že se **jedničky vyváží se šestkami, dvojky s pětkami a trojky se čtyřkami**. Kostka nemá paměť, každý hod je pořád $\frac{1}{6}$ na každé číslo. K $3{,}5$ se blíží **průměr**, ne jednotlivé hody.
+
+##### Těžiště — obrázek, který to celé vysvětlí
+
+Rozděl si čísla $1$ až $6$ po tyči a na každé pověs stejné závaží. **Kde tyč podepřít, aby se nepřevážila?**
+
+```
+   ●     ●     ●     ●     ●     ●        stejná závaží = stejné pravděpodobnosti
+   1     2     3     4     5     6
+               ▲
+              3,5      <- podpěra tady, i když v tom místě NIC NELEŽÍ
+```
+
+Bod rovnováhy leží uprostřed mezi trojkou a čtyřkou — na místě, kde žádné závaží není. **To je přesně důvod, proč střední hodnota nemusí být mezi možnými hodnotami.**
+
+A když se váhy změní, těžiště se posune k těžší straně:
+
+```
+   ●     ●     ●     ●     ●    ●●●       šestka je 3x pravděpodobnější
+   1     2     3     4     5     6
+                       ▲
+                     4,12          <- těžiště se posunulo doprava
+```
+
+*(Spočítáno: $\frac{1+2+3+4+5+3\cdot 6}{8} = \frac{33}{8} = 4{,}125$ — váhy jsou $1,1,1,1,1,3$, dohromady $8$.)*
+
+**V reálu tuhle vlastnost vidíš pořád:** *„průměrná domácnost má 1,4 dítěte"* — žádná domácnost nemá 1,4 dítěte. *„Průměrně 4,7 nehody denně"* — nikdy jich není 4,7. A ruleta níže dá $E(X) = -2{,}70$ Kč, přestože v jediné hře buď prohraješ stovku, nebo vyhraješ $3500$.
 
 **Na kostce:**
 
@@ -272,6 +338,23 @@ $$\sigma = \sqrt{D(X)}$$
 - měří, **jak jsou hodnoty rozptýlené** kolem střední hodnoty
 - umocnění na druhou je tam proto, aby se **kladné a záporné odchylky nevyrušily** (a aby se velké odchylky trestaly víc)
 - $D(aX+b) = a^2 D(X)$ — **posun rozptyl nemění**, roztažení ho mění kvadraticky
+
+**Rozptyl je šířka, střední hodnota poloha.** Dvě rozdělení se stejným $E(X)$ můžou vypadat úplně jinak:
+
+```
+  MALÝ ROZPTYL                    VELKÝ ROZPTYL
+
+ P│        ▌                     P│  ▌              ▌
+  │        ▌                      │  ▌     ▌     ▌  ▌
+  │     ▌  ▌  ▌                   │  ▌  ▌  ▌  ▌  ▌  ▌
+  └──┴──┴──┴──┴──┴──▶             └──┴──┴──┴──┴──┴──▶
+           ▲                                ▲
+        E(X) = 50                       E(X) = 50
+
+  hodnoty se tlačí u středu       hodnoty jsou rozházené
+```
+
+Střední hodnota ti řekne **kam** ukázat, rozptyl **jak moc si tím být jistý**. Bez rozptylu je průměr sám o sobě málo — tohle je věta, kterou u zkoušky vyslov.
 
 **Proč se odchylky umocňují — ukázka na dvou třídách.** Obě mají průměr $50$ bodů:
 
@@ -301,6 +384,42 @@ tedy „pod $x_p$ padne $100p$ procent hodnot". Speciální případy:
 | $x_{0{,}1}, \dots, x_{0{,}9}$ | decily |
 
 > **Kvantil je inverzní funkce k distribuční funkci.** $F$ jde z hodnoty na pravděpodobnost, kvantil z pravděpodobnosti zpátky na hodnotu. Odtud se to napojuje na [okruh 9](../09-intervaly-spolehlivosti/), kde se kvantily hledají v tabulkách.
+
+**Na grafu** se kvantil čte takhle — jdi na svislé ose do výšky $p$, dojeď vodorovně ke křivce a spusť se dolů:
+
+```
+  F
+ 1,0┤                    ______
+    │                  ╱
+0,75┤- - - - - - - -╱ |          <- horní kvartil
+    │             ╱   |
+ 0,5┤- - - - -  ╱     |          <- MEDIÁN
+    │         ╱ |     |
+0,25┤- - -  ╱   |     |          <- dolní kvartil
+    │    ╱  |   |     |
+   0┤__╱    |   |     |
+    └───────┴───┴─────┴────────▶ x
+          x0,25 x0,5  x0,75
+
+  F:      z hodnoty  ->  pravděpodobnost   (doprava nahoru)
+  kvantil: z pravděpodobnosti -> hodnotu   (zleva doprava dolů)
+```
+
+A na hustotě je kvantil místo, které **odkrojí plochu $p$ zleva**:
+
+```
+  f
+   │      ___
+   │    ╱███|  ╲
+   │   ╱████|    ╲
+   │  ╱█████|      ╲___
+   └──┴─────┴───────────▶ x
+           x0,25
+
+   vyšrafovaná plocha = 0,25
+```
+
+**Ukázka z praxe, kde kvantil poráží průměr:** u serveru nikoho nezajímá průměrná doba odpovědi, ale $x_{0{,}99}$ — *„99 % požadavků se stihne do 200 ms"*. Průměr by mohl vypadat skvěle, i kdyby každý stý uživatel čekal deset vteřin. Tomuhle se v praxi říká **p99 latence**.
 
 **Medián vs. střední hodnota:** u symetrického rozdělení splývají. U zešikmeného ne — a **medián je odolnější vůči odlehlým hodnotám**.
 
