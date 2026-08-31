@@ -269,6 +269,21 @@ $$\bar{x} \pm t_{n-1}\left(1-\tfrac{\alpha}{2}\right) \cdot \frac{s}{\sqrt{n}}$$
 
 **Tohle je varianta, která se používá v praxi**, protože skutečnou $\sigma$ populace člověk skoro nikdy nezná. Nahradí ji výběrovou směrodatnou odchylkou $s$ — jenže **to je taky jen odhad**, a za tu nejistotu navíc se platí širším kvantilem.
 
+#### Není to vlastně jedno, když v obou případech potřebuji nějaké $\sigma$?
+
+Napadne to skoro každého a je to dobrá otázka. **Míru rozptýlení potřebuješ tak jako tak** — bez ní nevíš, jak přesný odhad je. Rozdíl **není v tom, že bys ji jednou měl a podruhé ne**, ale **odkud ji máš**:
+
+| | $\sigma$ (varianta 1) | $s$ (varianta 2) |
+|---|---|---|
+| **odkud** | zvenčí — norma, dlouhodobé měření, zadání | **spočítal jsem si ji z týchž dat** |
+| **jak přesná** | přesná, je to fakt o populaci | sama je **odhad**, taky se mýlí |
+| **při jiném výběru** | stejná | **jiná** |
+| **kvantil** | $u$ z $N(0,1)$ | širší $t_{n-1}$ |
+
+**Konkrétně:** kdybych svých $25$ odezev serveru změřil znovu, `σ = 10` by zůstalo `10` (je to vlastnost serveru), ale `s` by vyšlo třeba `9,4` nebo `11,2`. **Do vzorce tedy dosazuji číslo, které samo poskakuje** — a Studentovo $t$ tuhle nejistotu navíc započítá tím, že je širší.
+
+**Takže máš pravdu v tom, že prakticky je to skoro jedno** — a pro $n > 30$ dokonce doslova, protože $t$ a $u$ už jsou skoro totožné. **Rozdíl je citelný jen u malých výběrů**, kde je $s$ spočítané z pár hodnot opravdu nespolehlivé. Právě proto se u velkých vzorků běžně používá $u$ i tam, kde by formálně patřilo $t$.
+
 #### Výběrový rozptyl a proč $n-1$
 
 $$s^2 = \frac{1}{n-1}\sum_{i=1}^{n}(x_i - \bar{x})^2$$
@@ -509,43 +524,80 @@ Interval spolehlivosti a oboustranný test hypotézy jsou **dvě formulace tého
 
 ### Příklad na papír
 
-Jeden příklad, který **projde celou otázkou** — dvě varianty téže úlohy vedle sebe, aby byl vidět rozdíl mezi $u$ a $t$, a pak rozbor vlivu $n$.
+Dva příklady. **První je hlavní** — projde celou otázkou a ukáže rozdíl mezi $u$ a $t$. **Druhý** je na interpretaci: šest výběrů vedle sebe, aby bylo vidět, co ta spolehlivost vlastně znamená.
 
 ---
 
-#### Zadání
+#### Příklad 1 — doba odezvy serveru
+
+##### Zadání
 
 Měřím **dobu odezvy serveru** v milisekundách. Naměřil jsem $n = 25$ hodnot s průměrem $\bar{x} = 70$ ms.
 
-#### Krok 1: varianta A — $\sigma$ znám
+##### Krok 0: co je co a odkud to mám
 
-Z dlouhodobého provozu vím, že $\sigma = 10$ ms. Chci $95\ \%$ interval.
+Tohle si u zkoušky vypiš dřív, než začneš počítat — je z toho vidět, že rozumíš, co dosazuješ:
 
-**Střední chyba:**
+| Značka | Co to je | Hodnota | **Odkud ji mám** |
+|---|---|---|---|
+| $n$ | rozsah výběru, počet měření | $25$ | **ze zadání** — kolikrát jsem měřil |
+| $\bar{x}$ | výběrový průměr, bodový odhad $\mu$ | $70$ ms | **spočítal jsem ho z dat** (součet děleno $n$) |
+| $\sigma$ | směrodatná odchylka **populace** | $10$ ms | **ze zadání** — z dlouhodobého provozu |
+| $\alpha$ | hladina významnosti, riziko | $0{,}05$ | **volím si ji** podle požadované spolehlivosti |
+| $1-\alpha$ | spolehlivost | $0{,}95$ | to, co chci tvrdit — $95\ \%$ |
+| $u_{1-\alpha/2}$ | kvantil normovaného normálního rozdělení | $1{,}96$ | **z tabulek** (nebo zpaměti) |
+| $\mu$ | skutečná průměrná odezva | **neznámá** | to, co odhaduji — proto tu celou úlohu dělám |
 
-$$\text{SE} = \frac{\sigma}{\sqrt{n}} = \frac{10}{\sqrt{25}} = \frac{10}{5} = 2$$
+**Všimni si, odkud se ta čísla berou:** $n$ a $\bar{x}$ **z dat**, $\sigma$ **ze zadání**, $\alpha$ **si volím sám** a $u$ z něj **vyčtu v tabulce**. Nic z toho není počítání — samotný výpočet je až ten násobek níž.
 
-**Kvantil:** $\alpha = 0{,}05$, tedy $u_{0{,}975} = 1{,}96$.
+##### Krok 1: varianta A — $\sigma$ znám
 
-**Chyba odhadu:**
+$$\bar{x} \pm u_{1-\alpha/2} \cdot \frac{\sigma}{\sqrt{n}}$$
 
-$$1{,}96 \cdot 2 = 3{,}92$$
+**Nejdřív kvantil.** Riziko $\alpha = 0{,}05$ se rozdělí na dva konce po $\frac{\alpha}{2} = 0{,}025$, takže v tabulce hledám úroveň
 
-**Interval:**
+$$1 - \frac{\alpha}{2} = 1 - 0{,}025 = 0{,}975 \quad \Rightarrow \quad u_{0{,}975} = 1{,}96$$
+
+**Pak střední chyba** — o kolik se typicky liší výběrový průměr od skutečného:
+
+$$\text{SE} = \frac{\sigma}{\sqrt{n}} = \frac{10}{\sqrt{25}} = \frac{10}{5} = 2\ \text{ms}$$
+
+**Chyba odhadu** je součin obojího:
+
+$$u \cdot \text{SE} = 1{,}96 \cdot 2 = 3{,}92\ \text{ms}$$
+
+**A interval** je odhad plus minus ta chyba:
 
 $$\text{IS} = 70 \pm 3{,}92 = (66{,}08;\ 73{,}92)\ \text{ms}$$
 
 **Řekni k tomu:** „S $95\ \%$ spolehlivostí je průměrná doba odezvy mezi $66$ a $74$ milisekundami."
 
-#### Krok 2: varianta B — $\sigma$ neznám
+##### Krok 2: varianta B — $\sigma$ neznám
 
-Teď $\sigma$ nemám a z dat jsem spočítal $s = 10$ ms (stejné číslo, aby byl vidět **jen** vliv kvantilu).
+$$\bar{x} \pm t_{n-1}\left(1-\tfrac{\alpha}{2}\right) \cdot \frac{s}{\sqrt{n}}$$
 
-Střední chyba je táž, $\text{SE} = 2$. Změní se **kvantil** — beru $t$ s $\nu = 25 - 1 = 24$ stupni volnosti:
+Teď $\sigma$ populace **nemám**. Mám jen svých $25$ naměřených hodnot, takže si směrodatnou odchylku musím spočítat z nich:
+
+$$s = \sqrt{\frac{1}{n-1}\sum_{i=1}^{n}(x_i - \bar{x})^2} = 10\ \text{ms}$$
+
+**Schválně vyšlo stejné číslo jako $\sigma$ v Kroku 1** — aby bylo vidět, že jediné, co se mezi variantami mění, je **kvantil**.
+
+**Co je jinak proti Kroku 1:**
+
+| Značka | Varianta A | Varianta B | Rozdíl |
+|---|---|---|---|
+| míra rozptýlení | $\sigma = 10$ (**dána**) | $s = 10$ (**spočítána z dat**) | v B je to sám odhad |
+| rozdělení kvantilu | $N(0,1)$ | Studentovo $t_{24}$ | B má těžší chvosty |
+| kvantil | $1{,}96$ | $2{,}064$ | B je větší |
+| $\nu$ (stupně volnosti) | — | $n - 1 = 24$ | jen v B |
+
+**Kvantil** teď čtu z tabulky $t$-rozdělení, na řádku $\nu = n - 1 = 25 - 1 = 24$:
 
 $$t_{24}(0{,}975) = 2{,}064$$
 
 $$\text{IS} = 70 \pm 2{,}064 \cdot 2 = 70 \pm 4{,}13 = (65{,}87;\ 74{,}13)\ \text{ms}$$
+
+> **Proč se vůbec liší, když jsem dosadil totéž číslo $10$?** Protože **nevím, jak přesné to $10$ je**. V A jde o vlastnost populace, kterou znám jistě. V B je to odhad z pětadvaceti hodnot — kdybych měřil znovu, vyšlo by $9{,}4$ nebo $11{,}2$. Studentovo $t$ tuhle nejistotu navíc započítává tím, že je širší. **Proto se ten interval nafoukne, i když dosazuji stejné číslo.**
 
 **Porovnání vedle sebe:**
 
@@ -556,7 +608,7 @@ $$\text{IS} = 70 \pm 2{,}064 \cdot 2 = 70 \pm 4{,}13 = (65{,}87;\ 74{,}13)\ \tex
 
 **Interval B je širší o $5\ \%$** — a to je přesně cena za to, že jsem směrodatnou odchylku musel odhadnout z dat. Pro $n = 5$ by ten rozdíl byl $42\ \%$; pro $n = 100$ už jen $1\ \%$.
 
-#### Krok 3: vliv rozsahu výběru
+##### Krok 3: vliv rozsahu výběru
 
 Zůstanu u varianty A a měním jen $n$:
 
@@ -576,15 +628,123 @@ Zůstanu u varianty A a měním jen $n$:
                      70
 ```
 
-#### Krok 4: kolik měření potřebuji
+##### Krok 4: kolik měření potřebuji
 
 Chci chybu odhadu nejvýš $\pm 1$ ms:
 
 $$n \ge \left(\frac{1{,}96 \cdot 10}{1}\right)^2 = 19{,}6^2 = 384{,}16 \quad \Rightarrow \quad \mathbf{n = 385}$$
 
-#### Krok 5: co z toho plyne pro rozhodování
+##### Krok 5: co z toho plyne pro rozhodování
 
 Tvrdí-li dodavatel, že server odpovídá v průměru do $65$ ms, mé měření mu **odporuje** — $65$ leží pod dolní mezí $66{,}08$. Tvrdí-li $68$ ms, data mu neodporují.
+
+---
+
+#### Příklad 2 — výška mužů a šest výběrů vedle sebe
+
+**Tenhle příklad si nakresli**, když se zeptají na interpretaci. Je na něm vidět to, co se slovy vysvětluje těžko: **parametr stojí, hýbou se intervaly.**
+
+##### Zadání
+
+| Pojem | Konkrétně |
+|---|---|
+| **populace** | všichni dospělí muži v ČR |
+| **výběr** | $25$ náhodně vybraných mužů |
+| **parametr** | $\mu$ = průměrná výška všech mužů v ČR |
+| **skutečná hodnota** | $\mu = 178{,}5$ cm |
+
+> **Pozor na tu poslední řádku:** ve skutečné úloze $\mu$ **neznám** — kdybych ho znal, nic neodhaduji. Tady si ho *dosadím*, abych mohl ukázat, které intervaly ho pokryly. **Je to didaktická berlička, ne součást postupu.**
+
+##### Krok 1: střední chyba
+
+Ze statistik vím, že směrodatná odchylka výšky mužů je $\sigma = 8$ cm. Při $n = 25$:
+
+$$\text{SE} = \frac{\sigma}{\sqrt{n}} = \frac{8}{\sqrt{25}} = \frac{8}{5} = 1{,}6\ \text{cm}$$
+
+$$\text{chyba odhadu} = 1{,}96 \cdot 1{,}6 = 3{,}136 \doteq 3{,}1\ \text{cm}$$
+
+**Každý interval bude tedy široký zhruba $6{,}3$ cm** — a to bez ohledu na to, jaký průměr mi ve kterém výběru vyjde. Šířka závisí jen na $\sigma$, $n$ a $\alpha$, **ne na datech**.
+
+##### Krok 2: šest nezávislých výběrů
+
+Vyberu šest různých pětadvacetic mužů. Každá dá jiný průměr, a tedy jiný interval:
+
+| Výběr | $\bar{x}$ | Interval $\bar{x} \pm 3{,}1$ | Pokryl $178{,}5$? |
+|---|---|---|---|
+| 1 | $178{,}2$ | $(175{,}1;\ 181{,}3)$ | ✔ |
+| 2 | $179{,}4$ | $(176{,}3;\ 182{,}5)$ | ✔ |
+| 3 | $177{,}1$ | $(174{,}0;\ 180{,}2)$ | ✔ |
+| 4 | $178{,}9$ | $(175{,}8;\ 182{,}0)$ | ✔ |
+| 5 | $175{,}0$ | $(171{,}9;\ \mathbf{178{,}1})$ | ✘ **minul** |
+| 6 | $180{,}0$ | $(176{,}9;\ 183{,}1)$ | ✔ |
+
+##### Krok 3: obrázek, kvůli kterému to celé je
+
+```
+                    mu = 178,5 cm
+                         │
+   výběr 1     ├─────────┼──┤          175,1 - 181,3   ✔
+   výběr 2        ├──────┼─────┤       176,3 - 182,5   ✔
+   výběr 3   ├────────┼──┤             174,0 - 180,2   ✔
+   výběr 4      ├───────┼────┤         175,8 - 182,0   ✔
+   výběr 5 ├────────┤   │               171,9 - 178,1   ✘ MINUL
+   výběr 6       ├──────┼──────┤       176,9 - 183,1   ✔
+                         │
+              svislá čára STOJÍ
+              závorky se HÝBOU
+```
+
+**Tři věty, které k tomu obrázku musíš říct:**
+
+1. **Svislá čára se nehýbe.** $178{,}5$ je vlastnost populace — nemění se podle toho, koho vyberu.
+2. **Pátý výběr nebyl udělaný špatně.** Byl stejně poctivě náhodný jako ostatní, jen do něj náhodou padlo víc menších mužů. Tomu se **nedá zabránit** — to je právě těch $5\ \%$.
+3. **U reálné úlohy vidím jediný řádek** a nevím, jestli je z těch pěti pokrývajících, nebo ten šestý. Proto se spolehlivost týká **metody**, ne mého konkrétního intervalu.
+
+> **Past ve formulaci:** neříkej „trefil jsem se do intervalu". Podmětem musí být **interval**: *„interval pokryl parametr"*. Ta první formulace totiž mlčky předpokládá, že interval stojí a parametr se hýbe — a to je přesně ta chybná představa, kterou zkoušející hledá.
+
+##### Krok 4: proč zrovna šest a ne sto
+
+Při $95\ \%$ spolehlivosti mine **jeden z dvaceti**. Ze šesti výběrů by tedy „správně" neměl minout ani jeden — čekaná hodnota je $6 \cdot 0{,}05 = 0{,}3$ výběru.
+
+**Řekni to takhle:** „Nakreslil jsem šest pro názornost, abych se na ně vešel. Kdybych jich udělal sto, minulo by zhruba pět."
+
+##### Krok 5: co změní jiná spolehlivost
+
+Táž data, jen jiné $\alpha$ — mění se **jen kvantil**, `SE` zůstává $1{,}6$:
+
+| Spolehlivost | $\alpha$ | Kvantil | Chyba | Šířka | Mine ze $100$ |
+|---|---|---|---|---|---|
+| $90\ \%$ | $0{,}10$ | $1{,}645$ | $2{,}6$ | $5{,}3$ cm | $10$ |
+| $95\ \%$ | $0{,}05$ | $1{,}96$ | $3{,}1$ | $6{,}3$ cm | $5$ |
+| $99\ \%$ | $0{,}01$ | $2{,}576$ | $4{,}1$ | $8{,}2$ cm | $1$ |
+
+```
+  90 %      ├────────┤          nejužší, ale mine 10x ze 100
+  95 %     ├──────────┤
+  99 %   ├──────────────┤       nejširší, ale mine jen 1x
+                │
+             178,5
+```
+
+**Nic zadarmo:** vyšší jistota se platí šířkou. Doveď to do extrému — **$100\ \%$ spolehlivosti se dá mít vždycky**, stačí říct „výška je mezi $0$ a $300$ cm". Nikdy se nespleteš a nikomu to nepomůže. **Užitečnost odhadu je právě v tom, že si připustíš nějaké riziko.**
+
+##### Krok 6: past na rozsah výběru
+
+Kdyby v zadání bylo $n = 1000$ místo $25$, vyšlo by
+
+$$\text{SE} = \frac{8}{\sqrt{1000}} \doteq \frac{8}{31{,}6} \doteq 0{,}25 \quad \Rightarrow \quad 1{,}96 \cdot 0{,}25 \doteq 0{,}5\ \text{cm}$$
+
+tedy interval široký **jeden centimetr**, ne šest.
+
+| $n$ | $\sqrt{n}$ | $\text{SE}$ | Chyba $\pm$ | Šířka |
+|---|---|---|---|---|
+| $25$ | $5$ | $1{,}6$ | $3{,}1$ | $6{,}3$ cm |
+| $100$ | $10$ | $0{,}8$ | $1{,}6$ | $3{,}1$ cm |
+| $1000$ | $31{,}6$ | $0{,}25$ | $0{,}5$ | $1{,}0$ cm |
+
+**Kontrola zdravým rozumem, která se vyplatí:** kdyby ti u tisícovky lidí vyšel interval široký sedm centimetrů, **něco jsi spočítal špatně**. Tisíc měření dává u výšky přesnost na půl centimetru — a přesně proto se průzkumy dělají na $n \approx 1000$: u podílů to vyjde na $\pm 3$ procentní body, což je akorát užitečné.
+
+---
 
 > **Věta, kterou celou otázku uzavři:** „Interval spolehlivosti je bodový odhad doplněný o poctivé přiznání, jak moc se může mýlit. Všechny jeho varianty jsou tentýž vzorec — *odhad plus minus kvantil krát střední chyba* — a liší se jen tím, z jakého rozdělení kvantil beru: znám-li $\sigma$, je to normální rozdělení, neznám-li ho, platím za jeho odhad širším Studentovým $t$, a u rozptylu se mění i tvar na nesymetrický $\chi^2$. Rozhodující je ale $\sqrt{n}$ ve jmenovateli — **přesnost roste jen s odmocninou z rozsahu výběru**, takže dvakrát přesnější odhad stojí čtyřikrát víc měření. A interpretovat se to musí opatrně: náhodné jsou meze intervalu, ne parametr."
 
@@ -607,6 +767,7 @@ Tvrdí-li dodavatel, že server odpovídá v průměru do $65$ ms, mé měření
 - Kdy se interval pro relativní četnost nesmí použít?
 - Co se stane s intervalem, když zvýším spolehlivost z $95\ \%$ na $99\ \%$?
 - Kdy použiješ jednostranný interval a jaký kvantil v něm bude?
+- **Není to jedno, jestli $\sigma$ znám, když stejně potřebuji $s$?** V čem je rozdíl?
 - Jak IS souvisí s testováním hypotéz a zamítnutím nulové hypotézy?
 - Průzkum hlásí $21\ \%$ a $19\ \%$ při chybě $\pm 3$ body — dá se říct, kdo vede?
 - Jak dopředu spočítám, kolik měření potřebuji?
