@@ -148,15 +148,12 @@ kde $V$ je **neprázdná** množina **vrcholů** (vertices) a $E$ množina **hra
 **Konkrétně** na tomhle grafu, se kterým budeme pracovat celou otázku:
 
 ```
-        A ─── B
-        │  ╲  │╲
-        │   ╲ │ ╲
-        │    ╲│  D
-        │     ╳  │
-        C ────╱──┘
-         ╲       │
-          ╲      │
-           E ────┘
+              A
+            ╱   ╲
+          B ─────── C
+          │      ╱  │
+          │   ╱     │
+          D ─────── E
 ```
 
 Přehledněji jako seznam hran:
@@ -492,11 +489,12 @@ def prohledej(graf, start, do_hloubky):
 #### Ukázka na našem grafu — start v $E$
 
 ```
-      A ─ B
-      │ ╲ │╲
-      C ──┼─D
-       ╲  │╱
-         E
+              A
+            ╱   ╲
+          B ─────── C
+          │      ╱  │
+          │   ╱     │
+          D ─────── E
 ```
 
 Seznam sousedů: $A: BC$, $B: ACD$, $C: ABDE$, $D: BCE$, $E: CD$
@@ -573,27 +571,12 @@ Seznam sousedů: $A: BC$, $B: ACD$, $C: ABDE$, $D: BCE$, $E: CD$
 $$V = \\{A, B, C, D, E\\} \qquad E = \\{AB,\ AC,\ BC,\ BD,\ CD,\ CE,\ DE\\}$$
 
 ```
-        A ────── B
-        │ ╲      │ ╲
-        │   ╲    │   ╲
-        │     ╲  │     D
-        │       ╲│   ╱ │
-        C ───────┼──╱  │
-          ╲      │     │
-            ╲    │     │
-              ╲  │     │
-                E ─────┘
-```
-
-**Kresli to raději takhle přehledně** — pětiúhelník s dvěma úhlopříčkami:
-
-```
               A
             ╱   ╲
-          B ───── C
-          │ ╲   ╱ │
-          │   ╳   │
-          D ───── E
+          B ─────── C
+          │      ╱  │
+          │   ╱     │
+          D ─────── E
 ```
 
 Hrany: $AB$, $AC$, $BC$, $BD$, $CD$, $CE$, $DE$ — sedm hran, pět vrcholů.
