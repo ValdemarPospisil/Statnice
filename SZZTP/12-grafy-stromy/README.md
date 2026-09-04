@@ -46,7 +46,10 @@ uzavreny = zacatek == konec.   KRUZNICE = uzavrena cesta
 REPREZENTACE          pamet        je hrana?   sousedi v
   matice sousednosti  V^2          O(1)        O(V)
   seznam sousedu      V + E        O(stupen)   O(stupen)
+  matice incidence    V * E        -           -      (radky vrcholy, sloupce hrany)
   -> RIDKY graf: seznam.   HUSTY nebo casty dotaz na hranu: matice
+  soucet radku = stupen (u obou matic).  sloupec incidencni matice = vzdy dve 1
+  diagonala matice sousednosti: nuly = jednoduchy graf = ANTIREFLEXIVNI relace
 
 STROM = souvisly + acyklicky   <=>  n-1 hran + souvisly
                                <=>  mezi kazdymi 2 vrcholy PRAVE JEDNA cesta
@@ -242,6 +245,24 @@ Tohle je **nejpraktičtější část otázky** a zkoušející ji mají rádi, 
 - **U neorientovaného grafu je matice symetrická podle hlavní diagonály.** U orientovaného obecně není. (A to je totéž jako symetrie relace z [okruhu 10](../10-logika-mnoziny-relace/)!)
 - **Součet řádku = stupeň vrcholu.** Řádek $C$ má $1+1+0+1+1 = 4$ ✔ — sedí s tabulkou výše.
 
+##### Proč je diagonála nulová
+
+Jednička na diagonále, tedy na pozici $(A,A)$, by znamenala **smyčku** — hranu z vrcholu do sebe sama. U nás jsou tam nuly proto, že pracujeme s **jednoduchým grafem**, a ten smyčky (ani násobné hrany) nepřipouští. To je výchozí konvence: řekne-li se „graf" bez přívlastku, myslí se jednoduchý.
+
+**Smyčky ale nejsou zakázané obecně** a nesouvisí s orientovaností — jdou v orientovaném i neorientovaném grafu. Připouští je multigraf, a dávají smysl třeba u stránky odkazující sama na sebe nebo u stavového automatu.
+
+**A tady je vazba na [okruh 10](../10-logika-mnoziny-relace/)** — matice orientovaného grafu **je** matice relace, takže se vlastnosti relace čtou přímo z ní:
+
+| Vlastnost relace | Jak vypadá matice |
+|---|---|
+| **reflexivita** | na diagonále samé **jedničky** |
+| **antireflexivita** | na diagonále samé **nuly** |
+| **symetrie** | matice symetrická podle diagonály |
+
+**Takže „jednoduchý graf" a „antireflexivní relace" je totéž.** Nulová diagonála není zjednodušení, ale tvrzení.
+
+> **Past na smyčky:** v neorientovaném grafu se smyčka počítá do stupně **dvakrát**, ne jednou. Jinak by přestal platit princip podání ruky — každá hrana musí do součtu stupňů přispět dvojkou, a smyčka má oba konce v témž vrcholu.
+
 #### Seznam sousedů
 
 Ke každému vrcholu seznam jeho sousedů:
@@ -258,15 +279,42 @@ graf = {
 
 **Všimni si, že každá hrana je uložená dvakrát** (jednou u každého konce) — proto je paměť $O(V + 2E)$, což se zapisuje $O(V + E)$.
 
+#### Matice incidence
+
+Třetí, méně častá reprezentace. Matice $\lvert V \rvert \times \lvert E \rvert$ — **řádky jsou vrcholy, sloupce hrany**; na pozici $(v, e)$ je $1$, pokud vrchol $v$ s hranou $e$ **inciduje** (je jejím koncem).
+
+Očísluj si hrany $e_1 = AB$, $e_2 = AC$, $e_3 = BC$, $e_4 = BD$, $e_5 = CD$, $e_6 = CE$, $e_7 = DE$:
+
+```
+      e1 e2 e3 e4 e5 e6 e7    součet = stupeň
+  A [  1  1  0  0  0  0  0 ]        2
+  B [  1  0  1  1  0  0  0 ]        3
+  C [  0  1  1  0  1  1  0 ]        4
+  D [  0  0  0  1  1  0  1 ]        3
+  E [  0  0  0  0  0  1  1 ]        2
+       ↑
+   v každém sloupci jsou právě dvě jedničky
+```
+
+**Dvě kontroly, které si na ní udělej:**
+
+- **součet řádku = stupeň vrcholu** (stejně jako u matice sousednosti) ✔
+- **součet každého sloupce je vždy $2$** — protože každá hrana má právě dva konce. **A to je princip podání ruky napsaný jinak:** $7$ sloupců po dvou jedničkách dá $14 = 2\lvert E \rvert$.
+
+U **orientovaného** grafu se rozlišuje směr: $-1$ pro počáteční vrchol, $+1$ pro koncový, $0$ jinak.
+
+> **Nepoužívá se moc** — zabere $\lvert V \rvert \cdot \lvert E \rvert$ políček, což je u našeho grafu $5 \cdot 7 = 35$ oproti $25$ u matice sousednosti, a u větších grafů je ten rozdíl mnohem horší. Smysl dává hlavně v teorii (lineární algebra nad grafy) a u multigrafů, kde umí odlišit **násobné hrany** — dvě hrany mezi týmiž vrcholy dostanou vlastní sloupec, kdežto v matici sousednosti by splynuly.
+
 #### Srovnání — a tady je ta pointa
 
-| | Matice sousednosti | Seznam sousedů |
-|---|---|---|
-| **paměť** | $O(V^2)$ | $O(V + E)$ |
-| **je hrana $(u,v)$?** | $O(1)$ | $O(\deg u)$ |
-| **projdi sousedy $u$** | $O(V)$ | $O(\deg u)$ |
-| **přidej hranu** | $O(1)$ | $O(1)$ |
-| **projdi celý graf** | $O(V^2)$ | $O(V + E)$ |
+| | Matice sousednosti | Seznam sousedů | Matice incidence |
+|---|---|---|---|
+| **paměť** | $O(V^2)$ | $O(V + E)$ | $O(V \cdot E)$ |
+| **je hrana $(u,v)$?** | $O(1)$ | $O(\deg u)$ | $O(E)$ |
+| **projdi sousedy $u$** | $O(V)$ | $O(\deg u)$ | $O(E)$ |
+| **přidej hranu** | $O(1)$ | $O(1)$ | nutno rozšířit matici |
+| **projdi celý graf** | $O(V^2)$ | $O(V + E)$ | $O(V \cdot E)$ |
+| **umí násobné hrany** | ne | ano | **ano** |
 
 **Rozhoduje hustota grafu.** Řídký graf má $E \approx V$, hustý má $E \approx V^2$.
 
@@ -718,14 +766,16 @@ Nestíháš-li všechno, **vynech Kroky 2 a 5** a udělej **stupně → Euler �
 10. **Kolik hran má úplný graf $K_n$?** → $\frac{n(n-1)}{2}$ — každý s každým, ale hrany počítané dvakrát.
 11. **Jak poznám z matice sousednosti, že graf je neorientovaný?** → Je **symetrická** podle hlavní diagonály.
 12. **Jak poznám z matice stupeň vrcholu?** → Součet příslušného **řádku**.
-13. **Jak zjistím, jestli je graf souvislý?** → Spustím DFS/BFS z libovolného vrcholu; navštívím-li všech $\lvert V \rvert$, je souvislý. Jinak jsem našel jednu komponentu.
-14. **Jaká je složitost DFS a BFS?** → $O(V+E)$ se seznamem sousedů, $O(V^2)$ s maticí — u matice musím u každého vrcholu projít celý řádek.
-15. **Který z průchodů je paměťově úspornější?** → Záleží na tvaru. DFS potřebuje $O(h)$ (hloubka), BFS $O(\text{šířka})$ nejširší vrstvy. U širokého mělkého grafu vyhraje DFS, u hlubokého úzkého BFS.
-16. **Jaký je vztah mezi grafem a binární relací?** → Orientovaný graf **je** binární relace na množině ([okruh 10](../10-logika-mnoziny-relace/)). Reflexivita = smyčky u všech vrcholů, symetrie = neorientovaný graf.
-17. **Co je Diracova věta a proč nestačí?** → Stupeň každého vrcholu $\geq n/2$ (pro $n \geq 3$) zaručí hamiltonovskou kružnici. Je jen **postačující** — neplatí-li, kružnice může přesto existovat.
-18. **K čemu je bipartitní graf a jak ho poznám?** → Modeluje vztahy dvou různých typů (studenti–předměty). Graf je bipartitní **právě tehdy, když neobsahuje kružnici liché délky**.
-19. **Jak souvisí průchody binárním stromem s DFS a BFS?** → Preorder/inorder/postorder jsou varianty **DFS** (liší se okamžikem zpracování uzlu), průchod po hladinách je **BFS**.
-20. **Proč je u rekurzivního DFS riziko přetečení zásobníku?** → Hloubka rekurze je až $O(V)$ — u grafu tvaru cesty. Totéž jako degenerovaný strom v [okruhu 3](../03-spojove-struktury/).
+13. **Co znamená jednička na diagonále matice sousednosti?** → **Smyčku** — hranu z vrcholu do sebe. Jednoduchý graf je zakazuje, proto má nulovou diagonálu. Jako relace ([okruh 10](../10-logika-mnoziny-relace/)) je to rozdíl mezi reflexivitou a antireflexivitou.
+14. **Co je matice incidence a čím se liší od matice sousednosti?** → Rozměr $\lvert V \rvert \times \lvert E \rvert$ — řádky vrcholy, sloupce hrany. Součet řádku je stupeň, součet **každého sloupce je vždy 2**. Je paměťově horší, ale umí odlišit násobné hrany.
+15. **Jak zjistím, jestli je graf souvislý?** → Spustím DFS/BFS z libovolného vrcholu; navštívím-li všech $\lvert V \rvert$, je souvislý. Jinak jsem našel jednu komponentu.
+16. **Jaká je složitost DFS a BFS?** → $O(V+E)$ se seznamem sousedů, $O(V^2)$ s maticí — u matice musím u každého vrcholu projít celý řádek.
+17. **Který z průchodů je paměťově úspornější?** → Záleží na tvaru. DFS potřebuje $O(h)$ (hloubka), BFS $O(\text{šířka})$ nejširší vrstvy. U širokého mělkého grafu vyhraje DFS, u hlubokého úzkého BFS.
+18. **Jaký je vztah mezi grafem a binární relací?** → Orientovaný graf **je** binární relace na množině ([okruh 10](../10-logika-mnoziny-relace/)). Reflexivita = smyčky u všech vrcholů, symetrie = neorientovaný graf.
+19. **Co je Diracova věta a proč nestačí?** → Stupeň každého vrcholu $\geq n/2$ (pro $n \geq 3$) zaručí hamiltonovskou kružnici. Je jen **postačující** — neplatí-li, kružnice může přesto existovat.
+20. **K čemu je bipartitní graf a jak ho poznám?** → Modeluje vztahy dvou různých typů (studenti–předměty). Graf je bipartitní **právě tehdy, když neobsahuje kružnici liché délky**.
+21. **Jak souvisí průchody binárním stromem s DFS a BFS?** → Preorder/inorder/postorder jsou varianty **DFS** (liší se okamžikem zpracování uzlu), průchod po hladinách je **BFS**.
+22. **Proč je u rekurzivního DFS riziko přetečení zásobníku?** → Hloubka rekurze je až $O(V)$ — u grafu tvaru cesty. Totéž jako degenerovaný strom v [okruhu 3](../03-spojove-struktury/).
 
 ### Užitečné odkazy
 
