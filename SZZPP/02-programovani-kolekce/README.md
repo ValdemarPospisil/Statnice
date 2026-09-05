@@ -10,7 +10,35 @@
 
 ### Požadované znalosti a dovednosti
 
-<!-- Podle PDF. Ke každé věci hned příklad s konkrétním výsledkem. -->
+<!-- Podle PDF. Nejdřív souhrn na jedno místo, pak výklad s příklady. -->
+
+#### Souhrn na jednom místě
+
+Všechno, co PDF vyžaduje, v jedné tabulce — na rychlé opakování před zkouškou. Podrobný výklad s příklady je pod ní.
+
+| Co | K čemu / jak se chová | Zapamatuj si | Kde |
+|---|---|---|---|
+| `list` | uspořádaná **měnitelná** posloupnost, index od 0 | `append`/`sort`/`remove` mění na místě a vrací `None` | [↓](#seznam-list--uspořádaný-měnitelný-indexovaný-od-nuly) |
+| `dict` | dvojice klíč→hodnota, klíč musí být **neměnitelný** | vyhledání $O(1)$; `d[k]` spadne na `KeyError`, `d.get(k, 0)` ne | [↓](#slovník-dict--dvojice-klíčhodnota-klíč-musí-být-neměnitelný) |
+| `range` | **líný generátor**, ne seznam | nedá se měnit; `list(range(…))` z něj udělá seznam | [↓](#range-není-seznam) |
+| `str` | neměnitelný řetězec | `.strip()`, `.split()`, `.lower()`, `.capitalize()` vrací **nový** řetězec | — |
+| `tuple` | neměnitelná n-tice `(1, 2)` | proto může být klíčem slovníku | — |
+| indexování | `s[0]` první, `s[-1]` poslední | záporný index počítá od konce | [↓](#slicing-startstopkrok) |
+| slicing | `s[start:stop:krok]` → **nový** seznam | `stop` je **výlučný**; `s[1::2]` = liché indexy; `s[:]` = mělká kopie | [↓](#slicing-startstopkrok) |
+| `for` / `while` | průchod kolekcí / dokud platí podmínka | `for` když znáš počet, `while` když čekáš na podmínku | — |
+| `enumerate` | dvojice `(index, hodnota)` | lepší než `range(len(s))`; `start=1` posune číslování | [↓](#enumerate-a-zip) |
+| `zip` | spojí kolekce po dvojicích | **končí u té kratší**; `dict(zip(a, b))` staví slovník | [↓](#enumerate-a-zip) |
+| comprehension | `[výraz for x in kolekce if podmínka]` | `if` na konci **filtruje**, `if…else` vepředu **vybírá hodnotu** | [↓](#list-comprehension) |
+| kopie | `b = a` **není kopie** | `.copy()` mělká (vnitřek sdílený), `copy.deepcopy()` hluboká | [↓](#mělká-vs-hluboká-kopie) |
+| `is` vs. `==` | identita vs. hodnota | `is` = tentýž objekt v paměti; pro `None` vždy `is None` | [↓](#mělká-vs-hluboká-kopie) |
+| výjimky | `raise ValueError("…")`, `try/except` | `ValueError` = špatná hodnota, `TypeError` = špatný typ | [↓](#výjimky) |
+| `isinstance` | kontrola typu | past: `isinstance(True, int)` je `True` — `bool` dědí z `int` | [↓](#výjimky) |
+| f-string | `f"{jmeno}: {cena:.2f}"` | `f"{x=}"` vypíše jméno i hodnotu — nejrychlejší ladění | [↓](#f-stringy) |
+| `print` / `input` | výstup / vstup z konzole | `input()` vrací **vždy `str`** — čísla musíš přetypovat `int(…)` | — |
+| `math`, `random` | `sqrt`, `floor`, `pi` / `randint`, `choice` | `randint(1,6)` je **včetně obou** mezí, na rozdíl od `range` | [↓](#math-a-random) |
+| vlastní funkce | `def f(a, b=1)` | poziční vs. pojmenované parametry; **`return` nesmí chybět** | — |
+
+**Tři věci z téhle tabulky pokrývají většinu chyb ve zkouškových úlohách:** metody měnící na místě vrací `None`, `range` není seznam, a `b = a` není kopie.
 
 #### Seznam (`list`) — uspořádaný, měnitelný, indexovaný od nuly
 
