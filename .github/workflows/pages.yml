@@ -26,6 +26,15 @@ jobs:
         with:
           python-version: '3.x'
 
+      - name: Nainstalovat nbconvert
+        run: pip install nbconvert nbclient ipykernel
+
+      # Jekyll .ipynb neumí — převedeme je na Markdown a přitom spustíme,
+      # aby byly na webu vidět i výstupy buněk. Chyba v notebooku s řešením
+      # tady build shodí, takže z tohohle kroku je zároveň test.
+      - name: Převést notebooky na Markdown
+        run: python convert_notebooks.py
+
       - name: Vygenerovat rozcestník
         run: python generate_index.py
 

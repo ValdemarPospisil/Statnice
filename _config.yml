@@ -34,6 +34,7 @@ exclude:
   - .github
   - vendor
   - generate_index.py
+  - convert_notebooks.py
   - horner.py
   - nelinearni_rovnice.py
   - numericke_derivovani.py
@@ -43,3 +44,5 @@ exclude:
   - CLAUDE.md
   - Gemfile
   - Gemfile.lock
+  - "**/*.ipynb"
+  - .ipynb_checkpoints

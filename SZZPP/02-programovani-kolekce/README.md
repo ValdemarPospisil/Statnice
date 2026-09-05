@@ -417,9 +417,11 @@ Vlož do notebooku jako markdown buňku pod řešení:
 
 Úlohy jsou ve složce [`Kod/`](./Kod/):
 
-- [`00-ukazkova-uloha.ipynb`](./Kod/00-ukazkova-uloha.ipynb) — oficiální úloha z PDF s celým rozborem
-- [`01-cviceni-zadani.ipynb`](./Kod/01-cviceni-zadani.ipynb) — šest cvičných úloh, prázdné buňky na řešení
-- [`02-cviceni-reseni.ipynb`](./Kod/02-cviceni-reseni.ipynb) — řešení včetně výsledků ladění a doptávek
+- **00 — ukázková úloha** ([notebook](https://github.com/ValdemarPospisil/Statnice/blob/main/SZZPP/02-programovani-kolekce/Kod/00-ukazkova-uloha.ipynb) · [číst na webu](./Kod/00-ukazkova-uloha.md)) — oficiální úloha z PDF s celým rozborem
+- **01 — cvičení, zadání** ([notebook](https://github.com/ValdemarPospisil/Statnice/blob/main/SZZPP/02-programovani-kolekce/Kod/01-cviceni-zadani.ipynb) · [číst na webu](./Kod/01-cviceni-zadani.md)) — šest úloh, prázdné buňky na řešení
+- **02 — cvičení, řešení** ([notebook](https://github.com/ValdemarPospisil/Statnice/blob/main/SZZPP/02-programovani-kolekce/Kod/02-cviceni-reseni.ipynb) · [číst na webu](./Kod/02-cviceni-reseni.md)) — řešení, výsledky ladění a doptávky
+
+Na webu jsou notebooky vidět i s výstupy (spouští se při buildu). **Trénuj ale v Jupyteru, ne na webu** — čtení kódu vytváří pocit znalosti bez znalosti.
 
 - [ ] Ukázková úloha z PDF celá, včetně rozšíření, na časovku 60 minut
 - [ ] Cvičná úloha 1 — mazání během iterace
