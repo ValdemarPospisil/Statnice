@@ -2,47 +2,680 @@
 
 - [Zadání okruhu (PDF)](../ZadaniOkruhu/ZEL-2okruhy.pdf)
 
+> Návrh logického kombinačního obvodu: **pravdivostní tabulka → minimalizace (Karnaugh i Quine-McCluskey) → rovnice → schéma**. 60 minut přípravy, pak 20 minut obhajoby. K dispozici tabulkový procesor a datasheet k sedmisegmentovce.
+
+**Na papíře, ale mechanicky.** Proti [analogové části](../06-elektronika-analogova/) se tu nepočítá, jen se postupuje podle algoritmu. Když umíš Grayovo pořadí v Karnaughově mapě a tabulku pro Quine-McCluskey, je to spolehlivá práce bez rizika, že se přepočítáš.
+
+> **Zásadní věc o ukázkové úloze:** dekodér 3→8 **nemá co minimalizovat** — každý výstup je jediný minterm, tedy izolovaná jednička v mapě, která se nemá s čím sloučit. Zadání přesto minimalizaci žádá, takže odpověď je *„provedl jsem ji a nic neubrala, protože…"*. Kdo to nepozná, hledá půl hodiny neexistující skupiny. [Podrobně níž](#rozbor-ukázkové-úlohy).
+
+Překryv s [SZZTP okruh 10](../../SZZTP/10-logika-mnoziny-relace/) (výrokový počet, úplný systém spojek) — NAND/NOR převody a De Morgan jsou tam teoreticky.
+
+---
+
 ### Požadované znalosti a dovednosti
 
-- funkce logických hradel (AND, OR, NOT, NAND, NOR, XOR, XNOR)
-- sestavení pravdivostní tabulky
-- Karnaughova mapa a minimalizace pomocí ní
-- algoritmus Quine-McCluskey včetně skupinové minimalizace
-- kreslení schématu logické funkce
-- sedmisegmentový displej (např. 5161AS, společná katoda)
-- dekodér a multiplexor
+<!-- Podle PDF. Nejdřív souhrn, pak výklad s příklady. -->
 
-### Charakteristika zkušební úlohy
+#### Souhrn na jednom místě
 
-Návrh logického kombinačního obvodu: pravdivostní tabulka → minimalizace (Karnaugh i Quine-McCluskey) → rovnice → schéma.
+| Co | Význam / vzorec | Zapamatuj si | Kde |
+|---|---|---|---|
+| **AND** ($\cdot$) | 1 jen když **všechny** vstupy 1 | jako násobení | [↓](#logická-hradla) |
+| **OR** ($+$) | 1 když **aspoň jeden** vstup 1 | jako sčítání (ale $1+1=1$) | [↓](#logická-hradla) |
+| **NOT** ($'$, negace) | obrací hodnotu | značí se čárkou nebo pruhem | [↓](#logická-hradla) |
+| **NAND** | negovaný AND | **úplný systém** — postavíš z něj vše | [↓](#nand-nor-a-de-morgan) |
+| **NOR** | negovaný OR | taky úplný systém | [↓](#nand-nor-a-de-morgan) |
+| **XOR** ($\oplus$) | 1 když je vstupů 1 **nepárný počet** | „různost", sčítání bez přenosu | [↓](#logická-hradla) |
+| **XNOR** | negovaný XOR | „shoda", komparátor | [↓](#logická-hradla) |
+| **minterm** | součin, kde je každá proměnná právě raz | odpovídá **jednomu řádku** tabulky s výstupem 1 | [↓](#od-tabulky-k-rovnici) |
+| **SoP** (DNF) | součet součinů: $AB + A'C$ | z jedniček tabulky | [↓](#od-tabulky-k-rovnici) |
+| **PoS** (KNF) | součin součtů: $(A+B)(A'+C)$ | z nul tabulky | [↓](#od-tabulky-k-rovnici) |
+| **Karnaughova mapa** | grafická minimalizace | **Grayovo pořadí**, slučuj mocniny dvou | [↓](#karnaughova-mapa) |
+| **don't care** (X) | výstup nezáleží | **použij ho jako 1, když ti pomůže** | [↓](#dont-care-stavy) |
+| **Quine-McCluskey** | tabulková minimalizace | algoritmus, funguje na libovolný počet proměnných | [↓](#quine-mccluskey) |
+| **De Morgan** | $(AB)' = A' + B'$, $(A+B)' = A'B'$ | „negace rozdělí a obrátí operátor" | [↓](#nand-nor-a-de-morgan) |
+| **dekodér** | $n$ vstupů → $2^n$ výstupů, aktivní právě jeden | každý výstup = jeden minterm | [↓](#dekodér) |
+| **multiplexor** | $2^n$ vstupů → 1 výstup, adresa vybírá | **realizuje libovolnou funkci** $n$ proměnných | [↓](#multiplexor) |
+| **7segment** | 7 LED (a–g) + tečka | **společná katoda** = aktivní 1, anoda = aktivní 0 | [↓](#sedmisegmentový-displej) |
+
+**Tři věci, které rozhodují:** Grayovo pořadí v mapě, slučování jen v mocninách dvou (1, 2, 4, 8) i přes okraje, a to, že don't care smíš brát jako jedničku.
+
+#### Logická hradla
+
+| $A$ | $B$ | AND | OR | XOR | NAND | NOR | XNOR |
+|---|---|---|---|---|---|---|---|
+| 0 | 0 | 0 | 0 | 0 | **1** | **1** | **1** |
+| 0 | 1 | 0 | 1 | 1 | **1** | 0 | 0 |
+| 1 | 0 | 0 | 1 | 1 | **1** | 0 | 0 |
+| 1 | 1 | **1** | 1 | 0 | 0 | 0 | **1** |
+
+**Jak si to zapamatovat bez biflování:** AND je násobení ($0 \cdot 1 = 0$). OR je sčítání s tím, že $1 + 1 = 1$ (saturuje). XOR je „jsou různé". XNOR je „jsou stejné". NAND a NOR jsou prostě negace prvních dvou.
+
+**Konkrétně:** $A = 1$, $B = 0$ → AND dá 0, OR dá 1, XOR dá 1 (různé), NAND dá 1 (negace nuly).
+
+**XOR má užitečné vlastnosti**, na které se ptají:
+
+$$A \oplus 0 = A, \qquad A \oplus 1 = A', \qquad A \oplus A = 0$$
+
+Poslední dvě znamenají, že XOR funguje jako **řízená negace** a že se dá použít na jednoduché šifrování (dvakrát XOR týmž klíčem = původní hodnota).
+
+#### Od tabulky k rovnici
+
+**Součet součinů (SoP)** — vezmi **řádky, kde je výstup 1**, a pro každý napiš součin všech proměnných (negovaná tam, kde je 0):
+
+| $A$ | $B$ | $C$ | $f$ | minterm |
+|---|---|---|---|---|
+| 0 | 0 | 0 | 0 | — |
+| 0 | 0 | 1 | 1 | $A'B'C$ |
+| 0 | 1 | 0 | 0 | — |
+| 0 | 1 | 1 | 1 | $A'BC$ |
+| 1 | 0 | 0 | 0 | — |
+| 1 | 0 | 1 | 0 | — |
+| 1 | 1 | 0 | 1 | $ABC'$ |
+| 1 | 1 | 1 | 1 | $ABC$ |
+
+$$f = A'B'C + A'BC + ABC' + ABC$$
+
+Zapisuje se taky jako $f = \sum m(1, 3, 6, 7)$ — čísla jsou dekadické indexy řádků.
+
+**Součin součtů (PoS)** — z **nul**, ale s obrácenou logikou: pro každý řádek s nulou napiš součet, kde je proměnná negovaná tam, kde je **1**. Pro řádek $A{=}0, B{=}0, C{=}0$ dostaneš $(A + B + C)$.
+
+**Kterou formu volit:** SoP je běžnější a snáz se čte. PoS se vyplatí, když je v tabulce **málo nul** — pak je kratší.
+
+#### Karnaughova mapa
+
+**Grayovo pořadí** je celý trik: sousední políčka se liší **v jediném bitu**, takže se dají slučovat.
+
+Mapa pro tři proměnné (proměnná $A$ určuje řádek, $BC$ sloupec):
+
+```
+        BC
+A    00   01   11   10       <- POZOR: 11 před 10, ne binárně!
+  0 | m0 | m1 | m3 | m2 |
+  1 | m4 | m5 | m7 | m6 |
+```
+
+Mapa pro čtyři proměnné:
+
+```
+         CD
+AB    00   01   11   10
+   00| m0 | m1 | m3 | m2 |
+   01| m4 | m5 | m7 | m6 |
+   11| m12| m13| m15| m14|
+   10| m8 | m9 | m11| m10|
+```
+
+**Proč Grayovo pořadí a ne binární** (klasická doptávka): kdyby byly sloupce v pořadí 00, 01, 10, 11, pak by sousedy byly `01` a `10`, které se liší ve **dvou** bitech — nešlo by je sloučit. Grayovo pořadí zajistí, že **každá dvě sousední políčka se liší právě v jednom bitu**, a tím se ta proměnná při sloučení vypustí.
+
+**Pravidla slučování:**
+
+1. Slučuj skupiny o velikosti **mocniny dvou**: 1, 2, 4, 8, 16. Nikdy 3 nebo 6.
+2. Skupiny **musí být obdélníkové** (v mapě), ne do L.
+3. **Přes okraje se to počítá jako soused** — mapa je na povrchu anuloidu. Levý a pravý sloupec jsou sousedi, horní a dolní řádek taky. **Všechny čtyři rohy tvoří jednu skupinu.**
+4. Skupiny se **mohou překrývat** — to je v pořádku a často to pomůže.
+5. Dělej **co největší** skupiny; každé zdvojnásobení velikosti vypustí jednu proměnnou.
+
+**Kolik proměnných zbyde:** skupina o velikosti $2^k$ v mapě s $n$ proměnnými má součin s $n - k$ literály. Skupina 4 políček ve 4proměnné mapě → $4 - 2 = 2$ literály.
+
+**Konkrétně** — majoritní funkce „aspoň dva ze tří vstupů jsou 1", tedy $f = \sum m(3, 5, 6, 7)$:
+
+```
+        BC
+A    00   01   11   10
+  0 |  0 |  0 |  1 |  0 |
+  1 |  0 |  1 |  1 |  1 |
+```
+
+Tři dvojice: $m_3 + m_7$ (sloupec 11) → $BC$. $m_5 + m_7$ → $AC$. $m_6 + m_7$ → $AB$.
+
+$$f = AB + BC + AC$$
+
+Ze čtyř tříliterálových mintermů jsou tři dvouliterálové součiny — z 12 literálů na 6.
+
+#### Don't care stavy
+
+**X** (nebo **–**) znamená „na téhle kombinaci nezáleží, nikdy nenastane". Typicky u BCD, kde kódy 10–15 nemají význam.
+
+**Pravidlo: ber don't care jako 1, když ti to zvětší skupinu. Jinak jako 0.** Nemusíš být konzistentní — u každé skupiny se rozhoduješ zvlášť.
+
+**Konkrétně** — segment `a` sedmisegmentovky pro BCD (svítí u číslic 0, 2, 3, 5, 6, 7, 8, 9; kódy 10–15 jsou don't care):
+
+Bez don't care by minimalizace dala dlouhý výraz. S nimi:
+
+$$a = A + C + BD + B'D'$$
+
+Kde $A$ je nejvyšší bit (váha 8), $D$ nejnižší (váha 1). **Čtyři členy místo osmi mintermů** — to je efekt don't care stavů.
+
+#### Quine-McCluskey
+
+Tabulkový algoritmus. **Výhoda proti Karnaughovi:** funguje pro libovolný počet proměnných a je mechanický (nedá se přehlédnout skupina).
+
+**Postup:**
+
+1. **Zapiš mintermy binárně** a seskup podle **počtu jedniček**.
+2. **Slučuj sousední skupiny** — dva termy, které se liší v jediném bitu, sluč a ten bit označ `–`. Oba původní termy si označ jako použité.
+3. **Opakuj**, dokud se dá slučovat.
+4. **Neoznačené termy jsou primární implikanty.**
+5. **Pokrývací tabulka:** řádky = primární implikanty, sloupce = mintermy. Najdi **esenciální** (ten, který jako jediný pokrývá nějaký minterm) a doplň zbytek.
+
+**Konkrétně** na funkci $f = \sum m(0, 1, 2, 5, 6, 7)$ (tři proměnné $A, B, C$):
+
+**Krok 1** — seskupení podle počtu jedniček:
+
+| Skupina | Minterm | ABC |
+|---|---|---|
+| 0 jedniček | $m_0$ | 000 |
+| 1 jednička | $m_1$ | 001 |
+| | $m_2$ | 010 |
+| 2 jedničky | $m_5$ | 101 |
+| | $m_6$ | 110 |
+| 3 jedničky | $m_7$ | 111 |
+
+**Krok 2** — slučování (liší se v jednom bitu):
+
+| Sloučeno | Výsledek | Zápis |
+|---|---|---|
+| $m_0, m_1$ | 00– | $A'B'$ |
+| $m_0, m_2$ | 0–0 | $A'C'$ |
+| $m_1, m_5$ | –01 | $B'C$ |
+| $m_2, m_6$ | –10 | $BC'$ |
+| $m_5, m_7$ | 1–1 | $AC$ |
+| $m_6, m_7$ | 11– | $AB$ |
+
+Dál se slučovat nedá (žádné dva se neliší v jednom bitu při stejné pozici `–`), takže **všech šest je primárních implikantů**.
+
+**Krok 3** — pokrývací tabulka:
+
+| Implikant | $m_0$ | $m_1$ | $m_2$ | $m_5$ | $m_6$ | $m_7$ |
+|---|---|---|---|---|---|---|
+| $A'B'$ | × | × | | | | |
+| $A'C'$ | × | | × | | | |
+| $B'C$ | | × | | × | | |
+| $BC'$ | | | × | | × | |
+| $AC$ | | | | × | | × |
+| $AB$ | | | | | × | × |
+
+Žádný minterm nemá jen jeden pokrývající implikant → **žádný esenciální**. Musíš vybrat minimální pokrytí, například:
+
+$$f = A'B' + BC' + AC \qquad \text{nebo} \qquad f = A'C' + B'C + AB$$
+
+**Obě jsou minimální** (tři členy, šest literálů). To je normální — minimální forma nemusí být jediná. **Řekni to u obhajoby**, ukazuje to, že rozumíš tomu, co se počítá.
+
+**Skupinová minimalizace** (zadání ji zmiňuje) = minimalizace **několika výstupů společně**, aby se sdílely společné členy. U dekodéru nemá smysl (výstupy nemají nic společného), u sedmisegmentovky ano — segmenty sdílí podvýrazy.
+
+#### NAND, NOR a De Morgan
+
+**De Morganovy zákony:**
+
+$$(A \cdot B)' = A' + B' \qquad (A + B)' = A' \cdot B'$$
+
+Slovně: **negace se rozdělí na členy a operátor se obrátí.**
+
+**Konkrétně:** $A = 1$, $B = 0$. Vlevo: $(1 \cdot 0)' = 0' = 1$. Vpravo: $1' + 0' = 0 + 1 = 1$. Sedí.
+
+**NAND je úplný systém spojek** — postavíš z něj cokoli:
+
+| Funkce | Z NAND |
+|---|---|
+| NOT $A$ | $A \uparrow A$ (oba vstupy stejné) |
+| $A \cdot B$ | $(A \uparrow B) \uparrow (A \uparrow B)$ — NAND a pak negace |
+| $A + B$ | $(A \uparrow A) \uparrow (B \uparrow B)$ — negace vstupů, pak NAND |
+
+**Převod SoP na samá NAND** je mechanický: schéma AND-OR nahradíš NAND-NAND. Funguje to díky De Morganovi — dvojitá negace se vyruší:
+
+$$AB + CD = \bigl((AB)' \cdot (CD)'\bigr)'$$
+
+Takže **první úroveň AND hradel → NAND, druhá úroveň OR → taky NAND**. Nic dalšího se nemění. Tohle je oblíbená doptávka a je to jednodušší, než to zní.
+
+Teorie úplných systémů spojek je v [SZZTP okruh 10](../../SZZTP/10-logika-mnoziny-relace/).
+
+#### Dekodér
+
+**$n$ vstupů → $2^n$ výstupů, aktivní je právě jeden** podle binární hodnoty na vstupu.
+
+Bloková značka ze zadání má vstupy označené **váhami 1, 2, 4** (ne jmény A, B, C) a výstupy 0–7:
+
+```
+        +--------+
+   ---->| 1    0 |---->
+   ---->| 2    1 |---->
+   ---->| 4    2 |---->
+        |  DEC 3 |---->
+        |      4 |---->
+        |      5 |---->
+        |      6 |---->
+        |      7 |---->
+        +--------+
+```
+
+**Každý výstup je právě jeden minterm** — to je celá jeho definice:
+
+$$Y_0 = C'B'A', \quad Y_1 = C'B'A, \quad Y_2 = C'BA', \quad \dots, \quad Y_7 = CBA$$
+
+(kde $A$ má váhu 1, $B$ váhu 2, $C$ váhu 4)
+
+**Praktické použití:** adresování — vybere jeden z osmi paměťových čipů podle tří adresních bitů. Odtud „adresový dekodér".
+
+**Aktivní úroveň:** bývá i dekodér s **aktivní nulou** (vybraný výstup je 0, ostatní 1) — pak jsou výstupy negované mintermy. Ověř si v zadání, co se chce.
+
+#### Multiplexor
+
+**$2^n$ datových vstupů → 1 výstup**, adresa $n$ bitů vybírá, který vstup se propustí.
+
+Pro MUX 8:1:
+
+$$Y = \sum_{i=0}^{7} D_i \cdot m_i$$
+
+kde $m_i$ je minterm adresy. Tedy $Y = D_0 A'B'C' + D_1 A'B'C + \dots + D_7 ABC$.
+
+**Jak realizovat libovolnou funkci** (nejlepší doptávka v celém okruhu): funkci $n$ proměnných realizuješ **jedním MUX $2^n{:}1$** tak, že proměnné dáš na adresní vstupy a **na datové vstupy přivedeš přímo hodnoty z pravdivostní tabulky** (0 nebo 1).
+
+**Konkrétně** pro $f = \sum m(1, 3, 6, 7)$ a MUX 8:1: adresa = $ABC$, a datové vstupy nastavíš na $D_0{=}0$, $D_1{=}1$, $D_2{=}0$, $D_3{=}1$, $D_4{=}0$, $D_5{=}0$, $D_6{=}1$, $D_7{=}1$. **Žádná minimalizace není potřeba** — tabulka je přímo zapojení.
+
+**Poloviční trik** (dojem na komisi): funkci $n$ proměnných zvládneš i s MUX $2^{n-1}{:}1$ — na adresu dáš $n-1$ proměnných a na datové vstupy přivedeš poslední proměnnou, její negaci, 0 nebo 1 podle toho, co v té dvojici řádků tabulky vychází.
+
+#### Sedmisegmentový displej
+
+Sedm LED označených **a** až **g** (plus tečka **dp**):
+
+```
+     aaa
+    f   b
+    f   b
+     ggg
+    e   c
+    e   c
+     ddd   dp
+```
+
+**Společná katoda** (typ 5161AS ze zadání): všechny katody LED jsou spojené na zem, segment se rozsvítí **jedničkou** na anodě. Aktivní úroveň = **1**.
+
+**Společná anoda:** naopak — anody na $+U$, segment svítí **nulou**. Aktivní úroveň = **0**.
+
+**Praktická věc, na kterou se ptají:** ke každému segmentu patří **předřadný rezistor** (typicky 220–330 Ω), jinak LED spálíš. Rezistor patří do série s každým segmentem zvlášť, ne jeden společný — jinak by jasnost závisela na počtu svítících segmentů.
+
+**Které segmenty svítí u které číslice** (dekodér BCD → 7 segmentů):
+
+| Číslice | a | b | c | d | e | f | g |
+|---|---|---|---|---|---|---|---|
+| 0 | 1 | 1 | 1 | 1 | 1 | 1 | 0 |
+| 1 | 0 | 1 | 1 | 0 | 0 | 0 | 0 |
+| 2 | 1 | 1 | 0 | 1 | 1 | 0 | 1 |
+| 3 | 1 | 1 | 1 | 1 | 0 | 0 | 1 |
+| 4 | 0 | 1 | 1 | 0 | 0 | 1 | 1 |
+| 5 | 1 | 0 | 1 | 1 | 0 | 1 | 1 |
+| 6 | 1 | 0 | 1 | 1 | 1 | 1 | 1 |
+| 7 | 1 | 1 | 1 | 0 | 0 | 0 | 0 |
+| 8 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| 9 | 1 | 1 | 1 | 1 | 0 | 1 | 1 |
+
+Kódy 10–15 jsou **don't care** — toho se využívá při minimalizaci každého segmentu zvlášť.
+
+---
 
 ### Postup u zkoušky (60 min přípravy)
 
-1. Sestavit pravdivostní tabulku ze slovního zadání — tady se dělá nejvíc chyb.
-2. Karnaughova mapa: správné Grayovo pořadí, slučovat co největší skupiny (i přes okraje).
-3. Quine-McCluskey: implikanty → primární implikanty → pokrývací tabulka.
-4. Zapsat minimalizovanou rovnici a nakreslit schéma.
-5. Případně převést do NAND/NOR (vazba na SZZTP 10 — úplný systém spojek).
+**0–10 min — pravdivostní tabulka**
+
+1. **Ze slovního zadání sestav tabulku.** Tady se dělá nejvíc chyb — přečti zadání dvakrát.
+2. **Označ si váhy vstupů** a jejich pořadí (co je MSB). Pak už to neměň.
+3. Vyznač **don't care** stavy, pokud nějaké jsou.
+4. Zapiš funkci jako $\sum m(\dots)$ — kompaktní a snadno se kontroluje.
+
+**10–25 min — Karnaughova mapa**
+
+5. Nakresli mřížku a **napiš záhlaví v Grayově pořadí** (00, 01, 11, 10). Zkontroluj to, než začneš plnit.
+6. Vyplň jedničky a don't care.
+7. Slučuj **od největších skupin**, přes okraje, s překryvy.
+8. Zapiš minimalizovanou rovnici.
+
+**25–40 min — Quine-McCluskey**
+
+9. Seskup mintermy podle počtu jedniček, slučuj, najdi primární implikanty.
+10. Pokrývací tabulka, esenciální implikanty, minimální pokrytí.
+11. **Porovnej s Karnaughem** — musí vyjít stejný počet členů a literálů (výrazy se mohou lišit).
+
+**40–55 min — schéma a multiplexor**
+
+12. Nakresli schéma z minimalizované rovnice (AND–OR).
+13. Případně převeď na NAND–NAND.
+14. Realizuj MUX — datové vstupy přímo z tabulky.
+
+**55–60 min — kontrola**
+
+15. **Ověř rovnici na dvou–třech řádcích tabulky.** Dosaď a spočítej.
+16. Zkontroluj, že Karnaugh a Quine-McCluskey daly ekvivalentní výsledek.
+
+**Kontrola v Pythonu** není v seznamu materiálů (je tam tabulkový procesor), ale v Excelu si tabulku ověřit můžeš — vzorec `=IF(AND(...),1,0)` a porovnat sloupce.
+
+---
+
+### Rozbor ukázkové úlohy
+
+> Navrhněte **adresový dekodér se třemi vstupy a osmi výstupy**. Každé kombinaci vstupních hodnot bude odpovídat právě jeden aktivní výstup.
+>
+> 1. Pravdivostní tabulka · 2. Minimalizace Karnaughovou mapou · 3. Minimalizace Quine-McCluskey · 4. Schéma dekodéru · 5. Návrh pomocí multiplexorů
+
+Vstupy jsou ve schématu označené **váhami 1, 2, 4**. Označím je $A$ (váha 1), $B$ (váha 2), $C$ (váha 4), takže hodnota na vstupu je $4C + 2B + A$.
+
+#### 1. Pravdivostní tabulka
+
+| $C$ (4) | $B$ (2) | $A$ (1) | Hodnota | $Y_0$ | $Y_1$ | $Y_2$ | $Y_3$ | $Y_4$ | $Y_5$ | $Y_6$ | $Y_7$ |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 0 | 0 | 0 | 0 | **1** | 0 | 0 | 0 | 0 | 0 | 0 | 0 |
+| 0 | 0 | 1 | 1 | 0 | **1** | 0 | 0 | 0 | 0 | 0 | 0 |
+| 0 | 1 | 0 | 2 | 0 | 0 | **1** | 0 | 0 | 0 | 0 | 0 |
+| 0 | 1 | 1 | 3 | 0 | 0 | 0 | **1** | 0 | 0 | 0 | 0 |
+| 1 | 0 | 0 | 4 | 0 | 0 | 0 | 0 | **1** | 0 | 0 | 0 |
+| 1 | 0 | 1 | 5 | 0 | 0 | 0 | 0 | 0 | **1** | 0 | 0 |
+| 1 | 1 | 0 | 6 | 0 | 0 | 0 | 0 | 0 | 0 | **1** | 0 |
+| 1 | 1 | 1 | 7 | 0 | 0 | 0 | 0 | 0 | 0 | 0 | **1** |
+
+**Na diagonále jsou jedničky** — to je vizuální podpis dekodéru. Každý řádek má právě jednu.
+
+#### 2. Minimalizace Karnaughovou mapou — a proč nic neubere
+
+**Tohle je pointa celé úlohy.** Vezmi mapu pro výstup $Y_3$ (aktivní jen při hodnotě 3, tedy $C{=}0, B{=}1, A{=}1$):
+
+```
+        BA
+C    00   01   11   10
+  0 |  0 |  0 |  1 |  0 |
+  1 |  0 |  0 |  0 |  0 |
+```
+
+**Jediná jednička, izolovaná.** Nemá žádného souseda s jedničkou, takže největší možná skupina má velikost 1 a vypustí nulu proměnných:
+
+$$Y_3 = C'BA$$
+
+**Totéž platí pro všech osm výstupů.** Každý má v mapě přesně jednu jedničku:
+
+$$Y_0 = C'B'A' \quad Y_1 = C'B'A \quad Y_2 = C'BA' \quad Y_3 = C'BA$$
+$$Y_4 = CB'A' \quad Y_5 = CB'A \quad Y_6 = CBA' \quad Y_7 = CBA$$
+
+**Jak to říct u obhajoby:**
+
+> „Minimalizaci jsem provedl pro každý výstup zvlášť. Každý výstup dekodéru je definičně **jediný minterm**, takže v Karnaughově mapě je to izolovaná jednička bez sousedů — nemá se s čím sloučit a minimalizace nemůže nic ubrat. Výsledný výraz je totožný s mintermem z tabulky. To není chyba postupu, ale vlastnost dekodéru."
+
+Kdo tohle řekne, má bod. Kdo hledá skupiny, ztratí půl hodiny.
+
+#### 3. Quine-McCluskey — stejný výsledek, jinou cestou
+
+Pro $Y_3$ je vstupem jediný minterm $m_3 = 011$:
+
+| Krok | Obsah |
+|---|---|
+| Seskupení podle počtu 1 | skupina „2 jedničky": $011$ |
+| Slučování | **není s čím** — jediný term v celé tabulce |
+| Primární implikanty | $011 = C'BA$ |
+| Pokrývací tabulka | jeden řádek, jeden sloupec → implikant je **esenciální** |
+
+$$Y_3 = C'BA$$
+
+**Argument je stejný jako u Karnaughovy mapy** — algoritmus proběhne, ale slučovací fáze nemá co dělat. U obhajoby stačí ukázat na jednom výstupu a říct, že u ostatních sedmi je to analogické.
+
+**Skupinová minimalizace** (zadání ji jmenuje u požadovaných znalostí): u dekodéru **nemá co sdílet**, protože žádné dva výstupy nemají společný implikant — každý je jiný minterm. Můžeš ale sdílet **negace vstupů**: $A'$, $B'$, $C'$ se použijí opakovaně, takže stačí **tři invertory** pro celý obvod. To je jediná úspora, která tu existuje, a je dobré ji zmínit.
+
+#### 4. Schéma dekodéru
+
+Osm tříbranných AND hradel, každé s jinou kombinací negovaných a nenegovaných vstupů:
+
+Nejdřív invertory, pak osm tříbranných AND hradel. Každý vstup je k dispozici v obou polaritách:
+
+```
+  A ---+---------------------> A
+       +---[>o]-------------->  A'      (invertor)
+
+  B ---+---------------------> B
+       +---[>o]-------------->  B'
+
+  C ---+---------------------> C
+       +---[>o]-------------->  C'
+```
+
+Z těch šesti signálů se pak sestaví osm součinů — každý AND dostane jednu kombinaci polarit:
+
+| Výstup | AND vstupy | Aktivní při |
+|---|---|---|
+| $Y_0$ | $C'$, $B'$, $A'$ | 000 = 0 |
+| $Y_1$ | $C'$, $B'$, $A$ | 001 = 1 |
+| $Y_2$ | $C'$, $B$, $A'$ | 010 = 2 |
+| $Y_3$ | $C'$, $B$, $A$ | 011 = 3 |
+| $Y_4$ | $C$, $B'$, $A'$ | 100 = 4 |
+| $Y_5$ | $C$, $B'$, $A$ | 101 = 5 |
+| $Y_6$ | $C$, $B$, $A'$ | 110 = 6 |
+| $Y_7$ | $C$, $B$, $A$ | 111 = 7 |
+
+Jeden výstup podrobně:
+
+```
+   C' ----+
+          |
+   B  ----+---[ AND ]----> Y3      (aktivní při C=0, B=1, A=1)
+          |
+   A  ----+
+```
+
+**Vzor je jednoduchý:** sloupec polarit v tabulce je binární zápis indexu výstupu, kde 0 znamená negovaný vstup. $Y_5$ = 101 → $C$ nenegované, $B$ negované, $A$ nenegované.
+
+**Spotřeba hradel:** 3 invertory + 8 tříbranných AND. To je celý dekodér.
+
+**Varianta s aktivní nulou:** místo AND použij NAND — výstupy budou negované, tedy vybraný výstup 0 a ostatní 1. Používá se to častěji, protože se tím dá přímo budit `CS` (chip select) vstup, který je typicky aktivní v nule.
+
+#### 5. Návrh pomocí multiplexorů
+
+Zadání chce „obvod pomocí multiplexorů". Dekodér a multiplexor jsou **duální funkce** (dekodér má jeden vstup a mnoho výstupů, MUX mnoho vstupů a jeden výstup), takže se realizuje po výstupech:
+
+**Každý výstup zvlášť jedním MUX 8:1:** adresa = $CBA$, datové vstupy přímo z tabulky. Pro $Y_3$ tedy $D_3 = 1$ a všechny ostatní $D_i = 0$.
+
+```
+  Y3:  MUX 8:1, adresa CBA
+       D0=0  D1=0  D2=0  D3=1  D4=0  D5=0  D6=0  D7=0
+```
+
+To je funkční, ale **osm multiplexorů na dekodér je plýtvání** — a přesně to u obhajoby řekni:
+
+> „Realizace multiplexorem je formálně možná, ale u dekodéru neefektivní — potřeboval bych osm MUX 8:1, tedy podstatně víc hradel než osm AND. Multiplexor se hodí na realizaci **jedné složité funkce**, kde ušetří minimalizaci, ne na dekodér, jehož výstupy jsou triviální mintermy. Naopak **demultiplexor** je s dekodérem funkčně totožný — dekodér s povolovacím vstupem *je* demultiplexor."
+
+Ta poslední věta je nejcennější věc, kterou v tomhle bodě můžeš říct.
+
+---
+
+### Příklady na procvičení
+
+Oba mají **ověřené výsledky**. Spočítej rukou, pak zkontroluj.
+
+#### Příklad 1 — majoritní funkce (rozcvička, ~15 min)
+
+Navrhni obvod se třemi vstupy $A, B, C$, který dá na výstupu 1, když jsou **aspoň dva vstupy v jedničce** (hlasování 2 ze 3).
+
+**Udělej:** tabulku, Karnaughovu mapu, minimalizaci, Quine-McCluskey, schéma, a realizaci MUX 8:1.
+
+<details markdown="1">
+<summary><strong>Řešení příkladu 1</strong> — až po vlastním výpočtu</summary>
+
+**Pravdivostní tabulka:**
+
+| $A$ | $B$ | $C$ | počet 1 | $f$ |
+|---|---|---|---|---|
+| 0 | 0 | 0 | 0 | 0 |
+| 0 | 0 | 1 | 1 | 0 |
+| 0 | 1 | 0 | 1 | 0 |
+| 0 | 1 | 1 | 2 | **1** |
+| 1 | 0 | 0 | 1 | 0 |
+| 1 | 0 | 1 | 2 | **1** |
+| 1 | 1 | 0 | 2 | **1** |
+| 1 | 1 | 1 | 3 | **1** |
+
+$$f = \sum m(3, 5, 6, 7)$$
+
+**Karnaughova mapa:**
+
+```
+        BC
+A    00   01   11   10
+  0 |  0 |  0 |  1 |  0 |
+  1 |  0 |  1 |  1 |  1 |
+```
+
+Tři dvojice (každá vypustí jednu proměnnou):
+
+- $m_3, m_7$ → sloupec 11, mění se $A$ → $BC$
+- $m_5, m_7$ → mění se $B$ → $AC$
+- $m_6, m_7$ → mění se $C$ → $AB$
+
+$$f = AB + BC + AC$$
+
+**Quine-McCluskey:**
+
+| Skupina | Minterm | ABC |
+|---|---|---|
+| 2 jedničky | $m_3$ | 011 |
+| | $m_5$ | 101 |
+| | $m_6$ | 110 |
+| 3 jedničky | $m_7$ | 111 |
+
+Slučování: $m_3{+}m_7 = {-}11 = BC$, $m_5{+}m_7 = 1{-}1 = AC$, $m_6{+}m_7 = 11{-} = AB$. Dál to nejde.
+
+Pokrývací tabulka:
+
+| Implikant | $m_3$ | $m_5$ | $m_6$ | $m_7$ |
+|---|---|---|---|---|
+| $BC$ | × | | | × |
+| $AC$ | | × | | × |
+| $AB$ | | | × | × |
+
+$m_3$ pokrývá jen $BC$ → **esenciální**. Stejně $m_5$ → $AC$ a $m_6$ → $AB$. **Všechny tři jsou esenciální**, takže:
+
+$$f = AB + BC + AC$$
+
+Shoda s Karnaughem ✓
+
+**Schéma:** tři dvoubranná AND hradla ($AB$, $BC$, $AC$) a jedno tříbranné OR. **Žádný invertor** — funkce neobsahuje negace, což je pěkná vlastnost majoritní funkce.
+
+**MUX 8:1:** adresa $ABC$, datové vstupy $D_0{=}0$, $D_1{=}0$, $D_2{=}0$, $D_3{=}1$, $D_4{=}0$, $D_5{=}1$, $D_6{=}1$, $D_7{=}1$ — přímo sloupec $f$ z tabulky.
+
+**Kontrola** dosazením $A{=}1, B{=}0, C{=}1$: $AB + BC + AC = 0 + 0 + 1 = 1$. V tabulce řádek 5 → 1 ✓
+
+</details>
+
+#### Příklad 2 — segment `a` sedmisegmentovky (plná úloha, ~35 min)
+
+Navrhni obvod, který budí **segment `a`** sedmisegmentového displeje se **společnou katodou** podle BCD vstupu $A$ (váha 8), $B$ (4), $C$ (2), $D$ (1).
+
+Segment `a` (horní vodorovná čárka) svítí u číslic **0, 2, 3, 5, 6, 7, 8, 9**. Kódy 10–15 jsou **don't care**.
+
+**Udělej:** tabulku, Karnaughovu mapu s využitím don't care, minimalizaci, Quine-McCluskey a schéma. Porovnej, o kolik don't care pomohly.
+
+<details markdown="1">
+<summary><strong>Řešení příkladu 2</strong> — až po vlastním výpočtu</summary>
+
+**Pravdivostní tabulka:**
+
+| Číslice | $A$ | $B$ | $C$ | $D$ | segment `a` |
+|---|---|---|---|---|---|
+| 0 | 0 | 0 | 0 | 0 | **1** |
+| 1 | 0 | 0 | 0 | 1 | 0 |
+| 2 | 0 | 0 | 1 | 0 | **1** |
+| 3 | 0 | 0 | 1 | 1 | **1** |
+| 4 | 0 | 1 | 0 | 0 | 0 |
+| 5 | 0 | 1 | 0 | 1 | **1** |
+| 6 | 0 | 1 | 1 | 0 | **1** |
+| 7 | 0 | 1 | 1 | 1 | **1** |
+| 8 | 1 | 0 | 0 | 0 | **1** |
+| 9 | 1 | 0 | 0 | 1 | **1** |
+| 10–15 | 1 | – | – | – | **X** |
+
+$$a = \sum m(0, 2, 3, 5, 6, 7, 8, 9) + \sum d(10, 11, 12, 13, 14, 15)$$
+
+**Karnaughova mapa** (X = don't care):
+
+```
+         CD
+AB    00   01   11   10
+   00|  1 |  0 |  1 |  1 |
+   01|  0 |  1 |  1 |  1 |
+   11|  X |  X |  X |  X |
+   10|  1 |  1 |  X |  X |
+```
+
+Skupiny (don't care beru jako 1, kde pomůže):
+
+1. **Celý spodní půl mapy** (řádky 11 a 10, tedy $A{=}1$): 8 políček → $A$
+2. **Sloupce 11 a 10** (tedy $C{=}1$): 8 políček → $C$
+3. **$BD$**: políčka $m_5, m_7, m_{13}, m_{15}$ → 4 políčka → $BD$
+4. **$B'D'$**: políčka $m_0, m_2, m_8, m_{10}$ → 4 políčka → $B'D'$
+
+$$a = A + C + BD + B'D'$$
+
+**Kontrola pokrytí:** $m_0$ (v $B'D'$) ✓, $m_2$ (v $C$ i $B'D'$) ✓, $m_3$ ($C$) ✓, $m_5$ ($BD$) ✓, $m_6$ ($C$) ✓, $m_7$ ($C$, $BD$) ✓, $m_8$ ($A$) ✓, $m_9$ ($A$) ✓. A nula $m_1$ ani $m_4$ v žádné skupině není ✓
+
+**Quine-McCluskey** dá tytéž čtyři primární implikanty:
+
+| Implikant | Binárně | Pokrývá |
+|---|---|---|
+| $C$ | `--1-` | 2, 3, 6, 7, 10, 11, 14, 15 |
+| $B'D'$ | `-0-0` | 0, 2, 8, 10 |
+| $BD$ | `-1-1` | 5, 7, 13, 15 |
+| $A$ | `1---` | 8–15 |
+
+Esenciální: $m_0$ pokrývá jen $B'D'$, $m_3$ a $m_6$ jen $C$, $m_5$ jen $BD$, $m_9$ jen $A$ → **všechny čtyři jsou esenciální**.
+
+$$a = A + C + BD + B'D'$$
+
+**O kolik don't care pomohly:** bez nich (kódy 10–15 jako nuly) by nešly udělat skupiny přes spodní řádky. Skupina $A$ by zmizela úplně a ostatní by se zmenšily na dvojice — dostal bys šest a víc členů se třemi literály. **Se don't care jsou to čtyři členy s nejvýš dvěma literály.** To je ten důvod, proč se u BCD vždycky používají.
+
+**Schéma:** dvě dvoubranná AND ($BD$, $B'D'$), jedno čtyřbranné OR, dva invertory ($B'$, $D'$). Vstupy $A$ a $C$ jdou do OR přímo.
+
+**Společná katoda:** segment svítí **jedničkou**, takže výstup obvodu jde přes předřadný rezistor (~220 Ω) na anodu segmentu. Kdyby to byla společná anoda, musel bys celý výstup **znegovat**, protože segment tam svítí nulou.
+
+</details>
+
+---
 
 ### Co si nacvičit
 
-- [ ] Vyřešit ukázkovou úlohu z PDF (adresový dekodér 3 → 8)
-- [ ] Karnaugh pro 3 i 4 proměnné, včetně neurčených stavů (don't care)
-- [ ] Quine-McCluskey ručně na jednom příkladu
-- [ ] Zapojení sedmisegmentovky se společnou katodou vs. anodou
-- [ ] Realizace funkce multiplexorem
+- [ ] Ukázková úloha z PDF (dekodér 3→8) — **hlavně umět vysvětlit, proč minimalizace nic neubere**
+- [ ] [Příklad 1](#příklad-1--majoritní-funkce-rozcvička-15-min) — majoritní funkce, všechny body
+- [ ] [Příklad 2](#příklad-2--segment-a-sedmisegmentovky-plná-úloha-35-min) — sedmisegmentovka s don't care
+- [ ] **Zpaměti: Grayovo pořadí** 00, 01, 11, 10 — a proč není binární
+- [ ] **Zpaměti: pravidla slučování** (mocniny dvou, obdélníky, přes okraje, rohy)
+- [ ] **Zpaměti: pravdivostní tabulka všech hradel** včetně XOR a XNOR
+- [ ] Quine-McCluskey ručně na funkci se 4 proměnnými
+- [ ] Převod SoP na samá NAND (De Morgan)
+- [ ] Realizace funkce multiplexorem — datové vstupy přímo z tabulky
+- [ ] Rozdíl společná katoda / anoda a k čemu je předřadný rezistor
+- [ ] Nakreslit schéma z rovnice a zpátky rovnici ze schématu
+
+---
 
 ### Poznámky
 
-<!-- Sem vlastní výpisky, příkazy, útržky kódu. -->
+<!-- Sem vlastní výpisky, mapy, schémata. -->
+
+---
 
 ### Na co se doptají
 
-- Proč je v Karnaughově mapě Grayovo pořadí a ne binární?
-- Co jsou don't care stavy a jak ti pomůžou?
-- Převeď svou funkci na samá NAND hradla.
-- Jak realizuješ libovolnou funkci 3 proměnných jedním multiplexorem 8:1?
+- **Proč je v Karnaughově mapě Grayovo pořadí a ne binární?** — Aby se **sousední políčka lišila v jediném bitu**. Při binárním pořadí by sousedily `01` a `10`, které se liší ve dvou bitech, a nešly by sloučit. Grayovo pořadí zajistí, že sloučení dvou sousedů vždy vypustí právě jednu proměnnou.
+- **Co jsou don't care stavy a jak ti pomůžou?** — Kombinace, které nikdy nenastanou (u BCD kódy 10–15). Můžeš je brát **jako 1, když ti to zvětší skupinu**, a jako 0 jinak — a nemusíš být konzistentní. U segmentu `a` to zkrátí výraz ze šesti členů na čtyři.
+- **Převeď svou funkci na samá NAND hradla.** — Mechanicky: schéma AND–OR se převede na NAND–NAND. Funguje to díky De Morganovi, $AB + CD = ((AB)' \cdot (CD)')'$ — dvojité negace se vyruší. Vstupy ani topologie se nemění.
+- **Jak realizuješ libovolnou funkci 3 proměnných jedním multiplexorem 8:1?** — Proměnné na **adresní vstupy**, a na **datové vstupy přivedu přímo sloupec výstupu z pravdivostní tabulky** (0 nebo 1). Minimalizace vůbec není potřeba — tabulka *je* zapojení.
+- **Proč u dekodéru minimalizace nic neubere?** — Každý výstup je **definičně jediný minterm**, tedy v mapě izolovaná jednička bez sousedů. Nemá se s čím sloučit. Jediná úspora je sdílení tří invertorů pro negované vstupy.
+- **Jaký je rozdíl mezi dekodérem a demultiplexorem?** — Funkčně **žádný** — dekodér s povolovacím (enable) vstupem *je* demultiplexor. Rozdíl je v použití: dekodér vybírá, demultiplexor rozvádí datový signál na jeden z výstupů.
+- **Kolik literálů má skupina o velikosti 4 ve mapě se 4 proměnnými?** — $n - k$, kde $2^k$ je velikost skupiny. Tedy $4 - 2 = 2$ literály. Každé zdvojnásobení skupiny ubere jednu proměnnou.
+- **Můžou být skupiny v Karnaughově mapě velikosti 3?** — **Ne**, jen mocniny dvou (1, 2, 4, 8, 16). Skupina o třech políčkách by neodpovídala žádnému součinu.
+- **Je minimální forma jediná?** — **Ne.** U funkce $\sum m(0,1,2,5,6,7)$ jsou dvě různá minimální řešení se stejným počtem členů i literálů. Když ti vyjde jiný výraz než v řešení, ověř počet členů — může být rovnocenný.
+- **Co je úplný systém spojek a proč je NAND úplný?** — Systém, kterým lze vyjádřit každou logickou funkci. NAND je úplný, protože z něj postavíš NOT ($A \uparrow A$), AND a OR. Teorie v [SZZTP okruh 10](../../SZZTP/10-logika-mnoziny-relace/).
+- **Rozdíl mezi společnou katodou a anodou u displeje?** — U společné katody jsou katody na zemi a segment svítí **jedničkou**. U společné anody naopak — svítí **nulou**, takže budicí obvod musí být negovaný.
+- **Proč má každý segment vlastní předřadný rezistor?** — Aby jasnost nezávisela na počtu svítících segmentů. Jeden společný rezistor by při osmičce (7 segmentů) dal každé LED méně proudu než při jedničce (2 segmenty).
+- **Kdy použít PoS místo SoP?** — Když je v tabulce **méně nul než jedniček** — pak je součin součtů kratší.
+- **Co dělá XOR a k čemu je?** — 1 při **nepárném počtu jedniček**. Používá se na paritu, poloviční sčítačku (součet bez přenosu) a jako řízená negace ($A \oplus 1 = A'$).
+
+---
 
 ### Užitečné odkazy
 
--
+- Analogová část elektroniky: [okruh 6](../06-elektronika-analogova/)
+- Výrokový počet a úplné systémy spojek: [SZZTP okruh 10](../../SZZTP/10-logika-mnoziny-relace/)
