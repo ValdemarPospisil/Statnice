@@ -130,6 +130,31 @@ Po vynásobení a seskupení dostaneš tvar, kde u $U_B$ stojí **součet převr
 - **mimo diagonálu:** $-1/R$ rezistoru mezi dvěma uzly
 - **pravá strana:** proudy vtékající ze zdrojů, tedy $U_{\text{zdroje}}/R$
 
+**Celá soustava pro zkouškový obvod** — tři uzly, tedy tři neznámá napětí:
+
+$$\left(\tfrac{1}{20} + \tfrac{1}{35}\right) U_A - \tfrac{1}{35} U_B = \tfrac{22}{20}$$
+$$-\tfrac{1}{35} U_A + \left(\tfrac{1}{35} + \tfrac{1}{50} + \tfrac{1}{60}\right) U_B - \tfrac{1}{60} U_C = 0$$
+$$-\tfrac{1}{60} U_B + \left(\tfrac{1}{60} + \tfrac{1}{70}\right) U_C = \tfrac{25}{70}$$
+
+Číselně:
+
+$$0{,}078571\, U_A - 0{,}028571\, U_B = 1{,}1$$
+$$-0{,}028571\, U_A + 0{,}065238\, U_B - 0{,}016667\, U_C = 0$$
+$$-0{,}016667\, U_B + 0{,}030952\, U_C = 0{,}357143$$
+
+Řešení: $U_A = 18{,}695$ V, $U_B = 12{,}912$ V, $U_C = 18{,}491$ V. Odtud se proudy dopočítají z Ohmova zákona, vždy jako **(odkud − kam) / R**:
+
+$$I_1 = \frac{U_1 - U_A}{R_1} = \frac{22 - 18{,}695}{20} = 0{,}1652\ \text{A}$$
+$$I_2 = \frac{U_A - U_B}{R_2} = \frac{18{,}695 - 12{,}912}{35} = 0{,}1652\ \text{A}$$
+$$I_3 = \frac{U_B}{R_3} = \frac{12{,}912}{50} = 0{,}2582\ \text{A}$$
+
+**Pozor na dvě věci, kde se chybuje:**
+
+- $U_A$ **není** napětí na `R1` ani na `R2` — je to **potenciál bodu A vůči zemi**. Napětí na rezistoru je vždy **rozdíl** potenciálů jeho konců: na `R2` je $18{,}695 - 12{,}912 = 5{,}78$ V.
+- Proud větví se zdrojem **není** $U_1/R_1$, ale $(U_1 - U_A)/R_1$. Zdroj tlačí 22 V, ale bod A je na 18,695 V, takže na `R1` zbývá jen 3,305 V úbytku.
+
+**Tři rovnice se ručně řeší nepříjemně** — u téhle metody použij [Python](#kontrola-v-pythonu), nebo zvol smyčkové proudy, kde jsou jen dvě.
+
 #### Metoda superpozice
 
 **Idea:** v lineárním obvodu je výsledný proud **součtem proudů od jednotlivých zdrojů**.
@@ -471,53 +496,155 @@ $$I_3 = \frac{10}{6{,}667 + 30} = \frac{10}{36{,}667} = \mathbf{0{,}2727\ A} \qu
 
 $R_1 = 10$ Ω, $R_2 = 25$ Ω, $R_3 = 40$ Ω, $R_4 = 50$ Ω, $R_5 = 20$ Ω, $U_1 = 18$ V, $U_5 = 12$ V.
 
-**Spočítej:** všech pět proudů, a to **dvěma metodami** (smyčkové proudy + uzlová napětí). Ověř energetickou bilancí. Pak Thévenin pro `R2` a Norton pro `R3`.
+**Spočítej:** všech pět proudů **všemi šesti metodami** jako u zkoušky — Kirchhoff, smyčkové proudy, uzlová napětí, superpozice, Thévenin pro `R2`, Norton pro `R3`. Ověř energetickou bilancí.
+
+Když je málo času, udělej aspoň smyčkové proudy a zkontroluj Théveninem.
 
 <details markdown="1">
 <summary><strong>Řešení příkladu 2</strong> — až po vlastním výpočtu</summary>
 
-**Smyčkové proudy** (společný `R3`, oba proudy dolů → plus):
+Obvod má **tři uzly** (A, B, C) a **dvě nezávislé smyčky**. Uzly A a C jsou jen průchozí (vedou z nich dvě větve), takže $I_1 = I_2$ a $I_4 = I_5$ — fakticky jsou neznámé **tři proudy**: $I_1$, $I_3$, $I_5$.
+
+#### a) Kirchhoffovy zákony
+
+**KCL v uzlu B** (co přiteče, to odteče):
+
+$$I_1 + I_5 = I_3$$
+
+**KVL levá smyčka** (zdroj $U_1$ → `R1` → `R2` → `R3` → zem):
+
+$$U_1 = R_1 I_1 + R_2 I_1 + R_3 I_3 \;\Rightarrow\; 18 = 35 I_1 + 40 I_3$$
+
+**KVL pravá smyčka** (zdroj $U_5$ → `R5` → `R4` → `R3` → zem):
+
+$$U_5 = R_5 I_5 + R_4 I_5 + R_3 I_3 \;\Rightarrow\; 12 = 70 I_5 + 40 I_3$$
+
+Substitucí $I_3 = I_1 + I_5$ do obou rovnic:
+
+$$18 = 35 I_1 + 40(I_1 + I_5) = 75 I_1 + 40 I_5$$
+$$12 = 70 I_5 + 40(I_1 + I_5) = 40 I_1 + 110 I_5$$
+
+To je táž soustava jako u smyčkových proudů — což není náhoda, viz níž.
+
+#### b) Smyčkové proudy
+
+$I_a$ obíhá levou smyčku, $I_b$ pravou, společná větev je `R3` a **oba jí tečou dolů** → znaménko plus:
 
 $$(R_1 + R_2 + R_3) I_a + R_3 I_b = U_1 \;\Rightarrow\; 75 I_a + 40 I_b = 18$$
 $$R_3 I_a + (R_3 + R_4 + R_5) I_b = U_5 \;\Rightarrow\; 40 I_a + 110 I_b = 12$$
 
 Determinant: $75 \cdot 110 - 40^2 = 8250 - 1600 = 6650$
 
-$$I_a = \frac{18 \cdot 110 - 40 \cdot 12}{6650} = \frac{1980 - 480}{6650} = \frac{1500}{6650} = 0{,}2256\ \text{A}$$
+$$I_a = \frac{18 \cdot 110 - 40 \cdot 12}{6650} = \frac{1980 - 480}{6650} = \frac{1500}{6650} = \frac{30}{133} = 0{,}2256\ \text{A}$$
 
-$$I_b = \frac{75 \cdot 12 - 40 \cdot 18}{6650} = \frac{900 - 720}{6650} = \frac{180}{6650} = 0{,}0271\ \text{A}$$
+$$I_b = \frac{75 \cdot 12 - 40 \cdot 18}{6650} = \frac{900 - 720}{6650} = \frac{180}{6650} = \frac{18}{665} = 0{,}0271\ \text{A}$$
 
-**Výsledky:**
+$$I_3 = I_a + I_b = \frac{24}{95} = 0{,}2526\ \text{A}$$
 
-| Proud | Hodnota |
-|---|---|
-| $I_1 = I_2 = I_a$ | **0,2256 A** |
-| $I_3 = I_a + I_b$ | **0,2526 A** |
-| $I_4 = I_5 = I_b$ | **0,0271 A** |
+**Proč to vyšlo stejně jako u Kirchhoffa:** smyčkové proudy jsou jen mechanický způsob, jak tu soustavu sestavit — KCL je splněný automaticky tím, že smyčkový proud vteče i vyteče.
 
-**Uzlová napětí** (kontrola druhou metodou): $U_A = 15{,}744$ V, $U_B = 10{,}105$ V, $U_C = 11{,}459$ V.
+#### c) Uzlová napětí
 
-Dopočet: $I_1 = \frac{18 - 15{,}744}{10} = 0{,}2256$ A ✓, $I_3 = \frac{10{,}105}{40} = 0{,}2526$ A ✓
+Zem je dolní vodič. U každého uzlu **součet vodivostí na diagonále**, u sousedů $-1/R$, vpravo $U_{\text{zdroje}}/R$:
+
+$$\left(\tfrac{1}{10} + \tfrac{1}{25}\right) U_A - \tfrac{1}{25} U_B = \tfrac{18}{10}$$
+$$-\tfrac{1}{25} U_A + \left(\tfrac{1}{25} + \tfrac{1}{40} + \tfrac{1}{50}\right) U_B - \tfrac{1}{50} U_C = 0$$
+$$-\tfrac{1}{50} U_B + \left(\tfrac{1}{50} + \tfrac{1}{20}\right) U_C = \tfrac{12}{20}$$
+
+Číselně:
+
+$$0{,}14\, U_A - 0{,}04\, U_B = 1{,}8$$
+$$-0{,}04\, U_A + 0{,}085\, U_B - 0{,}02\, U_C = 0$$
+$$-0{,}02\, U_B + 0{,}07\, U_C = 0{,}6$$
+
+Řešení: $U_A = 15{,}744$ V, $U_B = 10{,}105$ V, $U_C = 11{,}459$ V.
+
+Dopočet proudů (vždy „odkud − kam" děleno R):
+
+$$I_1 = \frac{18 - 15{,}744}{10} = 0{,}2256\ \text{A} \qquad I_2 = \frac{15{,}744 - 10{,}105}{25} = 0{,}2256\ \text{A}$$
+$$I_3 = \frac{10{,}105}{40} = 0{,}2526\ \text{A}$$
+$$I_4 = \frac{11{,}459 - 10{,}105}{50} = 0{,}0271\ \text{A} \qquad I_5 = \frac{12 - 11{,}459}{20} = 0{,}0271\ \text{A}$$
+
+**Všimni si:** tři rovnice místo dvou. Proto jsou u tohohle obvodu smyčkové proudy méně práce.
+
+#### d) Superpozice
+
+**Jen $U_1$** (zdroj $U_5$ nahrazen zkratem — `R5` pak vede z C na zem):
+
+Z pohledu zdroje je to `R1` + `R2` v sérii s paralelní kombinací:
+
+$$R_3 \parallel (R_4 + R_5) = \frac{40 \cdot 70}{110} = 25{,}455\ \Omega$$
+$$R_{\text{celk}} = 10 + 25 + 25{,}455 = 60{,}455\ \Omega \;\Rightarrow\; I_1' = \frac{18}{60{,}455} = 0{,}2977\ \text{A}$$
+
+Proud se v uzlu B rozdělí děličem:
+
+$$I_3' = I_1' \cdot \frac{R_4 + R_5}{R_3 + R_4 + R_5} = 0{,}2977 \cdot \frac{70}{110} = 0{,}1895\ \text{A}$$
+$$I_5' = -I_1' \cdot \frac{R_3}{R_3 + R_4 + R_5} = -0{,}2977 \cdot \frac{40}{110} = -0{,}1083\ \text{A}$$
+
+$I_5'$ je **záporný**, protože samotný zdroj $U_1$ by tou větví tlačil proud opačně.
+
+**Jen $U_5$** (zdroj $U_1$ zkratován):
+
+$$R_3 \parallel (R_1 + R_2) = \frac{40 \cdot 35}{75} = 18{,}667\ \Omega$$
+$$R_{\text{celk}} = 20 + 50 + 18{,}667 = 88{,}667\ \Omega \;\Rightarrow\; I_5'' = \frac{12}{88{,}667} = 0{,}1353\ \text{A}$$
+$$I_3'' = 0{,}1353 \cdot \frac{35}{75} = 0{,}0632\ \text{A} \qquad I_1'' = -0{,}1353 \cdot \frac{40}{75} = -0{,}0722\ \text{A}$$
+
+**Součet:**
+
+| Proud | Jen $U_1$ | Jen $U_5$ | Součet |
+|---|---|---|---|
+| $I_1$ | +0,2977 A | −0,0722 A | **0,2256 A** |
+| $I_3$ | +0,1895 A | +0,0632 A | **0,2526 A** |
+| $I_5$ | −0,1083 A | +0,1353 A | **0,0271 A** |
+
+Sedí s předchozími metodami.
+
+#### e) Thévenin pro `R2`
+
+Odpojím `R2` → obvod se rozpadne na dvě samostatné části.
+
+**Levá:** `R1` + `U1` naprázdno, neteče proud → $U_A = 18$ V.
+
+**Pravá:** $U_5$ tlačí proud přes `R5` + `R4` + `R3` sériově:
+
+$$I = \frac{12}{20 + 50 + 40} = \frac{12}{110} = 0{,}1091\ \text{A} \;\Rightarrow\; U_B = 0{,}1091 \cdot 40 = 4{,}364\ \text{V}$$
+
+$$U_{th} = 18 - 4{,}364 = 13{,}636\ \text{V}$$
+
+$R_{th}$ se zkratovanými zdroji (z A vede `R1` na zem, z B `R3` na zem a paralelně `R4`+`R5`):
+
+$$R_{th} = R_1 + \bigl(R_3 \parallel (R_4 + R_5)\bigr) = 10 + 25{,}455 = 35{,}455\ \Omega$$
+
+$$I_2 = \frac{U_{th}}{R_{th} + R_2} = \frac{13{,}636}{35{,}455 + 25} = \frac{13{,}636}{60{,}455} = \mathbf{0{,}2256\ A} \quad \checkmark$$
+
+#### f) Norton pro `R3`
+
+Odpojím `R3` a **zkratuju** bod B na zem → tečou dva nezávislé proudy:
+
+$$I_{sc} = \frac{U_1}{R_1 + R_2} + \frac{U_5}{R_4 + R_5} = \frac{18}{35} + \frac{12}{70} = 0{,}5143 + 0{,}1714 = 0{,}6857\ \text{A}$$
+
+$R_n$ mezi B a zemí se zkratovanými zdroji (dvě paralelní cesty):
+
+$$R_n = (R_1 + R_2) \parallel (R_4 + R_5) = \frac{35 \cdot 70}{105} = 23{,}333\ \Omega$$
+
+$$I_3 = I_{sc} \cdot \frac{R_n}{R_n + R_3} = 0{,}6857 \cdot \frac{23{,}333}{63{,}333} = 0{,}6857 \cdot 0{,}3684 = \mathbf{0{,}2526\ A} \quad \checkmark$$
+
+#### Souhrn výsledků
+
+| Proud | Větev | Hodnota |
+|---|---|---|
+| $I_1 = I_2$ | `R1`,`U1` a `R2` | **0,2256 A** |
+| $I_3$ | `R3` | **0,2526 A** |
+| $I_4 = I_5$ | `R4` a `R5`,`U5` | **0,0271 A** |
+
+Uzlová napětí: $U_A = 15{,}744$ V, $U_B = 10{,}105$ V, $U_C = 11{,}459$ V.
 
 **Kontroly:**
-- KCL v B: $0{,}2256 + 0{,}0271 = 0{,}2526$ ✓
-- Bilance: $18 \cdot 0{,}2256 + 12 \cdot 0{,}0271 = 4{,}060 + 0{,}325 = 4{,}385$ W = $\sum R I^2 = 4{,}385$ W ✓
 
-**Thévenin pro `R2`:**
-
-Levá část naprázdno: $U_A = 18$ V. Pravá: $I = \frac{12}{20 + 50 + 40} = 0{,}1091$ A, $U_B = 0{,}1091 \cdot 40 = 4{,}364$ V.
-
-$$U_{th} = 18 - 4{,}364 = 13{,}636\ \text{V}, \qquad R_{th} = 10 + \bigl(40 \parallel 70\bigr) = 10 + 25{,}455 = 35{,}455\ \Omega$$
-
-$$I_2 = \frac{13{,}636}{35{,}455 + 25} = \frac{13{,}636}{60{,}455} = \mathbf{0{,}2256\ A} \quad \checkmark$$
-
-**Norton pro `R3`:**
-
-$$I_{sc} = \frac{18}{10 + 25} + \frac{12}{50 + 20} = 0{,}5143 + 0{,}1714 = 0{,}6857\ \text{A}$$
-
-$$R_n = 35 \parallel 70 = \frac{35 \cdot 70}{105} = 23{,}333\ \Omega$$
-
-$$I_3 = 0{,}6857 \cdot \frac{23{,}333}{23{,}333 + 40} = 0{,}6857 \cdot 0{,}3684 = \mathbf{0{,}2526\ A} \quad \checkmark$$
+- **KCL v B:** $0{,}2256 + 0{,}0271 = 0{,}2526$ ✓
+- **Energetická bilance:** zdroje dodají $18 \cdot 0{,}2256 + 12 \cdot 0{,}0271 = 4{,}060 + 0{,}325 = 4{,}385$ W.
+  Rezistory spotřebují $0{,}509 + 1{,}272 + 2{,}553 + 0{,}037 + 0{,}015 = 4{,}385$ W ✓
+- **Všech šest metod dalo tytéž proudy** — to je nejlepší možná kontrola.
 
 </details>
 
