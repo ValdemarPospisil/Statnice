@@ -390,7 +390,55 @@ Zůstane **jediný skutečný uzel (B)** a **dvě nezávislé smyčky**. Neznám
 
 Hodnoty: $R_1 = 20$, $R_2 = 35$, $R_3 = 50$, $R_4 = 60$, $R_5 = 70$ Ω, $U_1 = 22$ V, $U_5 = 25$ V.
 
-#### Řešení uzlovým napětím (nejrychlejší cesta — jedna rovnice)
+#### Které metody zadání chce
+
+| Bod | Metoda | Neznámých | Kde níž |
+|---|---|---|---|
+| 1 | Kirchhoffovy zákony | 3 proudy | [↓](#řešení-pomocí-1-a-2-kirchhoffova-zákona-bod-1-zadání) |
+| 2 | smyčkové proudy | 2 | [↓](#řešení-smyčkovými-proudy-bod-2-zadání) |
+| 3 | uzlová napětí | **1** | [↓](#řešení-uzlovým-napětím-bod-3-zadání--nejrychlejší-cesta-jedna-rovnice) |
+| 4 | superpozice | — (dvě dílčí úlohy) | [↓](#řešení-superpozicí-bod-4-zadání) |
+| 5 | Thévenin pro `R2` | 1 | [↓](#thévenin-pro-r2-bod-5-zadání) |
+| 6 | Norton pro `R3` | 1 | [↓](#norton-pro-r3-bod-6-zadání) |
+
+**Všechny musí dát tytéž proudy** — to je nejlepší kontrola, jakou máš. Pořadí níž je podle zadání.
+
+#### Řešení pomocí 1. a 2. Kirchhoffova zákona (bod 1 zadání)
+
+Neznámé jsou **proudy ve větvích**. Protože A a C nejsou uzly, platí $I_1 = I_2$ a $I_4 = I_5$, takže neznámé jsou tři: $I_1$, $I_3$, $I_5$.
+
+**Zvol orientace** (a už je neměň): $I_1$ teče zdrojem `U1` nahoru a přes `R1`,`R2` do B. $I_5$ teče zdrojem `U5` nahoru a přes `R5`,`R4` do B. $I_3$ teče z B přes `R3` dolů na zem.
+
+**1. zákon (KCL) v uzlu B** — jediný skutečný uzel kromě země:
+
+$$I_1 + I_5 = I_3$$
+
+**2. zákon (KVL), levá smyčka** (zem → `U1` → `R1` → `R2` → B → `R3` → zem):
+
+$$U_1 = (R_1 + R_2) I_1 + R_3 I_3 \;\Longrightarrow\; 22 = 55 I_1 + 50 I_3$$
+
+**2. zákon (KVL), pravá smyčka** (zem → `U5` → `R5` → `R4` → B → `R3` → zem):
+
+$$U_5 = (R_4 + R_5) I_5 + R_3 I_3 \;\Longrightarrow\; 25 = 130 I_5 + 50 I_3$$
+
+**Máš tři rovnice o třech neznámých.** Kolik jich má být, si ověř vzorcem: $u - 1 = 1$ rovnice z KCL a $v - u + 1 = 3 - 2 + 1 = 2$ rovnice z KVL, tedy 3 celkem. Sedí.
+
+**Řešení** — dosaď $I_3 = I_1 + I_5$ do obou napěťových rovnic:
+
+$$22 = 55 I_1 + 50(I_1 + I_5) = 105 I_1 + 50 I_5$$
+$$25 = 130 I_5 + 50(I_1 + I_5) = 50 I_1 + 180 I_5$$
+
+Determinant: $105 \cdot 180 - 50^2 = 18900 - 2500 = 16400$
+
+$$I_1 = \frac{22 \cdot 180 - 50 \cdot 25}{16400} = \frac{3960 - 1250}{16400} = \frac{2710}{16400} = 0{,}1652\ \text{A}$$
+
+$$I_5 = \frac{105 \cdot 25 - 50 \cdot 22}{16400} = \frac{2625 - 1100}{16400} = \frac{1525}{16400} = 0{,}0930\ \text{A}$$
+
+$$I_3 = I_1 + I_5 = 0{,}2582\ \text{A}$$
+
+**Všimni si, že po substituci vyšla táž soustava jako u smyčkových proudů.** To není náhoda — smyčkové proudy jsou jen mechanický recept, jak tuhle soustavu sestavit, aniž bys psal KCL zvlášť.
+
+#### Řešení uzlovým napětím (bod 3 zadání — nejrychlejší cesta, jedna rovnice)
 
 Uzly jsou jen **dva**: bod B nad `R3` a zem. Zem je referenční, takže neznámá je jediná — $U_B$. Protože A a C uzly nejsou, `R1`+`R2` = 55 Ω a `R4`+`R5` = 130 Ω jsou sériové kombinace v jedné větvi.
 
@@ -406,7 +454,7 @@ Odtud proudy:
 
 $$I_1 = I_2 = \frac{22 - 12{,}912}{55} = 0{,}1652\ \text{A} \qquad I_3 = \frac{12{,}912}{50} = 0{,}2582\ \text{A} \qquad I_4 = I_5 = \frac{25 - 12{,}912}{130} = 0{,}0930\ \text{A}$$
 
-#### Kontrola smyčkovými proudy
+#### Řešení smyčkovými proudy (bod 2 zadání)
 
 Dvě smyčky: **levá** (`U1` → `R1` → `R2` → `R3` → zem) a **pravá** (`U5` → `R5` → `R4` → `R3` → zem). Společná větev je `R3` a **oba smyčkové proudy jí tečou dolů**, tedy stejným směrem → znaménko **plus**.
 
@@ -422,6 +470,46 @@ $$I_b = \frac{105 \cdot 25 - 50 \cdot 22}{16400} = \frac{1525}{16400} = 0{,}0930
 $$I_3 = I_a + I_b = 0{,}2582\ \text{A}$$
 
 Sedí — **dvě rovnice místo jedné**, proto je u tohohle obvodu rychlejší uzlové napětí.
+
+#### Řešení superpozicí (bod 4 zadání)
+
+Dva zdroje → dvě dílčí úlohy. V každé nechám působit jeden a druhý **nahradím zkratem**.
+
+**Krok 1: jen $U_1$** (zdroj `U5` zkratován, `R5` tak vede z C přímo na zem)
+
+Z pohledu zdroje `U1` je to `R1`+`R2` v sérii s paralelní kombinací `R3` a (`R4`+`R5`):
+
+$$R_3 \parallel (R_4 + R_5) = \frac{50 \cdot 130}{180} = \frac{325}{9} = 36{,}111\ \Omega$$
+
+$$R_{\text{celk}} = 55 + 36{,}111 = 91{,}111\ \Omega \;\Longrightarrow\; I_1' = \frac{22}{91{,}111} = 0{,}2415\ \text{A}$$
+
+V uzlu B se proud rozdělí **děličem proudu** — do každé větve nepřímo poměrně k jejímu odporu:
+
+$$I_3' = I_1' \cdot \frac{R_4 + R_5}{R_3 + R_4 + R_5} = 0{,}2415 \cdot \frac{130}{180} = 0{,}1744\ \text{A}$$
+
+$$I_5' = -I_1' \cdot \frac{R_3}{R_3 + R_4 + R_5} = -0{,}2415 \cdot \frac{50}{180} = -0{,}0671\ \text{A}$$
+
+**$I_5'$ je záporný** — samotný zdroj `U1` by tou větví tlačil proud opačným směrem, než jsme zvolili.
+
+**Krok 2: jen $U_5$** (zdroj `U1` zkratován)
+
+$$R_3 \parallel (R_1 + R_2) = \frac{50 \cdot 55}{105} = \frac{550}{21} = 26{,}190\ \Omega$$
+
+$$R_{\text{celk}} = 130 + 26{,}190 = 156{,}190\ \Omega \;\Longrightarrow\; I_5'' = \frac{25}{156{,}190} = 0{,}1601\ \text{A}$$
+
+$$I_3'' = I_5'' \cdot \frac{R_1 + R_2}{R_3 + R_1 + R_2} = 0{,}1601 \cdot \frac{55}{105} = 0{,}0838\ \text{A}$$
+
+$$I_1'' = -I_5'' \cdot \frac{R_3}{R_3 + R_1 + R_2} = -0{,}1601 \cdot \frac{50}{105} = -0{,}0762\ \text{A}$$
+
+**Krok 3: sečti dílčí výsledky**
+
+| Proud | Jen $U_1$ | Jen $U_5$ | Součet |
+|---|---|---|---|
+| $I_1 = I_2$ | +0,2415 A | −0,0762 A | **0,1652 A** |
+| $I_3$ | +0,1744 A | +0,0838 A | **0,2582 A** |
+| $I_4 = I_5$ | −0,0671 A | +0,1601 A | **0,0930 A** |
+
+Sedí s předchozími metodami. **Kontrola, která se hodí:** dílčí proudy musí mít smysl i samostatně — u jednoho zdroje teče proud z jeho plusu do obvodu a část se vrací tou druhou větví, proto ta záporná znaménka.
 
 #### Výsledky — všechny proudy
 
@@ -440,7 +528,7 @@ Uzlová napětí: $U_A = 18{,}695$ V, $U_B = 12{,}912$ V, $U_C = 18{,}491$ V.
 - **KCL v uzlu B:** $I_2 + I_4 = 0{,}1652 + 0{,}0930 = 0{,}2582 = I_3$ ✓
 - **Energetická bilance:** zdroje dodají $22 \cdot 0{,}1652 + 25 \cdot 0{,}0930 = 3{,}635 + 2{,}325 = 5{,}960$ W. Rezistory spotřebují $\sum R I^2 = 5{,}960$ W ✓
 
-#### Thévenin pro `R2`
+#### Thévenin pro `R2` (bod 5 zadání)
 
 Odpojením `R2` se obvod rozpadne na dvě samostatné části (viz [výklad výš](#théveninova-poučka)):
 
@@ -448,7 +536,7 @@ $$U_{th} = 22 - 6{,}944 = 15{,}056\ \text{V}, \qquad R_{th} = 20 + 36{,}11 = 56{
 
 $$I_2 = \frac{15{,}056}{56{,}11 + 35} = 0{,}1652\ \text{A} \quad \checkmark$$
 
-#### Norton pro `R3`
+#### Norton pro `R3` (bod 6 zadání)
 
 $$I_{sc} = \frac{22}{55} + \frac{25}{130} = 0{,}5923\ \text{A}, \qquad R_n = 55 \parallel 130 = 38{,}65\ \Omega$$
 
