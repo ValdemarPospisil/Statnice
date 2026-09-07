@@ -27,7 +27,9 @@
 | **Thévenin** | náhrada zdrojem napětí $U_{th}$ a $R_{th}$ | 1 | proud **jedním** rezistorem |
 | **Norton** | náhrada zdrojem proudu $I_{sc}$ a $R_n$ | 1 | proud **jedním** rezistorem |
 
-**Nejdůležitější rozhodnutí na začátku:** porovnej **počet nezávislých smyček** a **počet uzlů minus jeden**. Menší číslo vyhrává — u zkouškového obvodu jsou to 2 smyčky vs. 3 uzly, takže **smyčkové proudy jsou nejrychlejší**.
+**Nejdůležitější rozhodnutí na začátku:** porovnej **počet nezávislých smyček** a **počet uzlů minus jeden**. Menší číslo vyhrává.
+
+**U zkouškového obvodu vyhrávají uzlová napětí — a to výrazně.** Pozor na to, co je vlastně uzel: místo, kde se stýkají **aspoň tři** vodiče. V obvodu bez `R6`/`U6` jsou uzly jen **dva** (bod nad `R3` a zem), takže po volbě referenčního zbývá **jediná neznámá**. Smyčkové proudy by daly dvě. Body A a C uzly **nejsou** — stýkají se v nich jen dva prvky.
 
 #### Základní pojmy
 
@@ -130,30 +132,55 @@ Po vynásobení a seskupení dostaneš tvar, kde u $U_B$ stojí **součet převr
 - **mimo diagonálu:** $-1/R$ rezistoru mezi dvěma uzly
 - **pravá strana:** proudy vtékající ze zdrojů, tedy $U_{\text{zdroje}}/R$
 
-**Celá soustava pro zkouškový obvod** — tři uzly, tedy tři neznámá napětí:
+#### Nejdřív najdi skutečné uzly — jinak si přidáš práci
 
-$$\left(\tfrac{1}{20} + \tfrac{1}{35}\right) U_A - \tfrac{1}{35} U_B = \tfrac{22}{20}$$
-$$-\tfrac{1}{35} U_A + \left(\tfrac{1}{35} + \tfrac{1}{50} + \tfrac{1}{60}\right) U_B - \tfrac{1}{60} U_C = 0$$
-$$-\tfrac{1}{60} U_B + \left(\tfrac{1}{60} + \tfrac{1}{70}\right) U_C = \tfrac{25}{70}$$
+**Uzel je místo, kde se stýkají aspoň tři vodiče.** Tohle si ověř dřív, než začneš psát rovnice, protože to určuje, kolik jich bude.
 
-Číselně:
+Ve zkouškovém obvodu (bez `R6`/`U6`):
 
-$$0{,}078571\, U_A - 0{,}028571\, U_B = 1{,}1$$
-$$-0{,}028571\, U_A + 0{,}065238\, U_B - 0{,}016667\, U_C = 0$$
-$$-0{,}016667\, U_B + 0{,}030952\, U_C = 0{,}357143$$
+| Bod | Co se tam stýká | Uzel? |
+|---|---|---|
+| A | `R1` a `R2` | **ne** — jen dva prvky |
+| B (nad `R3`) | `R2`, `R3`, `R4` | **ano** |
+| C | `R4` a `R5` | **ne** — jen dva prvky |
+| zem (dolní vodič) | `R1`/`U1`, `R3`, `R5`/`U5` | **ano** |
 
-Řešení: $U_A = 18{,}695$ V, $U_B = 12{,}912$ V, $U_C = 18{,}491$ V. Odtud se proudy dopočítají z Ohmova zákona, vždy jako **(odkud − kam) / R**:
+**Jsou tedy jen dva uzly: B a zem.** Zem zvolíš referenční, takže zbývá **jediná neznámá $U_B$** — jedna rovnice, žádný determinant.
 
-$$I_1 = \frac{U_1 - U_A}{R_1} = \frac{22 - 18{,}695}{20} = 0{,}1652\ \text{A}$$
-$$I_2 = \frac{U_A - U_B}{R_2} = \frac{18{,}695 - 12{,}912}{35} = 0{,}1652\ \text{A}$$
+Protože A a C nejsou uzly, jsou `R1` s `R2` prostě **v sérii v jedné větvi** (a stejně tak `R4` s `R5`):
+
+$$R_{\text{levá}} = R_1 + R_2 = 20 + 35 = 55\ \Omega, \qquad R_{\text{pravá}} = R_4 + R_5 = 60 + 70 = 130\ \Omega$$
+
+#### Sestavení a řešení
+
+KCL v uzlu B — tři větve, každý proud jako $(U_B - \text{soused})/R$:
+
+$$\frac{U_B - U_1}{55} + \frac{U_B}{50} + \frac{U_B - U_5}{130} = 0$$
+
+Přeskládáno na tvar „vodivosti krát neznámá = proudy ze zdrojů":
+
+$$U_B \left(\frac{1}{55} + \frac{1}{50} + \frac{1}{130}\right) = \frac{U_1}{55} + \frac{U_5}{130}$$
+
+$$U_B \cdot (0{,}018182 + 0{,}020000 + 0{,}007692) = 0{,}400000 + 0{,}192308$$
+
+$$U_B \cdot 0{,}045874 = 0{,}592308 \;\Longrightarrow\; U_B = 12{,}912\ \text{V}$$
+
+Proudy z Ohmova zákona, vždy jako **(odkud − kam) / R**:
+
+$$I_1 = I_2 = \frac{U_1 - U_B}{R_1 + R_2} = \frac{22 - 12{,}912}{55} = 0{,}1652\ \text{A}$$
 $$I_3 = \frac{U_B}{R_3} = \frac{12{,}912}{50} = 0{,}2582\ \text{A}$$
+$$I_4 = I_5 = \frac{U_5 - U_B}{R_4 + R_5} = \frac{25 - 12{,}912}{130} = 0{,}0930\ \text{A}$$
+
+**Kontrola KCL:** $0{,}1652 + 0{,}0930 = 0{,}2582$ ✓
+
+Rovnou je vidět, **proč** $I_1 = I_2$ a $I_4 = I_5$ — jsou to tytéž větve, ne dvě různé.
 
 **Pozor na dvě věci, kde se chybuje:**
 
-- $U_A$ **není** napětí na `R1` ani na `R2` — je to **potenciál bodu A vůči zemi**. Napětí na rezistoru je vždy **rozdíl** potenciálů jeho konců: na `R2` je $18{,}695 - 12{,}912 = 5{,}78$ V.
-- Proud větví se zdrojem **není** $U_1/R_1$, ale $(U_1 - U_A)/R_1$. Zdroj tlačí 22 V, ale bod A je na 18,695 V, takže na `R1` zbývá jen 3,305 V úbytku.
+- $U_B$ **není** napětí na `R3` ani na žádném jiném rezistoru — je to **potenciál bodu B vůči zemi**. Napětí na rezistoru je vždy **rozdíl** potenciálů jeho konců. (Tady náhodou platí, že napětí na `R3` je taky 12,912 V, protože jeho druhý konec je na zemi, kde je potenciál nula.)
+- Proud větví se zdrojem **není** $U_1/(R_1+R_2)$, ale $(U_1 - U_B)/(R_1+R_2)$. Zdroj tlačí 22 V, bod B je na 12,912 V, takže na větvi zbývá 9,088 V úbytku.
 
-**Tři rovnice se ručně řeší nepříjemně** — u téhle metody použij [Python](#kontrola-v-pythonu), nebo zvol smyčkové proudy, kde jsou jen dvě.
+**Kdybys A a C zavedl jako uzly** (což se snadno stane, když se na ně podíváš jako na „místa, kde je něco připojené"), dostaneš soustavu 3×3. Vyjde správně — přebytečné rovnice si průchozí body dopočítají — ale je to **trojnásobek práce**. U zkoušky to poznáš tak, že $U_A$ a $U_C$ nikde nepotřebuješ.
 
 #### Metoda superpozice
 
@@ -363,7 +390,23 @@ Zůstane **jediný skutečný uzel (B)** a **dvě nezávislé smyčky**. Neznám
 
 Hodnoty: $R_1 = 20$, $R_2 = 35$, $R_3 = 50$, $R_4 = 60$, $R_5 = 70$ Ω, $U_1 = 22$ V, $U_5 = 25$ V.
 
-#### Řešení smyčkovými proudy (nejrychlejší cesta)
+#### Řešení uzlovým napětím (nejrychlejší cesta — jedna rovnice)
+
+Uzly jsou jen **dva**: bod B nad `R3` a zem. Zem je referenční, takže neznámá je jediná — $U_B$. Protože A a C uzly nejsou, `R1`+`R2` = 55 Ω a `R4`+`R5` = 130 Ω jsou sériové kombinace v jedné větvi.
+
+KCL v B:
+
+$$\frac{U_B - 22}{55} + \frac{U_B}{50} + \frac{U_B - 25}{130} = 0$$
+
+$$U_B \cdot (0{,}018182 + 0{,}020000 + 0{,}007692) = 0{,}400000 + 0{,}192308$$
+
+$$U_B = \frac{0{,}592308}{0{,}045874} = 12{,}912\ \text{V}$$
+
+Odtud proudy:
+
+$$I_1 = I_2 = \frac{22 - 12{,}912}{55} = 0{,}1652\ \text{A} \qquad I_3 = \frac{12{,}912}{50} = 0{,}2582\ \text{A} \qquad I_4 = I_5 = \frac{25 - 12{,}912}{130} = 0{,}0930\ \text{A}$$
+
+#### Kontrola smyčkovými proudy
 
 Dvě smyčky: **levá** (`U1` → `R1` → `R2` → `R3` → zem) a **pravá** (`U5` → `R5` → `R4` → `R3` → zem). Společná větev je `R3` a **oba smyčkové proudy jí tečou dolů**, tedy stejným směrem → znaménko **plus**.
 
@@ -372,9 +415,13 @@ $$50\, I_a + 180\, I_b = 25$$
 
 Řešení (determinant $105 \cdot 180 - 50^2 = 18900 - 2500 = 16400$):
 
-$$I_a = \frac{22 \cdot 180 - 50 \cdot 25}{16400} = \frac{3960 - 1250}{16400} = \frac{2710}{16400} = 0{,}1652\ \text{A}$$
+$$I_a = \frac{22 \cdot 180 - 50 \cdot 25}{16400} = \frac{2710}{16400} = 0{,}1652\ \text{A} = I_1$$
 
-$$I_b = \frac{105 \cdot 25 - 50 \cdot 22}{16400} = \frac{2625 - 1100}{16400} = \frac{1525}{16400} = 0{,}0930\ \text{A}$$
+$$I_b = \frac{105 \cdot 25 - 50 \cdot 22}{16400} = \frac{1525}{16400} = 0{,}0930\ \text{A} = I_5$$
+
+$$I_3 = I_a + I_b = 0{,}2582\ \text{A}$$
+
+Sedí — **dvě rovnice místo jedné**, proto je u tohohle obvodu rychlejší uzlové napětí.
 
 #### Výsledky — všechny proudy
 
@@ -503,7 +550,11 @@ Když je málo času, udělej aspoň smyčkové proudy a zkontroluj Théveninem.
 <details markdown="1">
 <summary><strong>Řešení příkladu 2</strong> — až po vlastním výpočtu</summary>
 
-Obvod má **tři uzly** (A, B, C) a **dvě nezávislé smyčky**. Uzly A a C jsou jen průchozí (vedou z nich dvě větve), takže $I_1 = I_2$ a $I_4 = I_5$ — fakticky jsou neznámé **tři proudy**: $I_1$, $I_3$, $I_5$.
+**Nejdřív si ověř uzly:** stýkají se aspoň tři vodiče jen v bodě nad `R3` (uzel B) a v dolním vodiči (zem). Body A a C uzly nejsou — jsou v nich jen dva prvky, takže `R1` s `R2` a `R4` s `R5` jsou **sériové kombinace v jedné větvi**:
+
+$$R_{\text{levá}} = 10 + 25 = 35\ \Omega, \qquad R_{\text{pravá}} = 50 + 20 = 70\ \Omega$$
+
+Platí tedy $I_1 = I_2$ a $I_4 = I_5$, a neznámé jsou fakticky **tři proudy**: $I_1$, $I_3$, $I_5$ — nebo, u uzlových napětí, **jediné napětí $U_B$**.
 
 #### a) Kirchhoffovy zákony
 
@@ -543,29 +594,25 @@ $$I_3 = I_a + I_b = \frac{24}{95} = 0{,}2526\ \text{A}$$
 
 **Proč to vyšlo stejně jako u Kirchhoffa:** smyčkové proudy jsou jen mechanický způsob, jak tu soustavu sestavit — KCL je splněný automaticky tím, že smyčkový proud vteče i vyteče.
 
-#### c) Uzlová napětí
+#### c) Uzlová napětí — nejrychlejší cesta
 
-Zem je dolní vodič. U každého uzlu **součet vodivostí na diagonále**, u sousedů $-1/R$, vpravo $U_{\text{zdroje}}/R$:
+Uzly jsou **dva** (B a zem), zem je referenční → **jediná neznámá $U_B$**. KCL v B se sériovými kombinacemi 35 Ω a 70 Ω:
 
-$$\left(\tfrac{1}{10} + \tfrac{1}{25}\right) U_A - \tfrac{1}{25} U_B = \tfrac{18}{10}$$
-$$-\tfrac{1}{25} U_A + \left(\tfrac{1}{25} + \tfrac{1}{40} + \tfrac{1}{50}\right) U_B - \tfrac{1}{50} U_C = 0$$
-$$-\tfrac{1}{50} U_B + \left(\tfrac{1}{50} + \tfrac{1}{20}\right) U_C = \tfrac{12}{20}$$
+$$\frac{U_B - 18}{35} + \frac{U_B}{40} + \frac{U_B - 12}{70} = 0$$
 
-Číselně:
+Přeskládáno:
 
-$$0{,}14\, U_A - 0{,}04\, U_B = 1{,}8$$
-$$-0{,}04\, U_A + 0{,}085\, U_B - 0{,}02\, U_C = 0$$
-$$-0{,}02\, U_B + 0{,}07\, U_C = 0{,}6$$
+$$U_B \left(\frac{1}{35} + \frac{1}{40} + \frac{1}{70}\right) = \frac{18}{35} + \frac{12}{70}$$
 
-Řešení: $U_A = 15{,}744$ V, $U_B = 10{,}105$ V, $U_C = 11{,}459$ V.
+$$U_B \cdot (0{,}028571 + 0{,}025000 + 0{,}014286) = 0{,}514286 + 0{,}171429$$
 
-Dopočet proudů (vždy „odkud − kam" děleno R):
+$$U_B \cdot 0{,}067857 = 0{,}685714 \;\Longrightarrow\; U_B = \frac{192}{19} = 10{,}105\ \text{V}$$
 
-$$I_1 = \frac{18 - 15{,}744}{10} = 0{,}2256\ \text{A} \qquad I_2 = \frac{15{,}744 - 10{,}105}{25} = 0{,}2256\ \text{A}$$
-$$I_3 = \frac{10{,}105}{40} = 0{,}2526\ \text{A}$$
-$$I_4 = \frac{11{,}459 - 10{,}105}{50} = 0{,}0271\ \text{A} \qquad I_5 = \frac{12 - 11{,}459}{20} = 0{,}0271\ \text{A}$$
+Proudy (vždy „odkud − kam" děleno R):
 
-**Všimni si:** tři rovnice místo dvou. Proto jsou u tohohle obvodu smyčkové proudy méně práce.
+$$I_1 = I_2 = \frac{18 - 10{,}105}{35} = 0{,}2256\ \text{A} \qquad I_3 = \frac{10{,}105}{40} = 0{,}2526\ \text{A} \qquad I_4 = I_5 = \frac{12 - 10{,}105}{70} = 0{,}0271\ \text{A}$$
+
+**Jedna rovnice o jedné neznámé** — proti dvěma u smyčkových proudů a třem u Kirchhoffa. Proto u tohohle typu obvodu (dva uzly, dvě smyčky) volíš uzlová napětí.
 
 #### d) Superpozice
 
@@ -678,7 +725,7 @@ Uzlová napětí: $U_A = 15{,}744$ V, $U_B = 10{,}105$ V, $U_C = 11{,}459$ V.
 - **Jak spočítáš vnitřní odpor náhradního zdroje?** — Odpojím dotyčný rezistor, **všechny zdroje nahradím zkratem** (napěťové) a spočítám odpor mezi uvolněnými body sériově-paralelním zjednodušováním.
 - **Zkontroluj si výsledek — sedí energetická bilance?** — Součet výkonů dodaných zdroji ($\sum U I$) musí být rovný součtu spotřebovaných na rezistorech ($\sum R I^2$). U mého řešení 5,960 W na obou stranách.
 - **Proč ti vyšel proud záporný?** — Protože teče proti mé zvolené orientaci šipky. Velikost je správná, jen směr je opačný. Fyzikálně to u zdroje znamená, že se **nabíjí** místo vybíjení.
-- **Kterou metodu bys zvolil, kdybys měl vybrat jednu?** — Porovnám počet nezávislých smyček a počet uzlů minus jeden; menší číslo vyhrává. U tohoto obvodu jsou 2 smyčky vs. 2 neznámá uzlová napětí, takže je to nastejno — volím smyčkové proudy, protože se sestavují mechanicky.
+- **Kterou metodu bys zvolil, kdybys měl vybrat jednu?** — Porovnám počet nezávislých smyček a počet uzlů minus jeden; menší číslo vyhrává. U tohohle obvodu jsou **dva uzly** (bod nad `R3` a zem), takže po volbě referenčního zbývá **jediná neznámá** — proti dvěma smyčkovým proudům. Volím tedy **uzlová napětí**: jedna rovnice, žádný determinant.
 - **Dá se superpozicí spočítat i výkon?** — **Ne.** Výkon je kvadratický v proudu ($P = RI^2$), takže dílčí výkony se sečíst nedají. Superpozice platí jen pro proudy a napětí.
 - **Jaký je vztah mezi Théveninem a Nortonem?** — Jsou to duální náhrady téhož: $U_{th} = I_{sc} R_n$ a $R_{th} = R_n$. Z jedné se druhá dopočítá.
 - **Co je uzel a co větev?** — Uzel je místo, kde se stýkají **aspoň tři** vodiče. Větev je úsek mezi dvěma uzly, kterým teče **jeden** proud. Bod, kde se stýkají jen dva prvky, není uzel — proto v našem obvodu nejsou A a C skutečné uzly.
