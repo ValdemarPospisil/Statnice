@@ -23,3 +23,8 @@ venv/
 
 # Markdown generovaný z notebooků (convert_notebooks.py), staví se v CI
 **/Kod/*.md
+
+# .NET / C# (okruh Vývoj desktopové aplikace) — buildy a uživatelská nastavení se necommitují
+bin/
+obj/
+*.user
