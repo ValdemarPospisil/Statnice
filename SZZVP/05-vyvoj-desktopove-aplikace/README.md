@@ -381,7 +381,30 @@ experimenty ||--o{ modely
 
 ### Mé řešení úlohy
 
-<!-- Zadání přijde 3–10 dní předem, na řešení je 5 hodin. Sem popis postupu, odkaz na repo, diagramy. -->
+Zpracovaná ukázková úloha II.1 (Generování fraktálního stromu) je v
+[FraktalniStrom/](./FraktalniStrom/), včetně samostatného README s
+uživatelskou příručkou, popisem architektury a UML diagramy.
+
+- **Technologie:** C# / .NET 10 / Avalonia 12 (GUI framework) / MVVM
+  (`CommunityToolkit.Mvvm`) / xUnit (testy).
+- **Proč Avalonia místo WPF:** vývoj probíhal na Linuxu, kde WPF technicky
+  nelze spustit; zadání navíc vyžaduje jen „GUI v C#“, WPF je zmíněný
+  pouze mezi doporučenými znalostmi. Avalonia je multiplatformní XAML
+  framework koncepčně shodný s WPF (XAML, binding, MVVM), takže obhajitelné
+  znalosti jsou přenositelné oběma směry — podrobné zdůvodnění a mapování
+  pojmů WPF ↔ Avalonia je v [README projektu](./FraktalniStrom/README.md#proč-avalonia-místo-wpf).
+- **Postup řešení:** rozdělení do tří vrstev — doménové jádro
+  (`FraktalniStrom.Jadro`: parametry stromu, iterativní generátor, validace
+  vstupu, JSON úložiště) bez závislosti na GUI, tenká Avalonia vrstva
+  (`FraktalniStrom.App`) s `MainViewModel` a vlastním kreslicím controlem,
+  a testy (`FraktalniStrom.Testy`). Generování běží asynchronně přes
+  `Task.Run`, s hlášením průběhu (`IProgress<int>`), pozastavením
+  (`ManualResetEventSlim`) a zrušením (`CancellationToken`), takže jde
+  výpočet zahájit, pozastavit, znovu rozběhnout i zrušit, aniž by GUI
+  zamrzlo. Vygenerovaný strom lze exportovat a znovu načíst z JSON souboru.
+- **Stav:** `dotnet build` bez chyb a upozornění, `dotnet test` 26 z 26
+  testů zelených (generátor, validace, JSON perzistence), aplikace
+  ověřeně běží (`dotnet run --project FraktalniStrom.App`).
 
 ### Kostra prezentace (7–10 min)
 
