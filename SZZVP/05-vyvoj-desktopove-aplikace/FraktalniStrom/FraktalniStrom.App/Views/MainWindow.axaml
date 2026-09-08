@@ -1,0 +1,88 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:FraktalniStrom.App.ViewModels"
+        xmlns:ctrl="using:FraktalniStrom.App.Controls"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:colorpicker="using:Avalonia.Controls"
+        mc:Ignorable="d" d:DesignWidth="1000" d:DesignHeight="700"
+        x:Class="FraktalniStrom.App.Views.MainWindow"
+        x:DataType="vm:MainViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="Fraktální strom"
+        Width="1000" Height="700">
+
+    <Design.DataContext>
+        <!-- This only sets the DataContext for the previewer in an IDE,
+             to set the actual DataContext for runtime, set the DataContext property in code (look at App.axaml.cs) -->
+        <vm:MainViewModel />
+    </Design.DataContext>
+
+    <Grid ColumnDefinitions="300,*">
+
+        <!-- Ovládací panel -->
+        <ScrollViewer Grid.Column="0">
+            <StackPanel Margin="12" Spacing="10">
+
+                <TextBlock Text="Počet iterací" FontWeight="Bold" />
+                <TextBox Text="{Binding IteraceText, Mode=TwoWay}" />
+
+                <TextBlock Text="Úhel (°)" FontWeight="Bold" />
+                <TextBox Text="{Binding UhelText, Mode=TwoWay}" />
+
+                <TextBlock Text="Koeficient zkrácení" FontWeight="Bold" />
+                <TextBox Text="{Binding KoeficientText, Mode=TwoWay}" />
+
+                <TextBlock Text="Délka kmene" FontWeight="Bold" />
+                <TextBox Text="{Binding DelkaKmeneText, Mode=TwoWay}" />
+
+                <TextBlock Text="Barva větví" FontWeight="Bold" />
+                <ColorPicker Color="{Binding Barva, Mode=TwoWay}" HorizontalAlignment="Stretch" />
+
+                <Separator Margin="0,8" />
+
+                <Button Content="Spustit"
+                        Command="{Binding SpustitCommand}"
+                        HorizontalAlignment="Stretch" />
+
+                <Button Content="{Binding TextPozastaveni}"
+                        Command="{Binding PozastavitCommand}"
+                        HorizontalAlignment="Stretch" />
+
+                <Button Content="Zrušit"
+                        Command="{Binding ZrusitCommand}"
+                        HorizontalAlignment="Stretch" />
+
+                <Separator Margin="0,8" />
+
+                <Button Content="Exportovat JSON"
+                        Command="{Binding ExportovatCommand}"
+                        HorizontalAlignment="Stretch" />
+
+                <Button Content="Importovat JSON"
+                        Command="{Binding ImportovatCommand}"
+                        HorizontalAlignment="Stretch" />
+
+                <Separator Margin="0,8" />
+
+                <ProgressBar Minimum="0" Maximum="100" Value="{Binding Prubeh}" ShowProgressText="True" Height="20" />
+
+                <TextBlock Text="{Binding Stav}" TextWrapping="Wrap" />
+
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Vykreslovací plocha stromu -->
+        <Border Grid.Column="1" Background="White" BorderBrush="Gray" BorderThickness="1" Margin="4">
+            <ctrl:PlatnoStromu Vetve="{Binding Vetve}"
+                                HorizontalAlignment="Stretch"
+                                VerticalAlignment="Stretch">
+                <ctrl:PlatnoStromu.Barva>
+                    <SolidColorBrush Color="{Binding Barva}" />
+                </ctrl:PlatnoStromu.Barva>
+            </ctrl:PlatnoStromu>
+        </Border>
+
+    </Grid>
+
+</Window>
