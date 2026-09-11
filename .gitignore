@@ -28,3 +28,10 @@ venv/
 bin/
 obj/
 *.user
+
+# Data generovaná skriptem vytvor-data.R (okruh 10)
+SZZPP/10-zaklady-zpracovani-dat/Kod/*.csv
+SZZPP/10-zaklady-zpracovani-dat/Kod/priklady/*.csv
+SZZPP/10-zaklady-zpracovani-dat/Kod/*.html
+SZZPP/10-zaklady-zpracovani-dat/Kod/figure/
+SZZPP/10-zaklady-zpracovani-dat/Kod/*_files/

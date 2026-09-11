@@ -1,0 +1,234 @@
+---
+title: "Protokol — zpracování dat o výsledcích studentů"
+author: "Valdemar Pospíšil"
+date: today
+format:
+  html:
+    toc: true
+    toc-depth: 2
+    code-fold: false
+    embed-resources: true
+lang: cs
+---
+
+```{r}
+#| label: setup
+#| message: false
+#| warning: false
+library(dplyr)
+library(tidyr)
+library(stringr)
+library(ggplot2)
+```
+
+## Popis zadaných dat
+
+Datová sada `StudentsPerformance.csv` obsahuje výsledky testů studentů spolu
+s demografickými údaji a informacemi o rodinném zázemí.
+
+```{r}
+#| label: nacteni
+df <- read.csv("StudentsPerformance.csv", stringsAsFactors = FALSE)
+
+cat("Rozměry:", nrow(df), "řádků,", ncol(df), "sloupců\n")
+cat("Chybějící hodnoty:", sum(is.na(df)), "\n")
+str(df)
+```
+
+Sada má **`r nrow(df)` pozorování** a **`r ncol(df)` proměnných**:
+
+- **pět kategorických** — `gender`, `race.ethnicity`, `parental.level.of.education`,
+  `lunch`, `test.preparation.course`
+- **tři číselné** — `math.score`, `reading.score`, `writing.score`, každá v rozsahu 0–100
+
+Datová sada **neobsahuje chybějící hodnoty**, takže není potřeba je ošetřovat.
+
+```{r}
+#| label: souhrn
+summary(df[, c("math.score", "reading.score", "writing.score")])
+```
+
+Rozložení kategorií:
+
+```{r}
+#| label: kategorie
+table(df$gender)
+table(df$race.ethnicity)
+table(df$parental.level.of.education)
+```
+
+## Úkol 1 — sloupec `avg.score`
+
+Přidávám nový sloupec s průměrem ze tří testovacích skóre. Používám `mutate()`
+z balíčku `dplyr`.
+
+```{r}
+#| label: ukol1
+df <- df %>%
+  mutate(avg.score = (math.score + reading.score + writing.score) / 3)
+
+head(df[, c("math.score", "reading.score", "writing.score", "avg.score")], 5)
+```
+
+**Poznámka k implementaci:** uvnitř `mutate()` nelze použít `mean(c(a, b, c))` —
+funkce `mean()` by počítala průměr celého sloupce, ne jednotlivých řádků.
+Proto ruční výpočet, případně `rowMeans()`:
+
+```{r}
+#| label: ukol1-alt
+# ekvivalentní zápis přes rowMeans (vhodnější při větším počtu sloupců)
+identical(
+  df$avg.score,
+  rowMeans(df[, c("math.score", "reading.score", "writing.score")])
+)
+```
+
+## Úkol 2 — filtrování podle „high school"
+
+Zadání požaduje záznamy, kde `parental.level.of.education` obsahuje pojem
+**„high school" kdekoliv v textu**. Nejprve se podívám, jaké hodnoty se vyskytují:
+
+```{r}
+#| label: ukol2-kategorie
+unique(df$parental.level.of.education)
+```
+
+**Klíčové zjištění:** hledaný pojem obsahují **dvě** kategorie — `high school`
+a `some high school`. Proto použiji `str_detect()`, který hledá **podřetězec**,
+nikoli test na rovnost.
+
+```{r}
+#| label: ukol2
+hs <- df %>%
+  filter(str_detect(parental.level.of.education, "high school"))
+
+cat("Před filtrem:", nrow(df), "řádků\n")
+cat("Po filtru:   ", nrow(hs), "řádků\n\n")
+table(hs$parental.level.of.education)
+```
+
+**Interpretace:** filtr zachoval `r nrow(hs)` z `r nrow(df)` záznamů, tedy zhruba
+`r round(100 * nrow(hs) / nrow(df))` %. Kdybych použil test na rovnost
+(`== "high school"`), přišel bych o kategorii `some high school`, tedy
+o `r sum(hs$parental.level.of.education == "some high school")` záznamů — téměř polovinu.
+
+## Úkol 3 — průměr pro kombinaci `gender` a `race.ethnicity`
+
+Seskupuji podle dvou proměnných současně a počítám průměr. Přidávám i počet
+pozorování ve skupině (`n`), protože průměr z malého vzorku je méně spolehlivý.
+
+```{r}
+#| label: ukol3
+souhrn <- hs %>%
+  group_by(gender, race.ethnicity) %>%
+  summarise(
+    prumer.avg.score = mean(avg.score),
+    n = n(),
+    .groups = "drop"
+  )
+
+as.data.frame(souhrn)
+```
+
+**Interpretace:** vzniklo `r nrow(souhrn)` kombinací (2 pohlaví × 5 skupin).
+Ve všech etnických skupinách dosahují ženy vyššího průměrného skóre než muži.
+Průměr napříč skupinami roste od skupiny A ke skupině E.
+
+Poznámka: `.groups = "drop"` ruší seskupení po agregaci — bez něj by výsledek
+zůstal seskupený podle `gender` a `dplyr` by vypsal varování.
+
+## Úkol 4 — převod do širokého formátu
+
+Kategorie ze sloupce `gender` se mají stát samostatnými sloupci.
+To je převod z **dlouhého** do **širokého** formátu pomocí `pivot_wider()`.
+
+```{r}
+#| label: ukol4
+siroky <- souhrn %>%
+  select(-n) %>%     # odebrat n, jinak by pivot vytvořil sloupce navíc
+  pivot_wider(names_from = gender, values_from = prumer.avg.score)
+
+as.data.frame(siroky)
+```
+
+**Interpretace:** v širokém formátu je rozdíl mezi pohlavími vidět na první pohled —
+ženy mají vyšší průměr **ve všech pěti skupinách**. Rozdíly:
+
+```{r}
+#| label: ukol4-rozdil
+siroky %>%
+  mutate(rozdil = round(female - male, 2)) %>%
+  as.data.frame()
+```
+
+Největší rozdíl je u skupiny A, nejmenší u skupiny E. V dlouhém formátu by tohle
+porovnání vyžadovalo ruční párování řádků.
+
+## Úkol 5 — boxplot podle etnické skupiny
+
+```{r}
+#| label: ukol5
+#| fig-width: 8
+#| fig-height: 5
+ggplot(hs, aes(x = race.ethnicity, y = avg.score, fill = race.ethnicity)) +
+  geom_boxplot(show.legend = FALSE) +
+  labs(
+    title = "Rozdělení průměrného skóre podle etnické skupiny",
+    subtitle = "Pouze studenti, jejichž rodič má vzdělání obsahující 'high school'",
+    x = "Etnická skupina",
+    y = "Průměrné skóre"
+  ) +
+  theme_minimal()
+```
+
+Číselné hodnoty, které z grafu odečítáme:
+
+```{r}
+#| label: ukol5-statistiky
+hs %>%
+  group_by(race.ethnicity) %>%
+  summarise(
+    n      = n(),
+    min    = round(min(avg.score), 1),
+    Q1     = round(quantile(avg.score, 0.25), 1),
+    median = round(median(avg.score), 1),
+    Q3     = round(quantile(avg.score, 0.75), 1),
+    max    = round(max(avg.score), 1),
+    IQR    = round(IQR(avg.score), 1),
+    .groups = "drop"
+  ) %>%
+  as.data.frame()
+```
+
+**Interpretace boxplotu:**
+
+- **Poloha:** mediány rostou od skupiny A k E. Rozdíl mezi krajními skupinami
+  je přibližně 11 bodů, což je systematický posun celého rozdělení.
+- **Rozptyl:** krabice (mezikvartilové rozpětí) ukazuje, kde leží prostředních 50 %
+  studentů. Skupina C má nejširší celkové rozpětí, tedy nejméně vyrovnané výsledky.
+- **Symetrie:** medián leží ve většině skupin zhruba uprostřed krabice,
+  rozdělení jsou tedy přibližně symetrická.
+- **Odlehlé hodnoty:** body mimo vousy leží dál než 1,5násobek IQR od kvartilů.
+  Jde o jednotlivé studenty s výrazně odlišným výsledkem.
+- **Velikost skupin:** skupina A má výrazně méně pozorování než skupina C,
+  takže její odhady jsou méně spolehlivé. Na to je při srovnávání nutné brát ohled.
+
+**Proč boxplot a ne histogram:** boxplot umožňuje porovnat rozdělení **mezi kategoriemi**
+vedle sebe, což je přesně požadavek zadání. Histogram by ukázal tvar rozdělení
+jedné proměnné, ale neumožnil by srovnání pěti skupin v jednom grafu.
+
+## Závěr
+
+Ze zpracovaných dat vyplývá:
+
+1. **Průměrné skóre se liší mezi etnickými skupinami** — mediány rostou
+   od skupiny A ke skupině E o zhruba 11 bodů.
+2. **Ženy dosahují vyššího průměrného skóre než muži** ve všech sledovaných
+   skupinách, přičemž velikost rozdílu se mezi skupinami liší.
+3. **Vzdělání rodičů obsahující „high school"** se týká zhruba
+   `r round(100 * nrow(hs) / nrow(df))` % studentů v datové sadě.
+
+Analýza popisuje **pozorované rozdíly ve vzorku**, nikoli příčinné vztahy.
+Pro tvrzení o příčinách by bylo potřeba kontrolovat další proměnné
+(`lunch` jako indikátor socioekonomického statusu, `test.preparation.course`)
+a použít vhodný statistický test.
