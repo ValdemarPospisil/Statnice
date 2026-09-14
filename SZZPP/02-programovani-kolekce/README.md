@@ -1,6 +1,7 @@
 ## 2 — Programování: kolekce
 
 - [Zadání okruhu (PDF)](../ZadaniOkruhu/APR-I-II-3okruhy.pdf)
+- 📄 **[Tahák k okruhu 2](../Tahaky/02.md)** — chyby u kolekcí + hotová funkce k úpravě *(na mobil k nahlédnutí, ne k odevzdání)*
 
 > Opravit chybný kód pracující s kolekcemi a rozšířit ho podle zadání. 60 minut u počítače (Jupyter, tahák Python, bez internetu), pak 20 minut obhajoby — v úvodu představíš řešení, následuje diskuse a ověřování souvisejících znalostí.
 

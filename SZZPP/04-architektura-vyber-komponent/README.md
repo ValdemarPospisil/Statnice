@@ -1,6 +1,7 @@
 ## 4 — Architektura počítačů: výběr komponent
 
 - [Zadání okruhu (PDF)](../ZadaniOkruhu/PCA-I.pdf)
+- 📄 **[Tahák k okruhu 4](../Tahaky/04.md)** — tabulka účel → komponenty, instalace OS, BIOS *(na mobil k nahlédnutí, ne k odevzdání)*
 
 > Dostaneš **rozpočet a požadavky na funkčnost**. Vybereš komponenty, **zdůvodníš volbu**, popíšeš sestavení, instalaci OS a ovladačů a nastavení BIOSu. 60 minut přípravy, pak 20 minut obhajoby.
 

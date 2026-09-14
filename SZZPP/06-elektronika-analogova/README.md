@@ -1,6 +1,7 @@
 ## 6 — Základy elektroniky: analogová část
 
 - [Zadání okruhu (PDF)](../ZadaniOkruhu/ZEL-2okruhy.pdf)
+- 📄 **[Tahák k okruhu 6](../Tahaky/06.md)** — všech šest metod řešení obvodů v kostce *(na mobil k nahlédnutí, ne k odevzdání)*
 
 > Zadaný obvod se zdroji napětí a rezistory. Spočítat **proudy ve všech větvích** postupně několika metodami. 60 minut přípravy, pak 20 minut obhajoby. K řešení soustav lze použít Python nebo R.
 

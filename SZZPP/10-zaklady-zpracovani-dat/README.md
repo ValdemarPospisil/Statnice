@@ -1,6 +1,7 @@
 ## 10 — Základy zpracování dat
 
 - [Zadání okruhu (PDF)](../ZadaniOkruhu/ZZD.pdf)
+- 📄 **[Tahák k okruhu 10](../Tahaky/10.md)** — **hotový R kód** — dplyr, pivot, ggplot *(na mobil k nahlédnutí, ne k odevzdání)*
 
 > Vstupem je **sada tabulek (CSV/XLSX)** a seznam požadavků. Výstupem je **protokol v Rmd nebo qmd + vyrenderované HTML/PDF** s popisem dat, komentovaným kódem a **interpretací výsledků**. 60 minut u počítače s RStudiem a tidyverse, pak 20 minut obhajoby.
 

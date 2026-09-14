@@ -1,6 +1,7 @@
 ## 3 — Programování: základy OOP
 
 - [Zadání okruhu (PDF)](../ZadaniOkruhu/APR-I-II-3okruhy.pdf)
+- 📄 **[Tahák k okruhu 3](../Tahaky/03.md)** — chyby v OOP + kompletní třída Semaphore *(na mobil k nahlédnutí, ne k odevzdání)*
 
 > Opravit chybnou definici třídy a rozšířit ji podle zadání. 60 minut u počítače (Jupyter, tahák Python, bez internetu), pak 20 minut obhajoby — v úvodu představíš řešení, následuje diskuse a ověřování souvisejících znalostí.
 

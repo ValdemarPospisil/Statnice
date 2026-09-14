@@ -1,6 +1,7 @@
 ## 7 — Základy elektroniky: digitální část
 
 - [Zadání okruhu (PDF)](../ZadaniOkruhu/ZEL-2okruhy.pdf)
+- 📄 **[Tahák k okruhu 7](../Tahaky/07.md)** — jak začít u dekodéru, MUXu, sedmisegmentovky *(na mobil k nahlédnutí, ne k odevzdání)*
 
 > Návrh logického kombinačního obvodu: **pravdivostní tabulka → minimalizace (Karnaugh i Quine-McCluskey) → rovnice → schéma**. 60 minut přípravy, pak 20 minut obhajoby. K dispozici tabulkový procesor a datasheet k sedmisegmentovce.
 

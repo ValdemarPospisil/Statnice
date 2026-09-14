@@ -1,6 +1,7 @@
 ## 11 — Multimédia a základy počítačové grafiky
 
 - [Zadání okruhu (PDF)](../ZadaniOkruhu/MPG.pdf)
+- 📄 **[Tahák k okruhu 11](../Tahaky/11.md)** — principy formátů, barev, transformací, filtrů *(na mobil k nahlédnutí, ne k odevzdání)*
 
 > **Prezentace návrhu** multimediální aplikace včetně **vysvětlení principů jevů**, které daná funkcionalita využívá. 60 minut přípravy (Windows, MS Office / LibreOffice, Python a C#), pak 20 minut obhajoby.
 

@@ -1,6 +1,7 @@
 ## 12 — Projektové řízení
 
 - [Zadání okruhu (PDF)](../ZadaniOkruhu/PRIZ.pdf)
+- 📄 **[Tahák k okruhu 12](../Tahaky/12.md)** — SMART, SWOT, RACI, rizika — struktura odpovědi *(na mobil k nahlédnutí, ne k odevzdání)*
 
 > **Analýza a návrh řízení simulovaného IT projektu** pomocí technik projektového managementu. 60 minut u počítače (MS Office / LibreOffice), pak 20 minut obhajoby. Odevzdává se **textový dokument nebo prezentace v PDF**.
 

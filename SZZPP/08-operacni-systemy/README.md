@@ -1,6 +1,7 @@
 ## 8 — Operační systémy
 
 - [Zadání okruhu (PDF)](../ZadaniOkruhu/OPS.pdf)
+- 📄 **[Tahák k okruhu 8](../Tahaky/08.md)** — **hotový funkční bash skript** k úpravě podle zadání *(na mobil k nahlédnutí, ne k odevzdání)*
 
 > Napsat **BASH skript** řešící dílčí úlohu správy Linuxu. 60 minut u počítače s **manuálovými stránkami** a vstupními daty, pak 20 minut obhajoby. Odevzdává se **funkční skript**.
 

@@ -1,6 +1,7 @@
 ## 1 — Programování: funkce a cykly
 
 - [Zadání okruhu (PDF)](../ZadaniOkruhu/APR-I-II-3okruhy.pdf)
+- 📄 **[Tahák k okruhu 1](../Tahaky/01.md)** — nejčastější chyby + hotový opravený kód uzávorkování *(na mobil k nahlédnutí, ne k odevzdání)*
 
 > Najít syntaktické i sémantické chyby v poskytnutém kódu, opravit je a rozšířit funkčnost podle zadání. 60 minut u počítače (Jupyter, tahák Python, bez internetu), pak 20 minut obhajoby — v úvodu představíš řešení, následuje diskuse a ověřování souvisejících znalostí.
 

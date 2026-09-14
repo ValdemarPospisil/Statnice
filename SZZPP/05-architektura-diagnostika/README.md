@@ -1,6 +1,7 @@
 ## 5 — Architektura počítačů: diagnostika a řešení problémů
 
 - [Zadání okruhu (PDF)](../ZadaniOkruhu/PCA-II.pdf)
+- 📄 **[Tahák k okruhu 5](../Tahaky/05.md)** — diagnostický postup + tabulka symptom → příčina *(na mobil k nahlédnutí, ne k odevzdání)*
 
 > Dostaneš **simulovanou závadu**: identifikovat ji, nasadit diagnostické nástroje, vyřešit, zaznamenat postup a případně navrhnout upgrade. 60 minut přípravy, pak 20 minut obhajoby.
 

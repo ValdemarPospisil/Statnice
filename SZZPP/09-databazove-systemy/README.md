@@ -1,6 +1,7 @@
 ## 9 — Databázové systémy
 
 - [Zadání okruhu (PDF)](../ZadaniOkruhu/URDB.pdf)
+- 📄 **[Tahák k okruhu 9](../Tahaky/09.md)** — CREATE/INSERT/SELECT vzory + normální formy *(na mobil k nahlédnutí, ne k odevzdání)*
 
 > Ze slovního popisu a konceptuálního návrhu vytvořit databázi v **PostgreSQL**: ER diagram po normalizaci **na papíře**, `CREATE TABLE` + `INSERT`, a **odladěné dotazy `SELECT` včetně výstupů**. 60 minut u počítače (psql, textový editor, **tahák SQL**), pak 20 minut obhajoby.
 
