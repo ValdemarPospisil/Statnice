@@ -6,6 +6,8 @@ Tento repozitář obsahuje materiály a vybrané otázky pro přípravu na stát
 
 🌐 [**Čitelná verze s vykreslenými vzorci**](https://valdemarpospisil.github.io/Statnice/) - poznámky se sázenou matematikou, čte se i na mobilu.
 
+📌 [**Co se naučit nazpaměť (SZZTP)**](./SZZTP/Tahaky/) - čísla, definice, vzorce a pasti na jednom místě.
+
 ## Přehled okruhů
 
 Materiály jsou rozděleny do následujících částí:

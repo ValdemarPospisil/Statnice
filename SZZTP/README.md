@@ -6,6 +6,12 @@ Pro tento předmět platí následující pravidla.
 - Student má nárok na 15 minut přípravy.
     Obvyklá doba zkoušení je 15 minut.
 
+## Co se naučit nazpaměť
+
+📌 **[Souhrn k biflování](./Tahaky/)** — jediný soubor, ze kterého se učí zpaměti: čísla, definice na doslovné znění, vzorce, které se neodvodí, věty, složitosti, **pasti** a nit ke každému okruhu.
+
+> Všechno ostatní v poznámkách se dá odvodit nebo ukázat na příkladu. Tohle ne — a bez toho nenapíšeš tahák.
+
 ## Vybrané okruhy a poznámky
 
 Číslování odpovídá pořadí okruhů níže (6 a 7 jsou vyřazené, do losování nejdou).
