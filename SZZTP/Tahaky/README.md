@@ -1,4 +1,6 @@
-# Co se musím naučit nazpaměť — SZZTP
+## Co se naučit nazpaměť — SZZTP
+
+Zpět na [rozcestník SZZTP](../).
 
 **Tohle je jediný soubor, ze kterého se biflí.** Všechno ostatní v poznámkách se dá odvodit, dovyprávět nebo ukázat na příkladu — tyhle věci ne. Když si zapamatuješ tuhle stránku, jsi u kterékoli z deseti otázek schopný napsat tahák a mít z čeho stavět.
 

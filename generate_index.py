@@ -41,6 +41,16 @@ def url_for(path: str) -> str:
     return "/".join(quote(part, safe="") for part in parts) + "/"
 
 
+def cheatsheet_for(section: str) -> tuple[str, str] | None:
+    """Vrátí (název, odkaz) na složku `Tahaky/`, pokud má README."""
+    directory = os.path.join(section, "Tahaky")
+    readme = os.path.join(directory, README)
+    if not os.path.isfile(readme):
+        return None
+    title = read_title(readme) or "Taháky"
+    return title, url_for(directory)
+
+
 def collect(section: str) -> list[tuple[int, str, str]]:
     if not os.path.isdir(section):
         return []
@@ -86,6 +96,11 @@ def build() -> str:
         lines.append("")
         lines.append(f"*KI/{section} — {format_note}*")
         lines.append("")
+        cheatsheet = cheatsheet_for(section)
+        if cheatsheet:
+            title, url = cheatsheet
+            lines.append(f"📌 [**{title}**]({url})")
+            lines.append("")
         for number, title, url in questions:
             lines.append(f"- [{number:02d} — {title}]({url})")
         lines.append("")
