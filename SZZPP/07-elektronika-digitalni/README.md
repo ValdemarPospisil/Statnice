@@ -633,6 +633,331 @@ $$a = A + C + BD + B'D'$$
 
 </details>
 
+
+---
+
+### Katalog typů úloh
+
+**Všechny výsledky níž jsou ověřené a verifikované na všech kombinacích vstupů.** Postup je vždy stejný — tabulka → K-mapa → minimalizace → schéma — mění se jen zadání. Projdi si je a u každého si zkus výsledek odvodit sám dřív, než se podíváš.
+
+#### Přehled
+
+| # | Typ úlohy | Vstupy → výstupy | Zvláštnost |
+|---|---|---|---|
+| 1 | [Dekodér](#1-dekodér-n--2n) | $n$ → $2^n$ | **minimalizace nic neubere** |
+| 2 | [Multiplexor](#2-multiplexor-2n--1) | $2^n$ + $n$ adresních → 1 | realizuje libovolnou funkci |
+| 3 | [Sedmisegmentovka](#3-sedmisegmentový-displej) | 4 (BCD) → 7 | **don't care** 10–15 |
+| 4 | [Binární → Gray](#4-převodník-binární--gray) | 4 → 4 | čisté XOR, K-mapa netřeba |
+| 5 | [Gray → binární](#5-převodník-gray--binární) | 4 → 4 | **kumulativní** XOR |
+| 6 | [Komparátor](#6-komparátor) | 4 (2+2) → 3 | tři výstupy: >, =, < |
+| 7 | [Sčítačka](#7-sčítačka) | 2–3 → 2 | základ ALU |
+| 8 | [Prioritní kodér](#8-prioritní-kodér) | 4 → 2 + validita | **priorita** vstupů |
+| 9 | [Detektor vlastnosti](#9-detektory-vlastností) | 4 → 1 | dělitelnost, prvočíslo |
+| 10 | [Parita](#10-generátor-parity) | 4 → 1 | **nejde zminimalizovat** |
+| 11 | [Majorita](#11-majoritní-funkce) | 3–4 → 1 | hlasování |
+| 12 | [Validátor BCD](#12-validátor-bcd) | 4 → 1 | detekce neplatného kódu |
+
+---
+
+#### 1. Dekodér ($n$ → $2^n$)
+
+**Zadání:** každé kombinaci vstupů odpovídá právě jeden aktivní výstup.
+
+Podrobně v [rozboru ukázkové úlohy](#rozbor-ukázkové-úlohy). Shrnutí:
+
+$$Y_0 = C'B'A' \quad Y_1 = C'B'A \quad \dots \quad Y_7 = CBA$$
+
+**Zvláštnost:** každý výstup je **jediný minterm**, takže v K-mapě je to izolovaná jednička. **Minimalizace nemůže nic ubrat** — a to je celý vtip té úlohy.
+
+**Schéma:** 3 invertory + 8 tříbranných AND.
+
+---
+
+#### 2. Multiplexor ($2^n$ → 1)
+
+**Zadání:** adresa vybírá, který datový vstup se propustí na výstup.
+
+$$Y = \sum_{i=0}^{2^n-1} D_i \cdot m_i \qquad \text{kde } m_i \text{ je minterm adresy}$$
+
+Pro MUX 4:1 s adresou $S_1 S_0$:
+
+$$Y = D_0 S_1'S_0' + D_1 S_1'S_0 + D_2 S_1 S_0' + D_3 S_1 S_0$$
+
+**Realizace libovolné funkce** (nejlepší doptávka okruhu): proměnné na adresní vstupy, **hodnoty z pravdivostní tabulky přímo na datové vstupy**. Žádná minimalizace není potřeba.
+
+```
+f = Σm(1,3,6,7) pomocí MUX 8:1, adresa ABC:
+   D0=0  D1=1  D2=0  D3=1  D4=0  D5=0  D6=1  D7=1
+        ↑ tohle je doslova sloupec f z tabulky
+```
+
+**Poloviční trik:** funkci $n$ proměnných zvládneš i s MUX $2^{n-1}$:1 — na adresu dáš $n-1$ proměnných a na datové vstupy přivedeš `0`, `1`, poslední proměnnou nebo její negaci (Shannonův rozvoj).
+
+---
+
+#### 3. Sedmisegmentový displej
+
+**Zadání:** BCD vstup (0–9) → sedm segmentů. Kódy 10–15 jsou **don't care**.
+
+Tabulka (společná katoda, segment svítí v `1`):
+
+| Číslice | $A$ | $B$ | $C$ | $D$ | a | b | c | d | e | f | g |
+|---|---|---|---|---|---|---|---|---|---|---|---|
+| 0 | 0 | 0 | 0 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 0 |
+| 1 | 0 | 0 | 0 | 1 | 0 | 1 | 1 | 0 | 0 | 0 | 0 |
+| 2 | 0 | 0 | 1 | 0 | 1 | 1 | 0 | 1 | 1 | 0 | 1 |
+| 3 | 0 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 1 |
+| 4 | 0 | 1 | 0 | 0 | 0 | 1 | 1 | 0 | 0 | 1 | 1 |
+| 5 | 0 | 1 | 0 | 1 | 1 | 0 | 1 | 1 | 0 | 1 | 1 |
+| 6 | 0 | 1 | 1 | 0 | 1 | 0 | 1 | 1 | 1 | 1 | 1 |
+| 7 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 0 | 0 | 0 | 0 |
+| 8 | 1 | 0 | 0 | 0 | 1 | 1 | 1 | 1 | 1 | 1 | 1 |
+| 9 | 1 | 0 | 0 | 1 | 1 | 1 | 1 | 1 | 0 | 1 | 1 |
+
+**Ověřené minimalizace všech sedmi segmentů** (s využitím don't care):
+
+| Segment | Mintermy | Minimalizovaný výraz |
+|---|---|---|
+| **a** | 0,2,3,5,6,7,8,9 | $A + C + BD + B'D'$ |
+| **b** | 0,1,2,3,4,7,8,9 | $B' + CD + C'D'$ |
+| **c** | 0,1,3,4,5,6,7,8,9 | $B + D + C'$ |
+| **d** | 0,2,3,5,6,8,9 | $A + B'C + CD' + B'D' + BC'D$ |
+| **e** | 0,2,6,8 | $CD' + B'D'$ |
+| **f** | 0,4,5,6,8,9 | $A + BC' + BD' + C'D'$ |
+| **g** | 2,3,4,5,6,8,9 | $A + B'C + BC' + CD'$ |
+
+**Všimni si:** segment `c` má jen **tři členy s jedním literálem** — je to nejjednodušší, protože svítí u devíti z deseti číslic (nesvítí jen u dvojky). Segment `d` je naopak nejsložitější.
+
+**Skupinová minimalizace** (zadání ji zmiňuje): několik segmentů sdílí podvýrazy — např. $B'D'$ je v `a` i `e`, $CD'$ v `e` i `g`. Sdílením hradel ušetříš.
+
+---
+
+#### 4. Převodník binární → Gray
+
+**Zadání:** převeď 4bitové binární číslo na Grayův kód (sousední hodnoty se liší v jediném bitu).
+
+**Ověřená tabulka:**
+
+```
+B3B2B1B0 -> G3G2G1G0      B3B2B1B0 -> G3G2G1G0
+  0000   ->   0000          1000   ->   1100
+  0001   ->   0001          1001   ->   1101
+  0010   ->   0011          1010   ->   1111
+  0011   ->   0010          1011   ->   1110
+  0100   ->   0110          1100   ->   1010
+  0101   ->   0111          1101   ->   1011
+  0110   ->   0101          1110   ->   1001
+  0111   ->   0100          1111   ->   1000
+```
+
+**Minimalizace přes K-mapu** (ověřeno):
+
+$$G_3 = A \qquad G_2 = A'B + AB' \qquad G_1 = B'C + BC' \qquad G_0 = C'D + CD'$$
+
+**Klíčové pozorování:** $A'B + AB'$ **je definice XOR**. Takže:
+
+$$G_3 = B_3 \qquad G_2 = B_3 \oplus B_2 \qquad G_1 = B_2 \oplus B_1 \qquad G_0 = B_1 \oplus B_0$$
+
+**Obecné pravidlo:** nejvyšší bit se opíše, každý další je XOR sousedních binárních bitů.
+
+**Schéma:** tři XOR hradla, žádné AND/OR. **K-mapu vlastně nepotřebuješ** — když vzorec znáš, napíšeš schéma rovnou.
+
+```
+  B3 ─────────────────────────► G3
+      ├──────┐
+  B2 ─┼──────┤ XOR ├──────────► G2
+      │      └──────┘
+      ├──────┐
+  B1 ─┼──────┤ XOR ├──────────► G1
+      │      └──────┘
+      ├──────┐
+  B0 ────────┤ XOR ├──────────► G0
+             └──────┘
+```
+
+**K čemu Gray kód je** (doptávka): u inkrementálních snímačů polohy. Při přechodu mezi sousedními hodnotami se mění **jediný bit**, takže nemůže vzniknout přechodový stav s nesmyslnou hodnotou. U binárního kódu přechod 0111 → 1000 mění všechny čtyři bity naráz.
+
+---
+
+#### 5. Převodník Gray → binární
+
+**Zadání:** opačný směr.
+
+$$B_3 = G_3 \qquad B_2 = B_3 \oplus G_2 \qquad B_1 = B_2 \oplus G_1 \qquad B_0 = B_1 \oplus G_0$$
+
+Rozepsáno jen přes vstupy:
+
+$$B_3 = A \qquad B_2 = A \oplus B \qquad B_1 = A \oplus B \oplus C \qquad B_0 = A \oplus B \oplus C \oplus D$$
+
+**Zvláštnost:** je to **kumulativní** XOR — každý další bit XORuje všechny předchozí. Proto se K-mapa nevyplatí: $B_0$ má **osm mintermů bez jediného souseda**, takže minimalizace nic neubere a výraz by měl osm čtyřliterálových členů.
+
+**Schéma:** řetěz tří XOR hradel zapojených **za sebou** (výstup jednoho jde do dalšího), na rozdíl od binární→Gray, kde jsou paralelně.
+
+---
+
+#### 6. Komparátor
+
+**Zadání:** porovnej dvě dvoubitová čísla $A_1A_0$ a $B_1B_0$, výstupy „větší", „rovno", „menší".
+
+Značení pro K-mapu: $A = A_1$, $B = A_0$, $C = B_1$, $D = B_0$.
+
+**Ověřené minimalizace:**
+
+| Výstup | Mintermy | Výraz |
+|---|---|---|
+| $A > B$ | 4,8,9,12,13,14 | $AC' + ABD' + BC'D'$ |
+| $A = B$ | 0,5,10,15 | $ABCD + A'BC'D + AB'CD' + A'B'C'D'$ |
+| $A < B$ | 1,2,3,6,7,11 | $A'C + B'CD + A'B'D$ |
+
+**Elegantnější zápis rovnosti přes XNOR:**
+
+$$(A = B) = (A_1 \odot B_1) \cdot (A_0 \odot B_0)$$
+
+Slovy: čísla se rovnají, když se **rovnají oba páry bitů**. XNOR je „shoda", takže dvě XNOR hradla a jeden AND. To je podstatně méně hradel než ta čtyřčlenná SoP forma — **zmiň to u obhajoby**.
+
+**Kontrola:** tři výstupy se musí navzájem vylučovat a pokrýt všechny stavy: $6 + 4 + 6 = 16$ ✓
+
+---
+
+#### 7. Sčítačka
+
+**Poloviční sčítačka** (half adder) — dva vstupy, bez přenosu zvenčí:
+
+| $A$ | $B$ | $S$ | $C$ |
+|---|---|---|---|
+| 0 | 0 | 0 | 0 |
+| 0 | 1 | 1 | 0 |
+| 1 | 0 | 1 | 0 |
+| 1 | 1 | 0 | **1** |
+
+$$S = A'B + AB' = A \oplus B \qquad C = AB$$
+
+**Jedno XOR a jedno AND.** Součet je XOR, přenos je AND — to si zapamatuj, je to základ všeho.
+
+**Úplná sčítačka** (full adder) — přidá přenos ze spodního řádu $C_{in}$:
+
+$$S = A \oplus B \oplus C_{in}$$
+$$C_{out} = AB + AC_{in} + BC_{in}$$
+
+**Ověřeno:** $S$ má mintermy 1,2,4,7 (lichý počet jedniček), $C_{out}$ mintermy 3,5,6,7 (aspoň dvě jedničky).
+
+**Všimni si:** $C_{out}$ je **majoritní funkce** — přenos vznikne, když jsou aspoň dva ze tří vstupů v jedničce. To je hezká souvislost s [úlohou 11](#11-majoritní-funkce).
+
+**Schéma úplné sčítačky:** dvě poloviční sčítačky + jedno OR.
+
+---
+
+#### 8. Prioritní kodér
+
+**Zadání:** čtyři vstupy $D_3 \dots D_0$, výstupem je **binární index nejvyššího aktivního vstupu**. Když jsou aktivní dva, vyhrává ten s vyšší prioritou.
+
+Značení: $A = D_3$, $B = D_2$, $C = D_1$, $D = D_0$.
+
+**Ověřené minimalizace:**
+
+$$Y_1 = A + B \qquad Y_0 = A + B'C \qquad V = A + B + C + D$$
+
+**Jak to číst:** $Y_1$ je 1, když je aktivní $D_3$ **nebo** $D_2$ (oba mají index ≥ 2). $Y_0$ je 1 při $D_3$, nebo při $D_1$ **za podmínky, že $D_2$ není aktivní** (jinak by vyhrál on).
+
+**Výstup $V$ (valid)** je nutný, protože bez něj nerozlišíš „aktivní je $D_0$" (výstup 00) od „není aktivní nic" (taky 00).
+
+**Rozdíl proti obyčejnému kodéru:** obyčejný kodér předpokládá, že je aktivní **právě jeden** vstup, a při dvou dá nesmysl. Prioritní řeší i současnou aktivaci — proto se používá v přerušovacím řadiči procesoru.
+
+---
+
+#### 9. Detektory vlastností
+
+**Zadání typu:** výstup je 1, když vstupní číslo má nějakou vlastnost.
+
+**Dělitelnost třemi** (4 bity, hodnoty 1–15), mintermy 3, 6, 9, 12, 15:
+
+$$f = ABCD + A'B'CD + A'BCD' + AB'C'D + ABC'D'$$
+
+**Zvláštnost:** **nedá se zminimalizovat** — každý minterm je izolovaný, protože násobky tří v binárním zápisu nesousedí. Výsledek je stejně dlouhý jako součet mintermů.
+
+> **Tohle je stejná situace jako u dekodéru** a je dobré ji poznat rychle: když jsou mintermy „rozházené", minimalizace nepomůže. Řekni to nahlas a nehledej skupiny, které neexistují.
+
+**Prvočíslo** (2, 3, 5, 7, 11, 13):
+
+$$f = A'CD + B'CD + BC'D + A'B'C$$
+
+Tady minimalizace **funguje** — ze šesti čtyřliterálových mintermů se staly čtyři tříliterálové členy.
+
+---
+
+#### 10. Generátor parity
+
+**Zadání:** výstup je 1, když je počet jedniček na vstupu **lichý** (sudá parita — doplní se do sudého počtu).
+
+Mintermy: 1, 2, 4, 7, 8, 11, 13, 14.
+
+$$P = A \oplus B \oplus C \oplus D$$
+
+**Zvláštnost — nejdůležitější poznatek:** v K-mapě je to **šachovnice**. Žádné dvě jedničky spolu nesousedí, takže **minimalizace je nemožná**. SoP forma má osm čtyřliterálových mintermů, což je nejhorší možný případ.
+
+**Ale s XOR** je to jediný řetězec tří hradel. To je celá pointa: **XOR se v Karnaughově mapě neprojeví jako slučitelná skupina**, proto se šachovnicový vzor musí poznat na první pohled.
+
+```
+       CD
+ AB   00 01 11 10
+ 00 |  0  1  0  1 |
+ 01 |  1  0  1  0 |     <- šachovnice = XOR
+ 11 |  0  1  0  1 |
+ 10 |  1  0  1  0 |
+```
+
+**Použití:** kontrola přenosu dat. Odesílatel přidá paritní bit, příjemce parity přepočítá — když nesedí, došlo k chybě v lichém počtu bitů.
+
+---
+
+#### 11. Majoritní funkce
+
+**Zadání:** výstup je 1, když je aspoň polovina (nebo daný počet) vstupů v jedničce.
+
+**Dva ze tří** (mintermy 3, 5, 6, 7):
+
+$$f = AB + AC + BC$$
+
+**Tři ze čtyř** (mintermy 7, 11, 13, 14, 15):
+
+$$f = ABC + ABD + ACD + BCD$$
+
+**Vzor je zřejmý:** všechny kombinace $k$ vstupů z $n$. Pro „2 ze 3" jsou to všechny dvojice, pro „3 ze 4" všechny trojice. **K-mapu vlastně nepotřebuješ** — napíšeš to z kombinatoriky.
+
+**Pěkná vlastnost:** výraz **neobsahuje žádnou negaci**, takže schéma nepotřebuje invertory. Jen AND hradla a jedno OR.
+
+**Použití:** hlasovací obvody v systémech s trojitou redundancí (letecká technika) — když dva ze tří počítačů řeknou totéž, výsledek se bere jako správný.
+
+---
+
+#### 12. Validátor BCD
+
+**Zadání:** detekuj neplatný BCD kód (hodnoty 10–15).
+
+$$f = AB + AC$$
+
+**Odvození bez K-mapy:** neplatné jsou hodnoty ≥ 10, tedy `1010` až `1111`. Všechny mají $A = 1$ (jsou ≥ 8) a zároveň $B = 1$ nebo $C = 1$ (aby byly ≥ 10). Odtud $A(B + C) = AB + AC$.
+
+**Doplněk** — platný BCD je negace: $f' = A' + B'C'$ (De Morgan).
+
+**Použití:** v BCD sčítačce se tímhle detekuje, kdy je potřeba korekce (+6).
+
+---
+
+### Jak s katalogem pracovat
+
+1. **Vyber si typ, vezmi papír a vyřeš ho sám** — tabulka, K-mapa, minimalizace, schéma.
+2. **Teprve pak porovnej** s výsledkem výš.
+3. Když se rozejdeš, zkontroluj na [32x8](http://www.32x8.com/) — ukáže i postup Quine-McCluskey.
+
+**Tři situace, které musíš poznat rychle**, protože ti ušetří půl hodiny hledání neexistujících skupin:
+
+| Poznávací znak v K-mapě | Co to je | Co s tím |
+|---|---|---|
+| **izolované jedničky** bez sousedů | dekodér, dělitelnost | minimalizace **nic neubere** — řekni to a jdi dál |
+| **šachovnice** | parita, XOR funkce | přepiš na **XOR**, ne na SoP |
+| **všechny kombinace $k$ z $n$** | majorita | napiš z kombinatoriky, K-mapa netřeba |
+
 ---
 
 ### Co si nacvičit
