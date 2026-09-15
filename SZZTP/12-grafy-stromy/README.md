@@ -9,9 +9,9 @@
 1. **Definice grafu** $G = (V, E)$ — neorientovaný (hrana je **množina** $\\{u,v\\}$) vs. orientovaný (hrana je **dvojice** $(u,v)$)
 2. **Stupeň vrcholu** a princip podání ruky: $\sum \deg(v) = 2\lvert E \rvert$ — z něj plyne skoro celý Euler
 3. **Sled, tah, cesta** — co se smí opakovat; uzavřený vs. otevřený, kružnice
-4. **Souvislost** a komponenty
+4. **Souvislost** a komponenty; u orientovaného **slabá vs. silná**, $\deg^-$ a $\deg^+$, **DAG**
 5. **Reprezentace:** matice sousednosti vs. seznam sousedů — paměť $O(V^2)$ vs. $O(V+E)$, kdy co
-6. **Význačné typy:** úplný, bipartitní, regulární, acyklický, strom, les
+6. **Vlastnost vs. typ** (typ = balík vlastností) — **typy:** úplný, bipartitní, regulární, acyklický, strom, les
 7. **Stromy** — tři ekvivalentní charakterizace, $n-1$ hran, mezi dvěma vrcholy **právě jedna** cesta
 8. **Binární strom** a jeho reprezentace (odkazy vs. pole) — podrobně v [okruhu 3](../03-spojove-struktury/)
 9. **Eulerovský tah a kružnice** — podmínka přes **počet lichých vrcholů** (0 nebo 2), sedm mostů královeckých
@@ -219,6 +219,57 @@ Tři pojmy, které se liší **jen tím, co se smí opakovat**. Je to zpřísňo
 
 **Souvislost se ověří jedním průchodem:** spustíš DFS nebo BFS z libovolného vrcholu, a když navštívíš všech $\lvert V \rvert$ vrcholů, je graf souvislý. Jinak jsi našel jednu komponentu a musíš začít znovu z nenavštíveného vrcholu. **To je celý algoritmus na počítání komponent.**
 
+#### Co se změní u orientovaného grafu
+
+Zadání chce definici obou, tak si pohlídej, co přesně **přibude**, když hranám přidáš směr. Jsou to tři věci.
+
+**1. Stupeň se rozpadne na dva.**
+
+- $\deg^-(v)$ — **vstupní** stupeň, kolik šipek vede **do** $v$
+- $\deg^+(v)$ — **výstupní** stupeň, kolik šipek vede **z** $v$
+
+Princip podání ruky se tím změní na
+
+$$\sum_{v \in V} \deg^-(v) = \sum_{v \in V} \deg^+(v) = \lvert E \rvert$$
+
+**a už tam není dvojka** — každá šipka má jeden začátek a jeden konec, takže do každého součtu přispěje jen jedničkou. **Konkrétně** na grafu $A \to B$, $B \to C$, $A \to C$: vstupní stupně jsou $0, 1, 2$ (součet $3$), výstupní $2, 1, 0$ (součet $3$), hrany $3$ ✔
+
+**2. Souvislost se rozdvojí.** To je nejdůležitější rozdíl a ptají se na něj:
+
+| | Definice |
+|---|---|
+| **slabě souvislý** | souvislý, když šipky ignoruju |
+| **silně souvislý** | mezi každými dvěma vrcholy vede **orientovaná** cesta **oběma směry** |
+
+```
+A → B → C        slabě souvislý (bez šipek drží pohromadě)
+                 NENÍ silně souvislý — z C se do A nedostanu
+
+A → B → C → A    silně souvislý
+```
+
+**Reálný příklad:** jednosměrky ve městě. *Slabě souvislé* = všechny ulice spolu sousedí. *Silně souvislé* = z každého místa dojedeš na každé jiné, aniž bys jel proti směru. To druhé je to, co město ve skutečnosti potřebuje.
+
+**3. Matice sousednosti přestane být symetrická.** U neorientovaného grafu je vždy symetrická podle diagonály, protože hrana $AB$ je totéž co $BA$. U orientovaného může být $M[A][B] = 1$ a $M[B][A] = 0$. **Rychlá odpověď u zkoušky:** *„Podle symetrie matice poznám, jestli je graf orientovaný."*
+
+**A přibude jeden význačný typ — DAG** (*directed acyclic graph*), orientovaný acyklický graf. Je to nejdůležitější orientovaný typ vůbec:
+
+- modeluje **závislosti**: build systémy (`make`), git historie, přepočet buněk v tabulkovém procesoru
+- dá se na něm dělat **topologické uspořádání** — seřadit vrcholy tak, aby každá šipka vedla zleva doprava
+- **Konkrétně:** *nakoupit* $\to$ *nakrájet* $\to$ *uvařit*. Šipky znamenají „musí být dřív", topologické uspořádání je pořadí, ve kterém to můžu dělat. Kdyby v grafu byl cyklus, žádné takové pořadí neexistuje — proto musí být acyklický.
+
+**Souhrnná tabulka — tohle je odpověď na „a co orientované grafy?":**
+
+| | neorientovaný | orientovaný |
+|---|---|---|
+| hrana | $\\{u,v\\}$, množina | $(u,v)$, uspořádaná dvojice |
+| stupeň | $\deg(v)$ | $\deg^-(v)$, $\deg^+(v)$ |
+| součtová věta | $\sum \deg = 2\lvert E \rvert$ | $\sum \deg^- = \sum \deg^+ = \lvert E \rvert$ |
+| matice sousednosti | symetrická | obecně nesymetrická |
+| souvislost | jedna | **slabá / silná** |
+| acyklický typ | strom, les | **DAG** |
+| eulerovská podmínka | všechny stupně sudé | $\deg^-(v) = \deg^+(v)$ v každém vrcholu |
+
 ---
 
 ### Reprezentace grafu
@@ -336,6 +387,37 @@ seznam:   2 · 5·10^6 = 10^7 položek
 ---
 
 ### Význačné typy grafů
+
+#### Vlastnost vs. typ — ať se ti to neplete
+
+Zadání okruhu mluví o **vlastnostech** i o **význačných typech** a je snadné to smíchat. Rozdíl:
+
+- **Vlastnost** je otázka ano/ne, kterou položíš hotovému grafu. *„Je souvislý?"* — podívám se, odpovím.
+- **Typ** je kategorie daná **definicí**, do které graf patří.
+
+A důvod, proč se to plete, je ten, že **typ je obvykle jen balík vlastností pohromadě**:
+
+$$\text{strom} = \text{souvislý} \ + \ \text{acyklický}$$
+
+Když někdo řekne *„je to strom"*, sdělil tím obě vlastnosti naráz. Typ je zkratka za kombinaci vlastností — proto se v tabulce níž objevují i pojmy, které jsi potkal jako vlastnosti.
+
+**Věta k vyslovení:** *„Vlastnost je jednotlivá kvalita, kterou ověřím — souvislost, acykličnost, bipartitnost. Typ je pojmenovaná kombinace vlastností — strom je souvislý acyklický graf. Typy zavádíme proto, že se pořád opakují a platí pro ně užitečné věty."*
+
+Vlastnosti, které bys měl umět vyjmenovat, i s tím, **jak se ověří** (to je ta část, na kterou se doptávají):
+
+| Vlastnost | Otázka | Jak ověřím |
+|---|---|---|
+| **souvislost** | vede cesta mezi každými dvěma vrcholy? | jeden průchod DFS/BFS — navštívil jsem všechny? |
+| **acykličnost** | neobsahuje kružnici? | DFS — narazil jsem na už navštívený vrchol jinak než na rodiče? |
+| **bipartitnost** | jdou vrcholy rozdělit na dvě skupiny? | BFS s obarvováním na dvě barvy |
+| **regularita** | mají všechny vrcholy stejný stupeň? | spočítám stupně |
+| **úplnost** | je každý vrchol spojen s každým? | má $\frac{n(n-1)}{2}$ hran? |
+| **eulerovskost** | existuje tah přes všechny hrany? | souvislý + počet lichých vrcholů je 0 nebo 2 |
+| **hamiltonovskost** | existuje kružnice přes všechny vrcholy? | **nemá jednoduché kritérium** |
+
+**Poslední řádek je past:** Euler má jednoduchou podmínku, Hamilton nemá žádnou. Rozpoznat eulerovský graf je $O(\lvert V \rvert + \lvert E \rvert)$, rozpoznat hamiltonovský je NP-úplné. Proto se u Eulera vyslovuje **ekvivalence** („právě tehdy, když"), zatímco u Hamiltona jen **postačující** podmínky.
+
+#### Přehled typů
 
 | Typ | Definice | Příklad |
 |---|---|---|
@@ -776,6 +858,11 @@ Nestíháš-li všechno, **vynech Kroky 2 a 5** a udělej **stupně → Euler �
 20. **K čemu je bipartitní graf a jak ho poznám?** → Modeluje vztahy dvou různých typů (studenti–předměty). Graf je bipartitní **právě tehdy, když neobsahuje kružnici liché délky**.
 21. **Jak souvisí průchody binárním stromem s DFS a BFS?** → Preorder/inorder/postorder jsou varianty **DFS** (liší se okamžikem zpracování uzlu), průchod po hladinách je **BFS**.
 22. **Proč je u rekurzivního DFS riziko přetečení zásobníku?** → Hloubka rekurze je až $O(V)$ — u grafu tvaru cesty. Totéž jako degenerovaný strom v [okruhu 3](../03-spojove-struktury/).
+23. **Jaký je rozdíl mezi vlastností a význačným typem grafu?** → Vlastnost je jednotlivá kvalita, kterou ověřím (souvislost, acykličnost). Typ je pojmenovaná **kombinace** vlastností nebo tvarová definice — strom je souvislý a acyklický zároveň.
+24. **Jaký je rozdíl mezi slabou a silnou souvislostí?** → **Slabá** = souvislý po zapomenutí směrů. **Silná** = mezi každými dvěma vrcholy vede orientovaná cesta oběma směry. $A \to B \to C$ je slabě, ne silně souvislý.
+25. **Jak vypadá princip podání ruky u orientovaného grafu?** → $\sum \deg^- = \sum \deg^+ = \lvert E \rvert$ — **bez dvojky**, protože každá šipka má jeden začátek a jeden konec.
+26. **Co je DAG a k čemu je?** → Orientovaný acyklický graf. Modeluje závislosti (build systémy, git) a dá se na něm dělat **topologické uspořádání** — to existuje **právě tehdy, když** je graf acyklický.
+27. **Jak z matice sousednosti poznám, že je graf neorientovaný?** → Je **symetrická** podle hlavní diagonály.
 
 ### Užitečné odkazy
 
