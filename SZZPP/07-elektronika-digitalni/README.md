@@ -678,5 +678,22 @@ $$a = A + C + BD + B'D'$$
 
 ### Užitečné odkazy
 
+#### Kde si to procvičit
+
+| Zdroj | K čemu | Jazyk |
+|---|---|---|
+| **[32x8 Karnaugh Map Solver](http://www.32x8.com/)** | **Nejužitečnější na kontrolu.** Zadáš mintermy (i don't care) pro 2–8 proměnných a vypíše minimalizovaný výraz — **navíc ukáže postup Quine-McCluskey**. Spočítej si úlohu rukou a ověř si ji tady. | EN |
+| [Charlie Coleman K-map Solver](https://www.charlie-coleman.com/experiments/kmap/) | vizuální Karnaughova mapa — klikáš do políček a vidíš, jak se tvoří skupiny | EN |
+| **[CircuitVerse](https://circuitverse.org/simulator)** | postav schéma z hradel a odsimuluj. Má hotové dekodéry, multiplexory i sedmisegmentovku. | EN |
+| [simulator.io](https://simulator.io/) | jednodušší simulátor logických obvodů, rychlý start | EN |
+| [Logic.ly (demo)](https://logic.ly/demo/) | přehledné kreslení hradel, dobré na ověření schématu | EN |
+| [Karnaughova mapa (Wikipedie)](https://cs.wikipedia.org/wiki/Karnaughova_mapa) | připomenutí pravidel slučování česky | CZ |
+
+**Jak na procvičení:** vezmi libovolnou funkci (třeba „výstup je 1, když jsou aspoň dva ze čtyř vstupů v 1"), sestav pravdivostní tabulku, zminimalizuj **rukou** Karnaughovou mapou — a teprve pak zkontroluj na 32x8. Nástroj ti navíc ukáže Quine-McCluskey postup, takže si ověříš obě metody naráz.
+
+**Pozor:** 32x8 očekává mintermy jako čísla oddělená čárkou a proměnné značí od `A` (nejvyšší bit). Ověř si, že máš stejné pořadí bitů jako ve svém zadání.
+
+#### Související okruhy
+
 - Analogová část elektroniky: [okruh 6](../06-elektronika-analogova/)
 - Výrokový počet a úplné systémy spojek: [SZZTP okruh 10](../../SZZTP/10-logika-mnoziny-relace/)

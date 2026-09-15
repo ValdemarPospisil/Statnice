@@ -826,5 +826,20 @@ Uzlová napětí: $U_A = 15{,}744$ V, $U_B = 10{,}105$ V, $U_C = 11{,}459$ V.
 
 ### Užitečné odkazy
 
+#### Kde si to procvičit
+
+| Zdroj | K čemu | Jazyk |
+|---|---|---|
+| **[Falstad Circuit Simulator](https://www.falstad.com/circuit/)** | **Nejlepší na pochopení.** Nakreslíš obvod myší a hned vidíš, kudy teče proud (animované tečky) a jaká jsou napětí. Zadaný obvod si sestav a ověř si jím vlastní výsledky. | EN |
+| [Falstad — přímo simulátor](https://www.falstad.com/circuit/circuitjs.html) | totéž bez úvodní stránky, jde rovnou kreslit | EN |
+| [CircuitLab](https://www.circuitlab.com/) | online kreslení a simulace, přehlednější UI | EN |
+| [Tinkercad Circuits](https://www.tinkercad.com/circuits) | simulace s multimetrem — dobré na pochopení, co se kde měří | EN |
+| [MIT OCW 6.002 Circuits and Electronics](https://ocw.mit.edu/courses/6-002-circuits-and-electronics-spring-2007/) | kompletní univerzitní kurz — přednášky, skripta, úlohy s řešením | EN |
+| [Kirchhoffovy zákony (Wikipedie)](https://cs.wikipedia.org/wiki/Kirchhoffovy_z%C3%A1kony) | rychlé připomenutí definic česky | CZ |
+
+**Jak Falstad použít na procvičení:** sestav zkouškový obvod, spusť simulaci a odečti proudy. Pak si ho spočítej rukou a porovnej. Když se rozejdete, máš znaménkovou chybu — a simulátor ti ukáže, kde.
+
+#### Související okruhy
+
 - Digitální část elektroniky: [okruh 7](../07-elektronika-digitalni/)
 - Soustavy lineárních rovnic teoreticky: [SZZTP okruh 4](../../SZZTP/04-funkce-polynomy-nelinearni-rovnice/)
